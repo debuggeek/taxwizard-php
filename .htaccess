@@ -1,0 +1,16 @@
+Options +FollowSymLinks
+#RewriteEngine On
+#RewriteBase /
+
+#SSLOptions +StrictRequire
+#SSLRequireSSL
+#SSLRequire %{HTTP_HOST} eq "debuggeek.com"
+#ErrorDocument 403 https://debuggeek.com/taxtiger_staging/index.html
+
+#DirectoryIndex index.html
+
+#AuthName EnterPassword
+#AuthType Basic
+
+#require valid-user
+#AuthUserFile "/home/cykoduck/.htpasswds/public_html/debuggeek.com/taxtiger/passwd"

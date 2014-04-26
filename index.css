@@ -1,0 +1,24 @@
+@CHARSET "UTF-8";
+
+#tabs {
+border-bottom: .5em solid #F93;
+margin: 0;
+padding: 0;
+}
+#tabs li { 
+display:inline; 
+border-top: .1em solid #F93;
+border-left: .1em solid #F93;
+border-right: .1em solid #F93;
+}
+#tabs li a {
+text-decoration: none;
+padding: 0.25em 1em;
+color: #000;
+}
+
+#page1 #tabs li#tab1 a, #page2 #tabs li#tab2 a, #page3 #tabs li#tab3 a, #page4 #tabs li#tab4 a{
+padding: 0.25em 1em;
+background-color: #F93;
+color: #fff;
+}

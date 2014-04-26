@@ -1,0 +1,21 @@
+@CHARSET "UTF-8";
+h1
+{
+font-size:14pt;
+color:black;
+}
+table
+{
+font-family:verdena;
+cellspacing:2;
+cellpadding:2;
+border-collapse:collapse;
+}
+table,th, td
+{
+border: 1px solid black;
+}
+td
+{
+padding:5px;	
+}

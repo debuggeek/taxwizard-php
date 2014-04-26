@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+<link rel="stylesheet" type="text/css" href="index.css">
+<title>Tax Tiger TCAD Tools</title>
+<style type="text/css"></style>
+</head>
+<body id="page1">
+<img src="TaxTTitle.png" width="623" height="99" title="" alt="">
+<ul id="tabs">
+<li id="tab1"><a href="index.html">Table Lookups</a></li>
+<li id="tab2"><a href="batch_complete.php">Batch Processing</a></li>
+<li id="tab3"><a href="beta.html">Beta Tools</a></li>
+<li id="tab4"><a href="admin.php">Admin Tools</a></li></ul>
+<ul>
+<script type="text/javascript">
+
+var numrows=1;
+
+function add_row() {
+    var end = document.getElementById("end");
+    var parentDiv = end.parentNode;
+    var div = document.createElement("div");
+    div.setAttribute("id", ++numrows);
+    parentDiv.insertBefore(div, end);
+
+	div.innerHTML = "\nID:<input type\=\"text\" name\=\"c" + numrows
+				+ "\">	Sales Price:<input type\=\"text\" name\=\"c" + numrows
+				+ "sp\"> Sales Date:<input type\=\"text\" name\=\"c" + numrows
+				+ "sd\"><input type=\"button\" onclick=\"del_row(" + numrows
+				+ ")\" value=\"-\">\n";
+	}
+
+	function del_row(id) {
+		var child = document.getElementById(id)
+		var parentDiv = child.parentNode;
+		parentDiv.removeChild(child);
+		--numrows;
+	}
+
+
+	function add_row_eq() {
+	    var end = document.getElementById("end2");
+	    var parentDiv = end.parentNode;
+	    var div = document.createElement("div");
+	    div.setAttribute("id", ++numrows);
+	    parentDiv.insertBefore(div, end);
+
+		div.innerHTML = "\nID:<input type\=\"text\" name\=\"c" + numrows
+					+ "\"><input type=\"button\" onclick=\"del_row(" + numrows
+					+ ")\" value=\"-\">\n";
+		}
+
+		function del_row(id) {
+			var child = document.getElementById(id)
+			var parentDiv = child.parentNode;
+			parentDiv.removeChild(child);
+			--numrows;
+		}
+</script>
+<p><strong>Prospects</strong></p>
+<script>
+	try{
+		for(var lastpass_iter=0; lastpass_iter < document.forms.length; lastpass_iter++){ 
+			var lastpass_f = document.forms[lastpass_iter]; 
+			if(typeof(lastpass_f.lpsubmitorig2)=="undefined"){
+				lastpass_f.lpsubmitorig2 = lastpass_f.submit; 
+				lastpass_f.submit = function(){ 
+										var form=this;
+										var customEvent = document.createEvent("Event");
+										customEvent.initEvent("lpCustomEvent", true, true);
+										var d = document.getElementById("hiddenlpsubmitdiv");
+										for(var i = 0; i < document.forms.length; i++){
+											if(document.forms[i]==form){ d.innerText=i; 
+										}
+									} 
+				d.dispatchEvent(customEvent); 
+				form.lpsubmitorig2(); 
+				}
+			}
+		}
+	}catch(e){}
+</script>
+<!-- when the form is submitted, the server response will appear in this iframe -->
+<a href="library/prospects_list.php">Show Prospect List</a>
+<br>
+<p><strong>Enter a PropertyID to find best comps and generate the generate report</strong>  (Note: This operation can take some time)</p>
+<form name="form" action="massreport.php" method="get" target="_blank">
+<input type="checkbox" name="trimindicated"> Only return properties with lower comparison values<br>
+<input type="checkbox" name="includemls"> Include MLS data<br>
+<input type="checkbox" name="multihood"> Include related neighborhoods<br>
+Number Results: <input type="text" name="limit" value="10" size="3">
+<input type="radio" name="style" value="equity"> Equity <input type="radio" name="style" value="sales" checked> Sales <br>
+<input type="text" name="propid"><input type="submit" name="S&G" value="Search and Generate"></form>
+<br>
+<strong>Type in your Subject and Comps</strong>
+<form action="properties2.php" method="get" target="_blank">
+<div id="subj">Subject:<br>
+<input type="text" name="s" id="s"></div>
+Comps:<input type="button" onclick="add_row()" value="+">
+<div id="comps">ID:<input type="text" name="c1" id="c1">
+Sales Price (No commas):<input type="text" name="c1sp">
+Sales Date:<input type="text" name="c1sd"> </div>
+<div id="end"></div><input type="submit" name="Submit" value="Build Sales Table"></form><br>
+<br>
+<form action="properties2.php" method="get" target="_blank">
+<div id="subj">Subject:<br>
+<input type="text" name="s" id="s"></div>
+Comps:<input type="button" onclick="add_row_eq()" value="+">
+<div id="comps">ID:<input type="text" name="c1" id="c1"></div>
+<div id="end2"></div><input type="submit" name="Submit" value="Build Equity Table"></form></ul>
+<div style="display: none" id="hiddenlpsubmitdiv"></div>
+</body>
+</html>

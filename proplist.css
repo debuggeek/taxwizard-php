@@ -1,0 +1,49 @@
+@CHARSET "UTF-8";@CHARSET "UTF-8";
+body
+{
+background-color:cream;
+text-align:center;
+}
+h1
+{
+font-size:18pt;
+}
+h2
+{
+color:black;
+font-weight:bold;
+}
+table
+{
+border-collapse:collapse;
+font-family:verdena;
+border:1px solid black;
+padding:2cm;
+}
+td,th
+{
+border:1px solid black;
+color:blue;
+text-align:left;
+}
+
+th
+{
+font-weight:bold;
+color:black;
+}
+.LandValueAdj,.ClassAdj,.\%GoodAdjustment,.L\/ASizeAdj,.MktLevelerDetailAdj
+{
+color:blue;
+float:left;
+white-space:nowrap;
+}
+
+.LandValAdjDelta,.ClassAdjDelta,.GoodAdjDelta,.LASizeAdjDelta,.MktLevelerDetailAdjDelta,.NetAdjustment,.IndicatedValue,.IndicatedValue\/SQFT,
+	.MeanValue,.MeanValue\/SQFT,.MedianValue,.MedianValue\/SQFT
+{
+color:red;
+float:right;
+text-align:right;
+white-space:nowrap;
+}
