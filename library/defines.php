@@ -13,7 +13,7 @@ $comparrsp = array();
 $comparrsd = array();
 $isEquityComp = false;
 
-$table="PROP";
+$prop_table="PROP";
 $data = array();
 $curryear = 2009;
 
@@ -27,21 +27,18 @@ $GEOID = array("Geo ID","PROP","geo_id");
 $SITUS = array("Situs","PROP",array("situs_num","situs_street_prefx","situs_street","situs_street_suffix","situs_unit","-TX","situs_zip"));
 $NEIGHB = array("Neighborhood","PROP","hood_cd","HOOD" => "hood_cd");
 $OWNER = array("Property Owner","PROP","py_owner_name");
-//$NEIGHBMIA = array("Neighborhood Mass Improv Adj","TABLELOOKUP","adjust_perc","TABLE"=>"special_imp");
 $NEIGHBMIA = array("Neighborhood Mass Improv Adj","CALCULATED","getNMIA","FIELD"=>"adjust_perc","TABLE"=>"SPECIAL_IMP");
 
 $MARKETVALUE = array("Market Value","PROP","market_value");
 $MARKETPRICESQFT = array("Market Price/SQFT","CALCULATED","getMrktSqft");
 $LIVINGAREA = array("Living Area","TABLELOOKUP","liv_area","TABLE"=>"SPECIAL_PROPDATA");
 
-$SALEDATE = array("Sale Date","TABLELOOKUP","sale_date","TABLE"=>"SPECIAL_SALE_EX_CONF");
-$SALEPRICE = array("Sale Price","TABLELOOKUP","sale_price","TABLE"=>"SPECIAL_SALE_EX_CONF");
-//$SALEDATE = array("Sale Date","CALCULATED","getSaleDate()");
-//$SALEPRICE = array("Sale Price","CALCULATED","getSalePrice()");
+$SALEDATE = array("Sale Date","TABLELOOKUP","sale_date","TABLE"=>"SALES_MLS_MERGED");
+$SALEPRICE = array("Sale Price","TABLELOOKUP","sale_price","TABLE"=>"SALES_MLS_MERGED");
+$SALESOURCE = array("Sale Source","TABLELOOKUP","source","TABLE"=>"SALES_MLS_MERGED");
 $SALEPRICESQFT = array("Sale Price / SQFT","CALCULATED","getSPSqft");
 
 $IMPROVEMENTCNT = array("Imp Count","CALCULATED","getImpCount");
-//$HIGHVALIMPMARCN = array("High Value Improv MA RCN","TABLELOOKUP","det_calc_val","TABLE"=>"SPECIAL_IMP");
 $HIGHVALIMPMARCN = array("High Value Improv MA RCN","CALCULATED","getHVImpMARCN");
 $HIGHVALIMPMARCNSQFT = array("High Value Improv MA RCN/SQFT","CALCULATED","getHVImpMARCNPerSQFT");
 $COMPLETE = array("% Complete","-CONST","-100");
@@ -50,12 +47,10 @@ $LANDVALUEADJ =	array("Land Value Adj","PROP","land_hstd_val");
 $LANDVALUEADJB =	array("Land Value Adj","PROP","land_non_hstd_val");
 $UNITPRICE = array("Unit Price","TABLE" => "SPECIAL_IMP","FIELD"=>"det_unitprice");
 $CLASSADJ = array("Class Adj","CALCULATED","getClassAdj");
-//$ACTUALYEARBUILT = array("Year Built","TABLELOOKUP","yr_built","TABLE"=>"IMP_DET");
 $ACTUALYEARBUILT = array("Year Built","CALCULATED","getYearBuilt");
 $GOODADJ = array("% Good Adj","CALCULATED","getGoodAdj","TABLE"=>"SPECIAL_IMP","FIELD"=>"det_base_deprec_perc");
 $LASIZEADJ = array("L/A Size Adj","CALCULATED","getLASizeAdj");
 $HIGHVALIMPMASQFTDIFF = array("High Value Improv MA SQFT Diff","COMPCALCULATED","getHVImpSqftDiff");
-//$MKTLEVELERDETAILADJ = array("Mkt Leveler Detail Adj","TABLELOOKUP","det_calc_val","TABLE"=>"SPECIAL_IMP");
 $MKTLEVELERDETAILADJ = array("Mkt Leveler Detail Adj","CALCULATED","getMktLevelerDetailAdj");
 $SEGMENTSADJ = array("Segments & Adj","CALCULATED","getSegAdj");
 $NEIGHBADJ = array("Neighborhood Adj","CALCULATED","getNeigbAdj");
@@ -112,10 +107,6 @@ $goodadjdelta = "GoodAdjDelta";
 $lasizeadjdelta = "LASizeAdjDelta";
 $mktlevelerdetailadjdelta =	"MktLevelerDetailAdjDelta";
 $segmentsadjdelta = "SegAdjDelta";
-
-//$landvaladjdelta = "getLandValAdjDelta";
-//$goodadjdeltafunc = "getGoodAdjDelta";
-//$segadjdeltafunc = "getSegAdjDelta";
 
 //TABLE NAMES
 $TABLE_IMP_DET = "IMP_DET";

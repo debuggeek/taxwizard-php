@@ -76,28 +76,27 @@ if($abort){
 	exit;
 }
 
+$property = getSubjProperty($propid);
 
-$property = getProperty($propid);
 
-
-if($INCLUDEMLS)
-	$compsarray = findBestComps($property,$isEquityComp,$TRIMINDICATED,null,$MULTIHOOD);
-else //Just use Sales table
-	$compsarray = findBestComps($property,$isEquityComp,$TRIMINDICATED, $TABLE_SALES,$MULTIHOOD);
-
+$compsarray = findBestComps($property,$isEquityComp,$TRIMINDICATED,$MULTIHOOD);
 
 if(sizeof($compsarray) == 0)
-	return returnNoHits($propid);
-	
+    return returnNoHits($propid);
+
+if(!$INCLUDEMLS){
+    $compsarray = array_filter($compsarray,"isNotMLS");
+}
+
 usort($compsarray,"cmpProp");
-		
+
 $comp_min = MIN($COMPSTODISPLAY,count($compsarray));
 $subjcomparray = array();
 $subjcomparray[0] = $property;
 
 for($i=0; $i < $comp_min; $i++)
 {
-	$subjcomparray[$i+1] = $compsarray[$i];
+    $subjcomparray[$i+1] = $compsarray[$i];
 }
 $_SESSION[$MEANVAL[0]] = getMeanVal($subjcomparray);
 $_SESSION[$MEANVALSQFT[0]] = getMeanValSqft($subjcomparray);

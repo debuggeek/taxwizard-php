@@ -16,6 +16,7 @@ class propertyClass{
 	public $mLivingArea;
 	public $mSaleDate;
 	public $mSalePrice;
+    public $mSaleSource;
 	public $mImprovCount;
 	private $mIndVal;
 	public $mHighValImpMARCN;
@@ -747,7 +748,9 @@ class propertyClass{
 	}
 
 	function setField($fieldConst,$value){
-		global $PROPID,$GEOID,$SITUS,$NEIGHB,$OWNER,$NEIGHBMIA,$MARKETVALUE,$LIVINGAREA,$SALEDATE,$SALEPRICE,$IMPROVEMENTCNT,$HIGHVALIMPMARCN,$COMPLETE,$LANDVALUEADJ,$CLASSADJ,$ACTUALYEARBUILT,$GOODADJ,$LASIZEADJ,$MKTLEVELERDETAILADJ,$SEGMENTSADJ;
+		global $PROPID,$GEOID,$SITUS,$NEIGHB,$OWNER,$NEIGHBMIA,$MARKETVALUE,$LIVINGAREA,$SALEDATE,$SALEPRICE,$SALESOURCE,
+               $IMPROVEMENTCNT,$HIGHVALIMPMARCN,$COMPLETE,$LANDVALUEADJ,$CLASSADJ,$ACTUALYEARBUILT,
+               $GOODADJ,$LASIZEADJ,$MKTLEVELERDETAILADJ,$SEGMENTSADJ;
 
 		//echo "setting field " .$fieldConst." to ".$value."<br>";
 		if($fieldConst == NULL)
@@ -786,6 +789,9 @@ class propertyClass{
 			case($SALEPRICE[0]):
 				$this->mSalePrice = $value;
 				break;
+            case($SALESOURCE[0]):
+                $this->mSaleSource = $value;
+                break;
 			case($IMPROVEMENTCNT[0]):
 				$this->mImprovCount = $value;
 				break;
@@ -855,11 +861,13 @@ class propertyClass{
 			case($LIVINGAREA[0]):
 				return $this->mLivingArea; //($this->mLivingArea);
 			case($SALEDATE[0]):
-				return $this->mSaleDate;
+                if(isNotMLS($this))
+				    return $this->mSaleDate;
+                else
+                    return $this->mSaleDate."_";
 			case($SALEPRICE[0]):
 				return $this->mSalePrice;
 			case($SALEPRICESQFT[0]):
-
 					return number_format($this->getSalePerSQFT());
 			case($IMPROVEMENTCNT[0]):
 				return $this->mImprovCount;
@@ -920,4 +928,22 @@ class propertyClass{
 		echo nl2br('<PROPID>'.$this->mPropID.'</PROPID>');
 		//echo nl2br()
 	}
+
+    /**
+     * @param mixed $mSaleSource
+     */
+    public function setSaleSource($mSaleSource)
+    {
+        $this->mSaleSource = $mSaleSource;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSaleSource()
+    {
+        return $this->mSaleSource;
+    }
+
+
 } // end of class

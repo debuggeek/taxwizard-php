@@ -193,7 +193,7 @@ function getSalePrice($propid)
 
 function setSaleDateAndPrice($compid, $compTable = null)
 {
-	global $TABLE_SALES_MERGED,$SALEDATE,$PROPID,$SALEPRICE,$debug,$debugquery;
+	global $TABLE_SALES_MERGED,$SALEDATE,$PROPID,$SALEPRICE,$debug,$debugquery,$SALESOURCE;
 
 	$year = date("Y");
 	$lastyear = $year -1;
@@ -202,7 +202,7 @@ function setSaleDateAndPrice($compid, $compTable = null)
 		$compTable = $TABLE_SALES_MERGED;
 	
 	sqldbconnect();
-	$query="SELECT sale_date,sale_price FROM ". $compTable . " WHERE prop_id=".$compid->mPropID." AND (sale_date LIKE '%$year%' OR sale_date LIKE '%$lastyear%')";
+	$query="SELECT sale_date,sale_price,source FROM ". $compTable . " WHERE prop_id=".$compid->mPropID." AND (sale_date LIKE '%$year%' OR sale_date LIKE '%$lastyear%')";
 
 
 	if($debugquery) echo("<br/> setSaleDateAndPrice query:".$query."<br/>");
@@ -225,16 +225,19 @@ function setSaleDateAndPrice($compid, $compTable = null)
 		if($tmpsalePrice == null){
 			$tmpsalePrice = $row[$SALEPRICE[2]];
 			$tmpsaleDate = $row[$SALEDATE[2]];
+            $tmpsaleSource = $row[$SALESOURCE[2]];
 		}
 		else{
 			if($tmpsalePrice== 0 || ($row[$SALEPRICE[2]] > 0 && $row[$SALEPRICE[2]] < $tmpsalePrice))
 				$tmpsalePrice = $row[$SALEPRICE[2]];
 				$tmpsaleDate = $row[$SALEDATE[2]];
+            $tmpsaleSource = $row[$SALESOURCE[2]];
 		}
 	}
 	
 	$compid->setField($SALEDATE[0],$tmpsaleDate);
 	$compid->setField($SALEPRICE[0],$tmpsalePrice);
+    $compid->setField($SALESOURCE[0],$tmpsaleSource);
 	return $compid;
 }
 
@@ -636,9 +639,9 @@ function hasDelta($class){
 
 function lookupProperty($propid)
 {
-	global $table,$debug,$fieldsofinteresteq,$NETADJ,$INDICATEDVAL,$INDICATEDVALSQFT,$LANDVALUEADJ,$LANDVALUEADJB;
+	global $prop_table,$debug,$fieldsofinteresteq,$NETADJ,$INDICATEDVAL,$INDICATEDVALSQFT,$LANDVALUEADJ,$LANDVALUEADJB;
 	
-	$query="SELECT * FROM ". $table . " WHERE prop_id='$propid'";
+	$query="SELECT * FROM ". $prop_table . " WHERE prop_id='$propid'";
 	if ($debug) echo $query;
 
 	sqldbconnect();
@@ -650,10 +653,9 @@ function lookupProperty($propid)
 		//$num_rows= $num; //$Attributes
 		//$compcolumns = count($comparr);
 		//$columns = $compcolumns +2; // + 1 for labels, +1 for subject
+        //if($debug) echo "columns is ".$columns."<br/>";
 		//$rows = count($fieldsofinteresteq) + 1;// +1 for header
 		$postcalcfields = array();
-	
-		if($debug) echo "columns is ".$columns."<br/>";
 		
 		$currprop = null;
 		while($row = mysql_fetch_array($result))
@@ -778,6 +780,12 @@ function calcDeltas($subj,$currprop)
 	$currprop->$INDICATEDVALSQFT[2]();
 }
 
+function getSubjProperty($propid){
+    $property = getProperty($propid);
+    $property->mSubj = true;
+    return $property;
+}
+
 /**
  * @param string $propid
  * @return NULL when error | propertyClass when successful
@@ -786,11 +794,11 @@ function calcDeltas($subj,$currprop)
  */
 function getProperty($propid)
 {
-	global $table,$debug,$fieldsofinteresteq,$NETADJ,$INDICATEDVAL,$INDICATEDVALSQFT,$LANDVALUEADJ,$LANDVALUEADJB;
+	global $prop_table,$debug,$fieldsofinteresteq,$NETADJ,$INDICATEDVAL,$INDICATEDVALSQFT,$LANDVALUEADJ,$LANDVALUEADJB;
 	
 	$currprop = new propertyClass();
 	
-	$query="SELECT * FROM ". $table . " WHERE prop_id='$propid'";
+	$query="SELECT * FROM ". $prop_table . " WHERE prop_id='$propid'";
 	if ($debug) echo $query;
 
 	sqldbconnect();
@@ -923,35 +931,6 @@ function lookupPropID($id,$fieldsofinterest){
 		}
 	}
 }
-
-function getHoodListBounded($hood,$sqft,$limit){
-	/*
-	 * This func currently bounds 20% of sqft
-	 */
-	global $NEIGHB;
-	$min = $sqft * .8;
-	$max = $sqft * 1.2;
-	
-	// SELECT * FROM PROP, SPECIAL_PROPDATA WHERE PROP.hood_cd='R2004' AND SPECIAL_PROPDATA.liv_area BETWEEN 3359.2 AND 5038.8
-	$query="SELECT * FROM ". $NEIGHB[1] . ", SPECIAL_PROPDATA WHERE ". $NEIGHB[1].".".$NEIGHB[2] ."='$hood' AND SPECIAL_PROPDATA.liv_area BETWEEN " . $min . " AND " . $max;
-	#$query = "SELECT * FROM PROP, SPECIAL_PROPDATA WHERE PROP.hood_cd ='R2004' AND SPECIAL_PROPDATA.liv_area BETWEEN 3359 AND 5038 LIMIT 100;";
-	if(is_Numeric($limit))
-		$query = $query . " LIMIT " . intval($limit);
-		
-	return getHoodListQuery($query);
-}
-/*
-function getHoodList($hood,$isEquity,$limit){
-	global $NEIGHB,$MARKETVALUE,$LIVINGAREA,$PROPID,$debug;
-	
-	$query="SELECT * FROM ". $NEIGHB[1] . " WHERE ". $NEIGHB["HOOD"] ."='$hood'";
-
-	if(is_Numeric($limit))
-		$query = $query . " LIMIT " . intval($limit);
-		
-	return getHoodListQuery($query,false);
-}
-*/
 /**
  * Retrieves an array of prop_class objects based on the neighborhood code
  * @param String $hood
@@ -960,28 +939,24 @@ function getHoodList($hood,$isEquity,$limit){
  * @param String $compTable - Table to compare with
  * @return Ambigous <propertyClass[], multitype:propertyClass >
  */
-function getHoodList($hood,$isEquity,$limit,$compTable = NULL,$multihood=FALSE){
+function getHoodList($hood,$isEquity,$limit,$multihood=FALSE){
 	global $TABLE_SALES_MERGED,$NEIGHB,$MARKETVALUE,$LIVINGAREA,$PROPID,$debug;
 
 	$year = date("Y");
 	$lastyear = $year -1;
 	$hoodSearch = $NEIGHB["HOOD"] ."='$hood'";
 	
-	if($compTable == NULL)
-		$compTable = $TABLE_SALES_MERGED;
-	
 	if($multihood){
 		//Change the hood from something like K1005 to K10**
 		$subHood = substr($hood,0,-2);
 		$hoodSearch = $NEIGHB["HOOD"] ." LIKE '$subHood%'";
 	}
-	
 
 	if($isEquity)
 		$query="SELECT * FROM ". $NEIGHB[1] . " WHERE ". $hoodSearch;
 	else{
-		$query="SELECT ". $PROPID[1].".".$PROPID[2] .",sale_price".
-				" FROM ". $NEIGHB[1] ."," . $compTable . " AS s " .
+		$query="SELECT ". $PROPID[1].".".$PROPID[2] .",sale_price,source".
+				" FROM ". $NEIGHB[1] ."," . $TABLE_SALES_MERGED . " AS s " .
 				" WHERE ". $hoodSearch . 
 					" AND (sale_date LIKE '%".$lastyear."%' OR sale_date LIKE '%".$year."%') ".
 					" AND sale_price>0 ".
@@ -1002,13 +977,13 @@ function getHoodList($hood,$isEquity,$limit,$compTable = NULL,$multihood=FALSE){
  */
 
 function getHoodListQuery($query,$isEquity){
-	global $NEIGHB,$MARKETVALUE,$LIVINGAREA,$PROPID,$debug,$SALEPRICE;
+	global $NEIGHB,$MARKETVALUE,$LIVINGAREA,$PROPID,$debug,$SALEPRICE,$SALESOURCE;
 	$breakcount = 100;
 	error_log("getHoodListQuery Start Memory >> ". memory_get_usage() . "\n");
 	if($isEquity)
 		$fieldsofinterest = array($PROPID,$MARKETVALUE);
 	else
-		$fieldsofinterest = array($PROPID,$SALEPRICE);
+		$fieldsofinterest = array($PROPID,$SALEPRICE,$SALESOURCE);
 	$hood_props = array();
 	
 	if ($debug) echo $query;
@@ -1073,15 +1048,15 @@ function getHoodListQuery($query,$isEquity){
 //Returns 0 if equal , -1 if prop1 is less the prop2, or 1 if prop1 > prop2
 function cmpProp(propertyClass $prop1,propertyClass $prop2)
 {
-	global $INDICATEDVAL,$MARKETVALUE;
-	
+	global $debug;
+
 	$prop1_Ind = intval($prop1->getIndicatedVal());
 	if($prop1_Ind == 0)
 		error_log("Error during comparison for indicated value of propid:".$prop1->mPropID);
 	$prop2_Ind = intval($prop2->getIndicatedVal());
 	if($prop2_Ind == 0)
 		error_log("Error during comparison for indicated value of propid:".$prop2->mPropID);
-	
+	if($debug) echo "<br/>Comparing indicated values of".$prop1_Ind." and ".$prop2_Ind."<br/>";
     if ($prop1_Ind == $prop2_Ind) {
         return 0;
     }
@@ -1090,7 +1065,7 @@ function cmpProp(propertyClass $prop1,propertyClass $prop2)
 
 /**
  * Takes a subject property and returns the comparables from the same neighborhood
- * where the square footage of the compared properties are within 20% of the subject.
+ * where the square footage of the compared properties are within 25% of the subject (as of 2014 rules).
  * This function will also remove any properties of class 'XX'
  * @param String subject property
  * @param Boolean True if doing equity compare
@@ -1098,21 +1073,22 @@ function cmpProp(propertyClass $prop1,propertyClass $prop2)
  * @param (Optional) String SQL Table you wish to use to find comps
  * @return Array of comparable properties
  */
-function findBestComps($subjprop,$isEquity,$trimIndicated = false,$compTable = NULL,$multihood=false)
+function findBestComps($subjprop,$isEquity,$trimIndicated = false,$multihood=false)
 {
 	global $NEIGHB,$LIVINGAREA,$PROPID,$debug,$isEquityComp;
 	//set global correctly, cuz prop_class uses this
 	$isEquityComp = $isEquity;
 	error_log("findBestComps Start Memory >> ". memory_get_usage() . "\n");
 	if($debug) echo "<br/>subj: " . var_dump($subjprop) . "<br/>";
-	$comps = getHoodList($subjprop->getFieldByName($NEIGHB[0]),$isEquity,NULL,$compTable,$multihood);
+	$comps = getHoodList($subjprop->getFieldByName($NEIGHB[0]),$isEquity,NULL,$multihood);
 
-	//Now that we have all comps we only want ones where the sqft / LA is within 20%
+	//Now that we have all comps we only want ones where the sqft / LA is within 25%
 	$subjsqft = $subjprop->getFieldByName($LIVINGAREA[0]);
-	$min = .8 * $subjsqft;
-	$max = 1.2 * $subjsqft;
+	$min = .75 * $subjsqft;
+	$max = 1.25 * $subjsqft;
 	$compsarray = array();
 	$compsseen = array();
+    if($debug) echo "<br/>walking ".count($comps)." potential comps<br/>";
 	foreach($comps as $comp)
 	{
 		$c = getProperty($comp->getFieldByName($PROPID[0]));
@@ -1145,7 +1121,7 @@ function findBestComps($subjprop,$isEquity,$trimIndicated = false,$compTable = N
 				if($debug) echo "<br/>Stripped property due to badclass ".$badClass;
 		}
 	}
-	if ($debug) echo "compsarry count: ".count($compsarray);
+	if ($debug) echo "compsarray count: ".count($compsarray);
 	return $compsarray;
 }
 
@@ -1185,4 +1161,10 @@ function executeQuery($query){
 	error_log(mysql_info($link));
 	mysql_close();
 	return $result;
+}
+
+function isNotMLS(propertyClass $property){
+
+    $strCmpResult = strcasecmp($property->getSaleSource(), "MLS");
+    return $strCmpResult != 0;
 }
