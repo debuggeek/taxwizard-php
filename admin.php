@@ -17,14 +17,14 @@ Database:<?php echo $database ?>
 <p><strong>Test Samples</strong><br>
 <a href="properties2.php?s=708686&amp;c1=729770&amp;c1sp=595000&amp;c1sd=9%2F29%2F2010&amp;c2=729775&amp;c2sp=605775&amp;c2sd=07%2F29%2F2010&amp;c3=783824&amp;c3sp=685000&amp;c3sd=12-15-2008&amp;Submit=Build+Sales+Table">Sales Comp Sample</a><br>
 <a href="properties2.php?s=253870&amp;c1=253877&amp;c2=253882&amp;c3=253875">Equity Comp Sample</a><br>
-<a href="letter.php?hood=X9000&amp;ampSubmit=Search"> Neighborhood Sample</a><br>
+<!--<a href="letter.php?hood=X9000&amp;ampSubmit=Search"> Neighborhood Sample</a><br>-->
 <a href="bestcomps.php?propid=129972&amp;display=100&amp;Submit=Search">Find Comps</a><br>
 <a href="bestcomps.php?propid=129972&amp;display=100&amp;Submit=Search&amp;equity=false">Find Comps Sales</a><br>
 <a href="massreport.php?propid=129972&amp;display=10&amp;Submit=Search">Find Comps & Gen Report</a><br>
-<a href="massreport.php?propid=129972&amp;display=10&amp;Submit=Search&amp;equity=false">Find Comps Sales & Gen Report</a><br>
-<a href="massreport.php?propid=708686&amp;display=10&amp;Submit=Search&amp;equity=false">Test Empty Sales Comps</a><br>
+<a href="massreport.php?propid=129972&amp;display=10&amp;Submit=Search&amp;style=sales">Find Comps Sales & Gen Report</a><br>
+<a href="massreport.php?propid=708686&amp;display=10&amp;Submit=Search&amp;style=sales">Test Empty Sales Comps</a><br>
 <a href="properties2.php?s=100218&c1=101636&c1sp=450000&c1sd=02%2F01%2F2010&Submit=Build+Sales+Table">Test Comps with multi Improvements</a><br>
-<a href="comps_pdf.php?subj=100867&complist=302915,283553,">PDF Test of comps_pdf</a><br>
+<a href="comps_pdf.php?subj=708686&complist=438058">PDF Test of comps_pdf</a><br>
 </p>
 <br>
 <p><strong>Used for Updating prospect information</strong>

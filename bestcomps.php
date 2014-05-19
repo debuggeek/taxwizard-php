@@ -1,8 +1,8 @@
 <?php
 session_start();
-include 'prop_class.php';
-include 'functions.php';
-include 'presentation.php';
+include 'library/prop_class.php';
+include 'library/functions.php';
+include 'library/presentation.php';
 $debug = false;
 $COMPSTODISPLAY = 50;
 $LIMIT=NULL;

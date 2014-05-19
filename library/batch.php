@@ -8,19 +8,6 @@ $COMPSTODISPLAY = 100;
 
 //$input = array("129972","708686");
 
-//processHood("R2004");
-
-
-	function processHood($hoodIn){
-		$isEquityComp = true;
-		
-		$hoodArray = getHoodList($hoodIn,$isEquityComp,null);
-		foreach($hoodArray[0] as $propid)
-		{
-			processSingleton($propid);	
-		}
-	}
-
 	/**
 	 * Process Array of Strings representing property ids
 	 * @param String[] $queueIn
