@@ -867,7 +867,10 @@ class propertyClass{
                 else
                     return $this->mSaleDate."_";
 			case($SALEPRICE[0]):
-				return $this->mSalePrice;
+                if(isFlaggableSaleType($this))
+                    return $this->mSalePrice.".";
+                else
+				    return $this->mSalePrice;
 			case($SALEPRICESQFT[0]):
 					return number_format($this->getSalePerSQFT());
 			case($IMPROVEMENTCNT[0]):

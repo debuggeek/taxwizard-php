@@ -1244,3 +1244,10 @@ function isNotMLS(propertyClass $property){
     $strCmpResult = strcasecmp($property->getSaleSource(), "MLS");
     return $strCmpResult != 0;
 }
+
+function isFlaggableSaleType(propertyClass $propertyClass){
+    if($propertyClass->mSaleType == "VQ")
+        return true;
+    else
+        return false;
+}
