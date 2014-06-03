@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'library/prop_class.php';
+include 'library/propertyClass.php';
 include 'library/functions.php';
 include 'library/presentation.php';
 $debug = false;
@@ -78,14 +78,22 @@ if($abort){
 
 $property = getSubjProperty($propid);
 
+error_log("Finding best comps for ".$propid);
 
 $compsarray = findBestComps($property,$isEquityComp,$TRIMINDICATED,$MULTIHOOD);
 
-if(sizeof($compsarray) == 0)
+if(sizeof($compsarray) == 0){
+    error_log("massreport: no comps found for ".$propid);
     return returnNoHits($propid);
+}
 
 if(!$INCLUDEMLS){
     $compsarray = array_filter($compsarray,"isNotMLS");
+}
+
+if(sizeof($compsarray) == 0){
+    error_log("massreport: no comps found for ".$propid);
+    return returnNoHits($propid);
 }
 
 usort($compsarray,"cmpProp");

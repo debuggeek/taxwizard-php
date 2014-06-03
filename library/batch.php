@@ -1,5 +1,5 @@
 <?php
-include_once 'prop_class.php';
+include_once 'propertyClass.php';
 include_once 'functions.php';
 
 //$debug = true;

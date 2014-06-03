@@ -17,6 +17,7 @@ class propertyClass{
 	public $mSaleDate;
 	public $mSalePrice;
     public $mSaleSource;
+    public $mSaleType;
 	public $mImprovCount;
 	private $mIndVal;
 	public $mHighValImpMARCN;
@@ -944,6 +945,23 @@ class propertyClass{
     {
         return $this->mSaleSource;
     }
+
+    /**
+     * @param mixed $mSaleType
+     */
+    public function setMSaleType($mSaleType)
+    {
+        $this->mSaleType = $mSaleType;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMSaleType()
+    {
+        return $this->mSaleType;
+    }
+
 
 
 } // end of class

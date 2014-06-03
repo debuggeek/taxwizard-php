@@ -2,7 +2,7 @@
 $debug = false;
 $debugquery = false;
 include_once 'defines.php';
-include_once 'prop_class.php';
+include_once 'propertyClass.php';
 //FUNCTIONS
 
 function getMrktSqft($data)
@@ -42,8 +42,12 @@ function getMeanVal($subjcomp)
 		$next = str_replace(",","",$subjcomp[$i]->getFieldByName($INDICATEDVAL[0]));
 		$result += $next;
 	}
-	
-	$result = $result / $compCount;
+	if($compCount > 0){
+	    $result = $result / $compCount;
+    } else {
+        error_log("getMeanVal: No comps to average over");
+        $result = 0;
+    }
 	return number_format($result);
 }
 
@@ -191,9 +195,9 @@ function getSalePrice($propid)
 	return $row[$SALEPRICE[2]];
 }
 
-function setSaleDateAndPrice($compid, $compTable = null)
+function setSaleInfo(propertyClass $compid, $compTable = null)
 {
-	global $TABLE_SALES_MERGED,$SALEDATE,$PROPID,$SALEPRICE,$debug,$debugquery,$SALESOURCE;
+	global $TABLE_SALES_MERGED,$SALEDATE,$SALEPRICE,$debug,$debugquery,$SALESOURCE,$SALETYPE;
 
 	$year = date("Y");
 	$lastyear = $year -1;
@@ -202,7 +206,7 @@ function setSaleDateAndPrice($compid, $compTable = null)
 		$compTable = $TABLE_SALES_MERGED;
 	
 	sqldbconnect();
-	$query="SELECT sale_date,sale_price,source FROM ". $compTable . " WHERE prop_id=".$compid->mPropID." AND (sale_date LIKE '%$year%' OR sale_date LIKE '%$lastyear%')";
+	$query="SELECT sale_date,sale_price,source,sale_type FROM ". $compTable . " WHERE prop_id=".$compid->mPropID." AND (sale_date LIKE '%$year%' OR sale_date LIKE '%$lastyear%')";
 
 
 	if($debugquery) echo("<br/> setSaleDateAndPrice query:".$query."<br/>");
@@ -226,18 +230,21 @@ function setSaleDateAndPrice($compid, $compTable = null)
 			$tmpsalePrice = $row[$SALEPRICE[2]];
 			$tmpsaleDate = $row[$SALEDATE[2]];
             $tmpsaleSource = $row[$SALESOURCE[2]];
+            $tmpSaleType = $row[$SALETYPE[2]];
 		}
 		else{
 			if($tmpsalePrice== 0 || ($row[$SALEPRICE[2]] > 0 && $row[$SALEPRICE[2]] < $tmpsalePrice))
 				$tmpsalePrice = $row[$SALEPRICE[2]];
-				$tmpsaleDate = $row[$SALEDATE[2]];
+		    $tmpsaleDate = $row[$SALEDATE[2]];
             $tmpsaleSource = $row[$SALESOURCE[2]];
+            $tmpSaleType = $row[$SALETYPE[2]];
 		}
 	}
 	
-	$compid->setField($SALEDATE[0],$tmpsaleDate);
-	$compid->setField($SALEPRICE[0],$tmpsalePrice);
-    $compid->setField($SALESOURCE[0],$tmpsaleSource);
+	$compid->mSaleDate = $tmpsaleDate;
+	$compid->mSalePrice = $tmpsalePrice;
+    $compid->mSaleSource = $tmpsaleSource;
+    $compid->mSaleType = $tmpSaleType;
 	return $compid;
 }
 
@@ -288,6 +295,7 @@ function getLivingArea($propid)
 	$query="SELECT * FROM ". $LIVINGAREA["TABLE"] . " WHERE prop_id='$propid'";
 
 	//	echo $query;
+    error_log("getLivingArea: query=".$query);
 
 	$result=mysql_query($query);
 	$num=mysql_numrows($result);
@@ -955,17 +963,25 @@ function getHoodList($hood,$isEquity,$limit,$multihood=FALSE){
 	if($isEquity)
 		$query="SELECT * FROM ". $NEIGHB[1] . " WHERE ". $hoodSearch;
 	else{
+        /*
+         * SELECT PROP.prop_id,sale_price,source
+            FROM PROP, SALES_MLS_MERGED AS s
+            WHERE hood_cd = 'W2005'
+            AND (sale_date LIKE '%2013%' OR sale_date LIKE '%2014%')
+            AND sale_price>0
+            AND PROP.prop_id = s.prop_id;
+         */
 		$query="SELECT ". $PROPID[1].".".$PROPID[2] .",sale_price,source".
 				" FROM ". $NEIGHB[1] ."," . $TABLE_SALES_MERGED . " AS s " .
 				" WHERE ". $hoodSearch . 
 					" AND (sale_date LIKE '%".$lastyear."%' OR sale_date LIKE '%".$year."%') ".
 					" AND sale_price>0 ".
 					" AND PROP.prop_id = s.prop_id";
-		//SELECT PROP.prop_id,hood_cd,sale_price FROM PROP,SPECIAL_SALE_EX_CONF WHERE PROP.hood_cd='R2004' AND SPECIAL_SALE_EX_CONF.sale_price>0 LIMIT 10
 	}
 	if(is_Numeric($limit))
 		$query = $query . " LIMIT " . intval($limit);
 
+    error_log("getHoodList: query=".$query);
 	return getHoodListQuery($query,$isEquity);
 }
 
@@ -1014,9 +1030,9 @@ function getHoodListQuery($query,$isEquity){
 			}
 			else{
 				if($debug)
-					echo "<br>Error on propid:".$currprop->mPropID."...removing due to LivingArea of ".$currprop->mLivingArea."<br>".PHP_EOL;
+					echo "<br>Error on propid:".$currprop->mPropID."...removing due to LivingArea of ".$val."<br>".PHP_EOL;
 				else
-					error_log("Error on propid".$currprop->mPropID."...removing due to LivingArea of ".$currprop->mLivingArea.PHP_EOL);
+					error_log("Error on propid".$currprop->mPropID."...removing due to LivingArea of ".$val);
 			}
 			$i++;
 			//if($i > $breakcount)
@@ -1076,53 +1092,113 @@ function cmpProp(propertyClass $prop1,propertyClass $prop2)
 function findBestComps($subjprop,$isEquity,$trimIndicated = false,$multihood=false)
 {
 	global $NEIGHB,$LIVINGAREA,$PROPID,$debug,$isEquityComp;
+    $compsarray = array();
+
 	//set global correctly, cuz prop_class uses this
 	$isEquityComp = $isEquity;
+
+
+    //Now that we have all comps we only want ones where the sqft / LA is within 25%
+    $subjsqft = $subjprop->getFieldByName($LIVINGAREA[0]);
+    if($subjsqft == 0){
+        error_log("findBestComps: subject sqft == 0 exiting");
+        return $compsarray;
+    }
+
+
 	error_log("findBestComps Start Memory >> ". memory_get_usage() . "\n");
 	if($debug) echo "<br/>subj: " . var_dump($subjprop) . "<br/>";
 	$comps = getHoodList($subjprop->getFieldByName($NEIGHB[0]),$isEquity,NULL,$multihood);
 
-	//Now that we have all comps we only want ones where the sqft / LA is within 25%
-	$subjsqft = $subjprop->getFieldByName($LIVINGAREA[0]);
-	$min = .75 * $subjsqft;
-	$max = 1.25 * $subjsqft;
-	$compsarray = array();
-	$compsseen = array();
+
     if($debug) echo "<br/>walking ".count($comps)." potential comps<br/>";
 	foreach($comps as $comp)
 	{
 		$c = getProperty($comp->getFieldByName($PROPID[0]));
-		$sqft = $c->getFieldByName($LIVINGAREA[0]);
-		if($sqft > $min && $sqft < $max)
-		{
-			$badClass = "XX"; //don't include this type as it's not a good property to use
-			$classadj = $c->getClassAdj();
-			$pos = stripos($classadj,$badClass);
-			if($pos === false){
-				if(!$isEquity) {
-					setSaleDateAndPrice($c,$compTable);
-				}
-				if($c->mPropID != $subjprop->mPropID){
-					$key = array_search($c->mPropID,$compsseen);
-					if($key == false){
-						calcDeltas($subjprop,$c);
-						if($trimIndicated){
-							if(cmpProp($subjprop,$c)==1){
-								//only return if the comp is less then the subject
-								$compsarray[] = $c;
-							}
-						} else {
-							$compsarray[] = $c;
-						}
-						$compsseen[] = $c->mPropID;
-					}
-				}
-			}else
-				if($debug) echo "<br/>Stripped property due to badclass ".$badClass;
-		}
+
+        if(addToCompsArray($c,$subjprop,$isEquityComp,$trimIndicated)){
+            error_log("Adding ".$c->mPropID. " as comp");
+            $compsarray[] = $c;
+        } else {
+            error_log("Skipped adding ".$c->mPropID." as comp to ".$subjprop->mPropID);
+        }
 	}
 	if ($debug) echo "compsarray count: ".count($compsarray);
 	return $compsarray;
+}
+
+/**
+ * Determines if the passed in comp should be compared against the subj property
+ * @param propertyClass $c
+ * @param propertyClass $subjprop
+ * @param bool $isEquity
+ * @param bool $trimIndicated
+ * @return bool
+ */
+function addToCompsArray(propertyClass $c,propertyClass $subjprop,$isEquity=false,$trimIndicated=false){
+    global $LIVINGAREA;
+    $compsseen = array();
+    $debug = false;
+
+    if($c->mPropID == $subjprop->mPropID){
+        error_log("addToCompsArray: Comp prop id matched subject:".$c->mPropID);
+        return false;
+    }
+
+    $subjsqft = $subjprop->getFieldByName($LIVINGAREA[0]);
+    $min = .75 * $subjsqft;
+    $max = 1.25 * $subjsqft;
+    $sqft = $c->getFieldByName($LIVINGAREA[0]);
+
+    if($sqft < $min || $sqft > $max)
+    {
+        error_log("addToCompsArray: ".$c->mPropID." removed as potential comp due to size min=".$min." max=".$max." size=".$sqft);
+        return false;
+    }
+
+    if(!$isEquity) {
+        setSaleInfo($c);
+    }
+
+    //Check sale type.
+    //2014 : Can't include VU
+    if(!$isEquity){
+        $badSaleTypes = "VU";
+        if($c->mSaleType == $badSaleTypes){
+            error_log("addToCompsArray: Sale type was bad: ".$c->mSaleType);
+            return false;
+        }
+    }
+
+
+    // Check class
+    //2013 : Can't include XX
+
+    $badClass = "XX"; //don't include this type as it's not a good property to use
+    $classadj = $c->getClassAdj();
+    $pos = stripos($classadj,$badClass);
+    if($pos === false){
+
+        if($c->mPropID != $subjprop->mPropID){
+            $key = array_search($c->mPropID,$compsseen);
+            if($key == false){
+                calcDeltas($subjprop,$c);
+                if($trimIndicated){
+                    if(cmpProp($subjprop,$c)==1){
+                        error_log("Found comp ".$c->mPropID);
+                        return true;
+                    }
+                } else {
+                    error_log("Found comp ".$c->mPropID);
+                    return true;
+                }
+
+            }
+        }
+    } else {
+        error_log("Property has badclass ".$badClass);
+    }
+    return false;
 }
 
 function putPropHistory($propid,$mean_val,$indicated_val,$comps_csv){

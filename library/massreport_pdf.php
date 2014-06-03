@@ -1,6 +1,6 @@
 <?php
 session_start();
-include_once 'prop_class.php';
+include_once 'propertyClass.php';
 include_once 'functions.php';
 include_once 'functions_pdf.php';
 include_once 'presentation.php';

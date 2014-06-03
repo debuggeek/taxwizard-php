@@ -1,5 +1,5 @@
 <?php
-include 'library/prop_class.php';
+include 'library/propertyClass.php';
 session_start();
 
 $subjarray = array();

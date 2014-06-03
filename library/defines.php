@@ -36,6 +36,7 @@ $LIVINGAREA = array("Living Area","TABLELOOKUP","liv_area","TABLE"=>"SPECIAL_PRO
 $SALEDATE = array("Sale Date","TABLELOOKUP","sale_date","TABLE"=>"SALES_MLS_MERGED");
 $SALEPRICE = array("Sale Price","TABLELOOKUP","sale_price","TABLE"=>"SALES_MLS_MERGED");
 $SALESOURCE = array("Sale Source","TABLELOOKUP","source","TABLE"=>"SALES_MLS_MERGED");
+$SALETYPE = array("Sale Type","TABLELOOKUP","sale_type","TABLE"=>"SALES_MLS_MERGED");
 $SALEPRICESQFT = array("Sale Price / SQFT","CALCULATED","getSPSqft");
 
 $IMPROVEMENTCNT = array("Imp Count","CALCULATED","getImpCount");

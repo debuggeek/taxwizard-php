@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'prop_class.php';
+include 'propertyClass.php';
 include 'functions.php';
 include 'presentation.php';
 $debug = false;
