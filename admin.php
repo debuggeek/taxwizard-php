@@ -7,7 +7,7 @@
  <?php include_once("library/accountinfo.php");?>
 </head>
 <body id="page4">
-<img src="TaxTTitle.png" width="623" height="99" title="" alt="">
+<img src="fivestonetax-logo.png" width="615" height="141" title="" alt="">
 <ul id="tabs">
 <li id="tab1"><a href="index.html">Table Lookups</a></li>
 <li id="tab2"><a href="batch_complete.php">Batch Processing</a></li>
