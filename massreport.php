@@ -9,6 +9,7 @@ $LIMIT=NULL;
 $TRIMINDICATED = false;
 $INCLUDEMLS = false;
 $MULTIHOOD = false;
+$INCLUDEVU = false;
 
 global $INDICATEDVAL;
 
@@ -67,6 +68,13 @@ for($i=0; $i < $c; $i++)
 			$MULTIHOOD = true;
 		$targ = NULL;
 	}
+    if($keys[$i] == "includevu"){
+        $targ = $_GET['includevu'];
+        $targ = trim($targ);
+        if($targ == "on")
+            $INCLUDEVU = true;
+        $targ = NULL;
+    }
 }
 
 if($propid != "")	$abort = false;
@@ -80,7 +88,7 @@ $property = getSubjProperty($propid);
 
 error_log("Finding best comps for ".$propid);
 
-$compsarray = findBestComps($property,$isEquityComp,$TRIMINDICATED,$MULTIHOOD);
+$compsarray = findBestComps($property,$isEquityComp,$TRIMINDICATED,$MULTIHOOD,$INCLUDEVU);
 
 if(sizeof($compsarray) == 0){
     error_log("massreport: no comps found for ".$propid);

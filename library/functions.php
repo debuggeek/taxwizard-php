@@ -1089,7 +1089,7 @@ function cmpProp(propertyClass $prop1,propertyClass $prop2)
  * @param (Optional) String SQL Table you wish to use to find comps
  * @return Array of comparable properties
  */
-function findBestComps($subjprop,$isEquity,$trimIndicated = false,$multihood=false)
+function findBestComps($subjprop,$isEquity,$trimIndicated = false,$multihood=false,$includevu=false)
 {
 	global $NEIGHB,$LIVINGAREA,$PROPID,$debug,$isEquityComp;
     $compsarray = array();
@@ -1116,7 +1116,7 @@ function findBestComps($subjprop,$isEquity,$trimIndicated = false,$multihood=fal
 	{
 		$c = getProperty($comp->getFieldByName($PROPID[0]));
 
-        if(addToCompsArray($c,$subjprop,$isEquityComp,$trimIndicated)){
+        if(addToCompsArray($c,$subjprop,$isEquityComp,$trimIndicated,$includevu)){
             error_log("Adding ".$c->mPropID. " as comp");
             $compsarray[] = $c;
         } else {
@@ -1135,7 +1135,7 @@ function findBestComps($subjprop,$isEquity,$trimIndicated = false,$multihood=fal
  * @param bool $trimIndicated
  * @return bool
  */
-function addToCompsArray(propertyClass $c,propertyClass $subjprop,$isEquity=false,$trimIndicated=false){
+function addToCompsArray(propertyClass $c,propertyClass $subjprop,$isEquity=false,$trimIndicated=false,$includevu=false){
     global $LIVINGAREA;
     $compsseen = array();
     $debug = false;
@@ -1162,7 +1162,7 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop,$isEquity=fals
 
     //Check sale type.
     //2014 : Can't include VU
-    if(!$isEquity){
+    if(!$isEquity && $includevu==false){
         $badSaleTypes = "VU";
         if($c->mSaleType == $badSaleTypes){
             error_log("addToCompsArray: Sale type was bad: ".$c->mSaleType);
