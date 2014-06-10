@@ -1,0 +1,77 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Nick
+ * Date: 6/9/14
+ * Time: 6:12 PM
+ */
+
+session_start();
+include 'library/propertyClass.php';
+include 'library/functions.php';
+include 'library/presentation.php';
+$debug = false;
+$COMPSTODISPLAY = 100;
+$LIMIT=NULL;
+$TRIMINDICATED = false;
+$INCLUDEMLS = false;
+$MULTIHOOD = false;
+$INCLUDEVU = false;
+
+global $INDICATEDVAL,$fieldsofinteresteq;
+
+//Treat like equity so we use market val and not sales price
+$isEquityComp = true;
+
+$compInfo = array();
+
+//Parse Inputs
+$subjPropId = trim($_GET['s']);
+if($_GET['Submit'] == 'Build Sales Table'){
+    $isEquityComp = false;
+}
+
+$compInt = 1;
+while(true){
+    if(isset($_GET['c'.$compInt])){
+        $compInfo[] = array("id"=>trim($_GET['c'.$compInt]),"salePrice"=>trim($_GET['c'.$compInt.'sp']),"saleDate"=>trim($_GET['c'.$compInt.'sd']));
+        $compInt++;
+    } else {
+        break;
+    }
+}
+
+if($subjPropId != "")
+    $abort = false;
+
+if($abort){
+    echo "<p>Please enter a value</p>";
+    exit;
+}
+
+$subjProperty = getSubjProperty($subjPropId);
+
+error_log("Building subjcomparray for ".$subjPropId);
+$subjcomparray = array();
+$subjcomparray[0] = $subjProperty;
+
+foreach($compInfo as $compIn){
+    $c = getPropertyWithFields($compIn['id'],$fieldsofinteresteq);
+    $c->mSalePrice = $compIn['salePrice'];
+    $c->mSaleDate = $compIn['saleDate'];
+    calcDeltas($subjProperty,$c);
+    $subjcomparray[] = $c;
+}
+
+if(sizeof($subjcomparray) == 1){
+    error_log("massreport: no comps provided for ".$subjPropId);
+    return returnNoHits($subjPropId);
+}
+
+$_SESSION[$MEANVAL[0]] = getMeanVal($subjcomparray);
+$_SESSION[$MEANVALSQFT[0]] = getMeanValSqft($subjcomparray);
+$_SESSION[$MEDIANVAL[0]] = getMedianVal($subjcomparray);
+$_SESSION[$MEDIANVALSQFT[0]] = getMedianValSqft($subjcomparray);
+
+createGenericTable($subjcomparray,$isEquityComp);
+?>

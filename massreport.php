@@ -119,7 +119,5 @@ $_SESSION[$MEANVALSQFT[0]] = getMeanValSqft($subjcomparray);
 $_SESSION[$MEDIANVAL[0]] = getMedianVal($subjcomparray);
 $_SESSION[$MEDIANVALSQFT[0]] = getMedianValSqft($subjcomparray);
 
-//putPropHistory($propid,getMeanVal($subjcomparray),$property->getFieldByName($INDICATEDVAL[0]),$property->mNeighborhood);
-
 createGenericTable($subjcomparray,$isEquityComp);
 ?>

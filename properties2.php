@@ -89,7 +89,7 @@ for($i=1;$i <= $_SESSION['numcomps'];$i++)
 echo "<br/>data ".$i.": " . var_dump($_SESSION['comp'.$i]) . "<br/>";
 }
 
-emitHTMLHeader();
+//emitHTMLHeader();
 #@todo where I left off
 $compsarray = array();
 $currcomp = 1;
@@ -99,6 +99,23 @@ for($i=0;$i <= $_SESSION['numcomps'];$i++)
 	$currcomp++;
 }
 
+usort($compsarray,"cmpProp");
+
+$comp_min = MIN($COMPSTODISPLAY,count($compsarray));
+$subjcomparray = array();
+$subjcomparray[0] = $property;
+
+for($i=0; $i < $comp_min; $i++)
+{
+    $subjcomparray[$i+1] = $compsarray[$i];
+}
+$_SESSION[$MEANVAL[0]] = getMeanVal($subjcomparray);
+$_SESSION[$MEANVALSQFT[0]] = getMeanValSqft($subjcomparray);
+$_SESSION[$MEDIANVAL[0]] = getMedianVal($subjcomparray);
+$_SESSION[$MEDIANVALSQFT[0]] = getMedianValSqft($subjcomparray);
+
+createGenericTable($subjcomparray,$isEquityComp);
+/*
 if($export)
 	{
 	//CSV expects full array with subj at front
@@ -110,7 +127,7 @@ else if($isEquityComp){
 }
 else{
 	createSalesTable($compsarray);
-}
+}*/
 
-emitHTMLFooter();
+//emitHTMLFooter();
 ?>

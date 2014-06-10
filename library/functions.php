@@ -581,7 +581,12 @@ function getLandValAdjDelta($subj,$comp)
 
 }
 
-
+/**
+ * Depricated use the one in the propertyClass
+ * @param $subj
+ * @param $comp
+ * @return mixed
+ */
 function getLASizeAdjDelta($subj,$comp)
 {
 	global $LASIZEADJ,$HIGHVALIMPMARCNSQFT;
@@ -589,7 +594,7 @@ function getLASizeAdjDelta($subj,$comp)
 	$var2 = $comp[$LASIZEADJ[2]];
 	$var3 = $subj[$HIGHVALIMPMARCNSQFT[2]];
 	$constvar = .65;
-	//echo $var1." ".$var2." ".$var3." ";
+	error_log("getLASizeAdjDelta: (".$var1."-".$var2.")*".$var3."*.65");
 	return ($var1-$var2)*$var3*$constvar;
 }
 
@@ -796,13 +801,26 @@ function getSubjProperty($propid){
 
 /**
  * @param string $propid
- * @return NULL when error | propertyClass when successful
- * 
+ * @return propertyClass when successful
+ *
  * Note: this function will NOT give delta information just basic and calculated data of property
  */
 function getProperty($propid)
 {
-	global $prop_table,$debug,$fieldsofinteresteq,$NETADJ,$INDICATEDVAL,$INDICATEDVALSQFT,$LANDVALUEADJ,$LANDVALUEADJB;
+    global $fieldsofinteresteq;
+    return getPropertyWithFields($propid,$fieldsofinteresteq);
+}
+
+/**
+ * @param string $propid
+ * @param array $fieldsofinterest
+ * @return propertyClass when successful
+ *
+ * Note: this function will information based on the fields of interest passed in
+ */
+function getPropertyWithFields($propid, $fieldsofinterest)
+{
+	global $prop_table,$debug,$LANDVALUEADJ,$LANDVALUEADJB;
 	
 	$currprop = new propertyClass();
 	
@@ -829,7 +847,7 @@ function getProperty($propid)
 	$currprop->mPropID= $propid;
 	while($row = mysql_fetch_array($result))
 	{
-		foreach($fieldsofinteresteq as $field)
+		foreach($fieldsofinterest as $field)
 		{
 			if($debug) echo "field is " . $field[0] . " " . $field[2] ."<br/>";
 			if(is_array($field[2]))
@@ -1040,23 +1058,6 @@ function getHoodListQuery($query,$isEquity){
 		}
 	}
 	error_log("getHoodListQuery End Memory >> ". memory_get_usage() . "\n");
-	/*
-	//Removes any properties that have a bad living area value
-	foreach($hood_props as $key => $prop){
-		$val = getLivingArea($prop->mPropID);
-		if ($val > 0)
-			$prop->setField($LIVINGAREA[0],$val);
-		else{
-			if($debug)
-				echo "<br>Error on propid:".$prop->mPropID."...removing due to LivingArea of ".$prop->mLivingArea."<br>".PHP_EOL;
-			else
-				error_log("Error on propid".$prop->mPropID."...removing due to LivingArea of ".$prop->mLivingArea.PHP_EOL);
-			
-			unset($hood_props[$key]);
-		}
-			
-	}
-	*/
 	return $hood_props;
 }
 

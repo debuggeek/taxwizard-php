@@ -219,6 +219,7 @@ class propertyClass{
 			$var3 = $var1/$var2;
 			$var4 = $var3 - 1;
 			$result = $var4 * $this->mHighValImpMARCN;
+            error_log("setClassAdjDelta: ((".$var1."/".$var2.") - 1) *".$this->mHighValImpMARCN." = ".$result);
 			$this->mClassAdjDelta = $result;
 		}
 		else
@@ -371,10 +372,9 @@ class propertyClass{
 			$this->mLASizeAdj = $this->getLASizeAdj();
 		$var2 = $this->mLASizeAdj;
 		$var3 = number_format($subjdetailadj->getHVImpMARCNPerSQFT(),2);
-		$constvar = .65;
 
-		$this->mLASizeAdjDelta = ($var1-$var2)*$var3*$constvar;
-		
+		$this->mLASizeAdjDelta = ($var1-$var2)*$var3;
+        error_log("getLASizeAdjDelta: (".$var1."-".$var2.")*".$var3." = ".$this->mLASizeAdjDelta);
 		//Now that we have a LASizeAdjDelta we can also compute the HVIMASQFTDIFF
 		$this->setHVImpSqftDiff($subjdetailadj);
 	}
