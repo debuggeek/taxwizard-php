@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=MacRoman">
+    <meta http-equiv="refresh" content="1;url=batch_complete.php" />
 <title>Reset PropID</title>
 </head>
     <body>

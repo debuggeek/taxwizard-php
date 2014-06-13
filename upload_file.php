@@ -5,7 +5,8 @@ $allowedExts = array("txt", "log", "csv");
 if (!$_FILES)
 	echo("Must upload a file");
 else{
-	$extension = end(explode(".", $_FILES["file"]["name"]));
+    $tmp = explode(".", $_FILES["file"]["name"]);
+	$extension = end($tmp);
 	if (($_FILES["file"]["type"] == "text/plain" || $_FILES["file"]["type"] == "text/csv")
 		&& ($_FILES["file"]["size"] < 20000)
 		&& in_array($extension, $allowedExts))

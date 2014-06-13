@@ -1,10 +1,12 @@
 <?php
-session_start();
 include_once 'defines.php';
 include_once "MPDF56/mpdf.php";
 include_once 'presentation.php';
 
-
+function strbool($value)
+{
+    return $value ? 'true' : 'false';
+}
 
 /**
  * Retrieves a pdf for a property with a Sales 5, Sales 10 and Equity 11 report
@@ -23,7 +25,7 @@ function generatePropMultiPDF($propid){
 	$stylesheet = file_get_contents('default_pdf.css', FILE_USE_INCLUDE_PATH);
 	$mpdf->WriteHTML($stylesheet,1);	// The parameter 1 tells that this is css/style only and no body/html/text
 
-	$property = getProperty($propid);
+	$property = getSubjProperty($propid);
 	$retArray["prop_mktvl"] = $property->mMarketVal;
 	//Generate Sales 15
 	$subjcomparray15 = generateArray($property,false,15);
@@ -43,7 +45,8 @@ function generatePropMultiPDF($propid){
 	//$subjcomparray10 = generateArray($property,false);
 	$subjcomparray10 = null;
 	if (sizeof($subjcomparray15) >= 10){
-		$subjcomparray10 = array_slice($subjcomparray15, 0,6);
+        //Take the first 10 comps of the 15 + the subj
+		$subjcomparray10 = array_slice($subjcomparray15, 0,11);
 		$_SESSION[$MEANVAL[0]] = getMeanVal($subjcomparray10);
 		$_SESSION[$MEANVALSQFT[0]] = getMeanValSqft($subjcomparray10);
 		$_SESSION[$MEDIANVAL[0]] = getMedianVal($subjcomparray10);
@@ -91,23 +94,29 @@ function generatePropMultiPDF($propid){
 	return $retArray;
 }
 
-
-
-
+/*
+ * This has to be kept in sync with massreport.php
+ * Should be merged
+ */
 function generateArray($property,$eqComp,$numComps=10){
+    global $TRIMINDICATED,$MULTIHOOD,$INCLUDEVU,$PREVYEAR,$INCLUDEMLS;
+
 	$COMPSTODISPLAY = $numComps;
 	if($eqComp)
 		$COMPSTODISPLAY = 11;
-	
-	//if($INCLUDEMLS)
-	$compsarray = findBestComps($property,$eqComp);//,$TRIMINDICATED);
-	//else //Just use Sales table
-	//$compsarray = findBestComps($property,$isEquityComp,$TRIMINDICATED, $TABLE_SALES);
 
-	if(sizeof($compsarray) == 0)
+    $compsarray = findBestComps($property,$eqComp,$TRIMINDICATED,$MULTIHOOD,$INCLUDEVU,$PREVYEAR);
+
+	if(count($compsarray) == 0)
 		return null;
 
 	usort($compsarray,"cmpProp");
+
+    if(!$INCLUDEMLS){
+        //error_log("Excluding MLS data. Size before=".var_dump(count($compsarray)));
+        $compsarray = array_filter($compsarray,"isNotMLS");
+        //error_log("Size after=".str(count($compsarray)));
+    }
 
 	$comp_min = MIN($COMPSTODISPLAY,count($compsarray));
 	$subjcomparray = array();

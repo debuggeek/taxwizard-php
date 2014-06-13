@@ -1,10 +1,10 @@
 <?php
 session_start();
-include_once 'propertyClass.php';
-include_once 'functions.php';
-include_once 'functions_pdf.php';
-include_once 'presentation.php';
-include_once 'batch.php';
+include_once 'library/propertyClass.php';
+include_once 'library/functions.php';
+include_once 'library/functions_pdf.php';
+include_once 'library/presentation.php';
+include_once 'library/batch.php';
 
 
 $debug = false;

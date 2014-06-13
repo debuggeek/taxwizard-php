@@ -1,8 +1,11 @@
 <?php
 session_start();
-include 'library/propertyClass.php';
-include 'library/functions.php';
-include 'library/presentation.php';
+include_once 'library/propertyClass.php';
+include_once 'library/functions.php';
+include_once 'library/functions_pdf.php';
+include_once 'library/presentation.php';
+include_once 'MPDF56/mpdf.php';
+
 $debug = false;
 $COMPSTODISPLAY = 100;
 $LIMIT=NULL;
@@ -21,7 +24,6 @@ $isEquityComp = true;
 if(isset($_GET['multiyear'])){
     $PREVYEAR = $_GET['multiyear'];
 }
-
 
 for($i=0; $i < $c; $i++)
 {
@@ -94,6 +96,12 @@ $property = getSubjProperty($propid);
 
 error_log("Finding best comps for ".$propid);
 
+
+/*
+ * This has to be kept in sync with functions_pdf.php
+ * Should be merged
+ */
+
 $compsarray = findBestComps($property,$isEquityComp,$TRIMINDICATED,$MULTIHOOD,$INCLUDEVU,$PREVYEAR);
 
 if(sizeof($compsarray) == 0){
@@ -125,5 +133,12 @@ $_SESSION[$MEANVALSQFT[0]] = getMeanValSqft($subjcomparray);
 $_SESSION[$MEDIANVAL[0]] = getMedianVal($subjcomparray);
 $_SESSION[$MEDIANVALSQFT[0]] = getMedianValSqft($subjcomparray);
 
-createGenericTable($subjcomparray,$isEquityComp);
+if(isset($_GET["pdf"])){
+    $prop_pdfs = generatePropMultiPDF($propid);
+    $multiPDF = $prop_pdfs["mPDF"];
+    echo($multiPDF->Output($propid.'.pdf','I'));
+} else {
+    createGenericTable($subjcomparray,$isEquityComp);
+}
+
 ?>

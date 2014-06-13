@@ -27,7 +27,7 @@ Database:<?php echo $database ?>
 <a href="comps_pdf.php?subj=708686&complist=438058">PDF Test of comps_pdf</a><br>
 </p>
 <br>
-<p><strong>Used for Updating prospect information</strong>
+<p><strong>Prospect information</strong>
 <?php 
 include_once("library/functions.php");
 
@@ -43,5 +43,6 @@ echo $resultCount." Prospects Found"
 <input type="text" name="propid"><input type="submit" name="prospects" value="Singleton">Test Singleton<br>
 <a href="library/prospects_list.php">Show Prospect List</a>
 </form>
+<p><strong>Batch Admin Controls</strong>
 </body>
 </html>

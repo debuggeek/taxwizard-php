@@ -20,11 +20,23 @@ include_once("library/functions.php");
 $queryAll="SELECT * FROM BATCH_PROP";
 $resultAll=executeQuery($queryAll);
 $numAll=mysql_numrows($resultAll);
-
+mysql_free_result($resultAll);
 
 $query="SELECT * FROM BATCH_PROP WHERE completed='true'";
 $result=executeQuery($query);
 $num=mysql_numrows($result);
+mysql_free_result($result);
+
+$queueQuery = "SELECT * FROM BATCH_PROP_SETTINGS WHERE id=(SELECT max(id) FROM BATCH_PROP_SETTINGS)";
+$resultSettings = executeQuery($queueQuery);
+$row = mysql_fetch_array($resultSettings);
+$TRIMINDICATED=$row['TrimIndicated'];
+$MULTIHOOD=$row['MultiHood'];
+$INCLUDEVU=$row['IncludeVU'];
+$PREVYEAR=$row['NumPrevYears'];
+$INCLUDEMLS=$row['IncludeMLS'];
+mysql_free_result($resultSettings);
+
 ?>
 <br>
 <p><strong>Bulk Generation</strong>
@@ -33,11 +45,25 @@ Choose a file to upload: <input name="file" type="file" /><br />
 <p><input type="submit" name="submit" value="Submit" /></p>
 </form>
 <br>
+<p><strong>Bulk Generation Settings</strong></p>
+<form action="updateBatchSettings.php" formtarget="_blank">
+    <input type="checkbox" name="trimindicated" id="trimindicated" value="yes" <?php echo ($TRIMINDICATED=='TRUE' ? 'checked' : '');?>>
+    Only return properties with lower comparison values<br>
+    <input type="checkbox" name="includemls" id="includemls" value="yes" <?php echo ($INCLUDEMLS=='TRUE' ? 'checked' : '');?>>
+    Include MLS data.<br>
+    <input type="checkbox" name="multihood" id="multihood" value="yes" <?php echo ($MULTIHOOD=='TRUE' ? 'checked' : '');?>>
+    Include related neighborhoods<br>
+    <input type="checkbox" name="includevu" id="includevu" value="yes" <?php echo ($INCLUDEVU=='TRUE' ? 'checked' : '');?>>
+    Include forclosures (VU)<br>
+    Years back to include:<input type="text" name="multiyear" value=<?php echo $PREVYEAR;?> size="1"><br>
+    <br/>
+    <input type="submit" value="Update Bulk Settings"/>
+</form>
 <h2><?php echo $numAll?> properties in batch queue</h2>
 <h2><?php echo $num?> completed batch properties</h2>
 <h2><?php echo $numAll - $num?> remaining to process</h2>
 <p>
-<a href='library/download_pdf.php?subj=ALL'>Download All Completed PDF Reports</a>
+<a href='download_pdf.php?subj=ALL'>Download All Completed PDF Reports</a>
 <br>
 <a href='library/download_csv.php?subj=ALL'>Download Simple Report CSV</a>
 <br>
@@ -72,7 +98,7 @@ $rs_result = executeQuery($sql);
 <td>Median (Sales 10)</td>
 <td>Median (Sales 15)</td>
 <td>Median (Equity 11)</td>
-<td><a href='reset.php?subj=ALL'>Reset All</a></td>
+<td><form action="reset.php" method="get"><button type="submit" name="subj" value="ALL">Reset All</button></form></td>
 </tr>
 <?php 
 while ($row = mysql_fetch_assoc($rs_result)) { 
@@ -90,41 +116,5 @@ while ($row = mysql_fetch_assoc($rs_result)) {
 }; 
 ?> 
 </table>
-<!-- 
-table>
-?php
-$i=0;
-
-while ($i < $num) {
-	$rowArray = array();
-	if($i < $num-10){
-		while($i % 10 != 0)
-		{		
-			$rowArray[]=mysql_result($result,$i,"prop");
-			$i++;
-		}
-	} else {
-		while($i < $num)
-		{
-			$rowArray[]=mysql_result($result,$i,"prop");
-			$i++;
-		}
-	}
-
-?>
-<tr>
-?php 
-	foreach($rowArray as $propid){
-?>
-<td>?php echo "<a href='download_pdf.php?subj=".$propid."'>$propid</a>"; ?></td>
-	?php
-	}
-	?>
-</tr>
-?php
-}
-?>
-</table>
- -->
 </body>
 </html>

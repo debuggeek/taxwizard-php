@@ -1,17 +1,43 @@
 <?php
 set_include_path(get_include_path() . PATH_SEPARATOR . "/home/cykoduck/public_html/debuggeek.com/taxtiger/");
-include_once 'functions.php';
-include_once 'functions_pdf.php';
+include_once 'library/functions.php';
+include_once 'library/functions_pdf.php';
 
 $debug=false;
 /**
  * For each non completed row in the batch_prop table
  * calculate the comp pdf and save it back to the pdfs column blob
  */
+$TRIMINDICATED=false;
+$MULTIHOOD=true;
+$INCLUDEVU=true;
+$PREVYEAR=1;
 
 $date = new DateTime();
 echo "\n".$date->format('Y-m-d H:i:s') . " >> Starting Batch Processing\n";
- 
+
+$queueQuery = "SELECT * FROM BATCH_PROP_SETTINGS WHERE id=(SELECT max(id) FROM BATCH_PROP_SETTINGS)";
+$result = executeQuery($queueQuery);
+
+if(mysql_numrows($result) == 0){
+    echo "\n Found no settings using defaults";
+}
+if(mysql_numrows($result) > 1){
+    echo "\n Found multiple settings using first";
+}
+if(mysql_numrows($result) > 0){
+    $row = mysql_fetch_array($result);
+    $TRIMINDICATED= $row['TrimIndicated'] === "TRUE" ? true : false;
+    $MULTIHOOD=$row['MultiHood']=== "TRUE" ? true : false;
+    $INCLUDEVU=$row['IncludeVU']=== "TRUE" ? true : false;
+    $INCLUDEMLS=$row['IncludeMLS']=== "TRUE" ? true : false;
+    $PREVYEAR=$row['NumPrevYears'];
+    $output = "Executing with settings: Trim=".strbool($TRIMINDICATED)." Multihoods=".strbool($MULTIHOOD)." VUs=".strbool($INCLUDEVU)." mls=".strbool($INCLUDEMLS)." years=".strbool($PREVYEAR);
+    error_log("batch_pdf: ". $output);
+    echo "\n".$output ."\n";
+}
+mysql_free_result($result);
+
 //Query to check if any work to do
 $queueQuery = "SELECT prop FROM BATCH_PROP WHERE completed='false'";
 $result = executeQuery($queueQuery);
