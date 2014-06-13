@@ -490,134 +490,72 @@ class propertyClass{
 	
 	function lookupHVImpMARCN($data)
 	{
-		
-
 		global $HIGHVALIMPMARCN,$allowablema;
 
 		$mafield = "Imprv_det_type_cd";
 
-	
 		//sometimes we appear to look this up before the improvements...not sure why that's so, but this hack saves the day
 		if($data == null){
 			$this->getImpCount();
 			$data = $this->mPrimeImpId;
 		}
-		
-
 		//$query = "SELECT * FROM ".$HIGHVALIMPMARCN["TABLE"]." WHERE prop_id='$propid'";
 
 		$subquery = "";
-
-	
-
 		$i=0;
 
 		while($i < count($allowablema))
-
 		{
-
 			$subquery .= "imprv_det_type_cd='$allowablema[$i]'";
-
 			if (++$i < count($allowablema))
-
 				$subquery .= " OR ";
-
 		}
 
-	
-
 		$query = "SELECT det_calc_val FROM IMP_DET, SPECIAL_IMP
-
 		WHERE IMP_DET.prop_id='$this->mPropID'
-
 		AND ( " . $subquery . ")
-
 		AND imprv_det_id = det_id
-
 		AND IMP_DET.prop_id = SPECIAL_IMP.prop_id";
 
-	
-
 		$query .= " AND IMP_DET.imprv_id = '$data'";
-
-	
-
 		//echo "$query";
 
 		sqldbconnect();
-
 		$result=mysql_query($query);
-
 		mysql_close();
 
-	
-
 		if(!$result)
-
 			return "No Value Found!";
 
-	
-
 		$value=0;
-
-	
-
 		while($row = mysql_fetch_array($result))
-
 		{
-
 			$value += $row['det_calc_val'];
-
 		}
-
 		return $value;
-
-	
-
 	}
 	
 	function getImpCount(){
-
 		global $TABLE_IMP_DET;
-
 		// The improvment count is determined by the number of unique
-
 		//	 imprv-id in the IMP_DET table
 
-	
 		if($this->mImprovCount != null)
 			return $this->mImprovCount;
-		
 
 		$query="SELECT DISTINCT imprv_id FROM " . $TABLE_IMP_DET . " WHERE prop_id='$this->mPropID';";
-		
 		sqldbconnect();
-
-		$result=mysql_query($query);	
-		
-
+		$result=mysql_query($query);
 		mysql_close();
 
 		if(!$result)
-
 			return "No Value Found!";
 
-	
-
 		$num=mysql_numrows($result);
-
-	
 		$row = mysql_fetch_array($result);
-		
 		$this->mImprovCount = $num;
 		$this->mPrimeImpId = $row['imprv_id'];
-
 		return $num;
-
-	
-
-	
-
 	}
 	
 	function getSegAdj(){
@@ -892,6 +830,14 @@ class propertyClass{
 			case($ACTUALYEARBUILT[0]):
 				return $this->mYearBuilt;
 			case($GOODADJ[0]):
+                if($this->mSubj){
+                    $year = date("Y");
+                    if($this->mYearBuilt <= ($year - 25 )){
+                        if($this->mGoodAdj >= 75){
+                            return $this->mGoodAdj . "_";
+                        }
+                    }
+                }
 				return $this->mGoodAdj;
 			case($goodadjdelta):
 				return number_format($this->mGoodAdjDelta);
