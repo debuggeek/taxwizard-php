@@ -195,18 +195,22 @@ function getSalePrice($propid)
 	return $row[$SALEPRICE[2]];
 }
 
-function setSaleInfo(propertyClass $compid, $compTable = null)
+function setSaleInfo(propertyClass $compid,$prevyear,$compTable = null)
 {
 	global $TABLE_SALES_MERGED,$SALEDATE,$SALEPRICE,$debug,$debugquery,$SALESOURCE,$SALETYPE;
 
 	$year = date("Y");
-	$lastyear = $year -1;
 
 	if($compTable == null)
 		$compTable = $TABLE_SALES_MERGED;
 	
 	sqldbconnect();
-	$query="SELECT sale_date,sale_price,source,sale_type FROM ". $compTable . " WHERE prop_id=".$compid->mPropID." AND (sale_date LIKE '%$year%' OR sale_date LIKE '%$lastyear%')";
+    $years = "sale_date LIKE '%".$year."%'";
+    for($i=1; $i <= $prevyear; $i++){
+        $yearsBack = $year - $i ;
+        $years = $years . "OR sale_date LIKE '%".$yearsBack."%' ";
+    }
+	$query="SELECT sale_date,sale_price,source,sale_type FROM ". $compTable . " WHERE prop_id=".$compid->mPropID." AND (".$years.")";
 
 
 	if($debugquery) echo("<br/> setSaleDateAndPrice query:".$query."<br/>");
@@ -965,11 +969,10 @@ function lookupPropID($id,$fieldsofinterest){
  * @param String $compTable - Table to compare with
  * @return Ambigous <propertyClass[], multitype:propertyClass >
  */
-function getHoodList($hood,$isEquity,$limit,$multihood=FALSE){
-	global $TABLE_SALES_MERGED,$NEIGHB,$MARKETVALUE,$LIVINGAREA,$PROPID,$debug;
+function getHoodList($hood,$isEquity,$limit,$multihood=FALSE,$prevyear=1){
+	global $TABLE_SALES_MERGED,$NEIGHB,$PROPID;
 
 	$year = date("Y");
-	$lastyear = $year -1;
 	$hoodSearch = $NEIGHB["HOOD"] ."='$hood'";
 	
 	if($multihood){
@@ -989,10 +992,15 @@ function getHoodList($hood,$isEquity,$limit,$multihood=FALSE){
             AND sale_price>0
             AND PROP.prop_id = s.prop_id;
          */
+        $years = "sale_date LIKE '%".$year."%'";
+        for($i=1; $i <= $prevyear; $i++){
+            $yearsBack = $year - $i ;
+            $years = $years . "OR sale_date LIKE '%".$yearsBack."%' ";
+        }
 		$query="SELECT ". $PROPID[1].".".$PROPID[2] .",sale_price,source".
 				" FROM ". $NEIGHB[1] ."," . $TABLE_SALES_MERGED . " AS s " .
 				" WHERE ". $hoodSearch . 
-					" AND (sale_date LIKE '%".$lastyear."%' OR sale_date LIKE '%".$year."%') ".
+					" AND ($years) ".
 					" AND sale_price>0 ".
 					" AND PROP.prop_id = s.prop_id";
 	}
@@ -1090,7 +1098,7 @@ function cmpProp(propertyClass $prop1,propertyClass $prop2)
  * @param (Optional) String SQL Table you wish to use to find comps
  * @return Array of comparable properties
  */
-function findBestComps($subjprop,$isEquity,$trimIndicated = false,$multihood=false,$includevu=false)
+function findBestComps($subjprop,$isEquity,$trimIndicated = false,$multihood=false,$includevu=false,$prevyear=1)
 {
 	global $NEIGHB,$LIVINGAREA,$PROPID,$debug,$isEquityComp;
     $compsarray = array();
@@ -1109,7 +1117,7 @@ function findBestComps($subjprop,$isEquity,$trimIndicated = false,$multihood=fal
 
 	error_log("findBestComps Start Memory >> ". memory_get_usage() . "\n");
 	if($debug) echo "<br/>subj: " . var_dump($subjprop) . "<br/>";
-	$comps = getHoodList($subjprop->getFieldByName($NEIGHB[0]),$isEquity,NULL,$multihood);
+	$comps = getHoodList($subjprop->getFieldByName($NEIGHB[0]),$isEquity,NULL,$multihood,$prevyear);
 
 
     if($debug) echo "<br/>walking ".count($comps)." potential comps<br/>";
@@ -1117,7 +1125,7 @@ function findBestComps($subjprop,$isEquity,$trimIndicated = false,$multihood=fal
 	{
 		$c = getProperty($comp->getFieldByName($PROPID[0]));
 
-        if(addToCompsArray($c,$subjprop,$isEquityComp,$trimIndicated,$includevu)){
+        if(addToCompsArray($c,$subjprop,$isEquityComp,$trimIndicated,$includevu,$prevyear)){
             error_log("Adding ".$c->mPropID. " as comp");
             $compsarray[] = $c;
         } else {
@@ -1136,7 +1144,7 @@ function findBestComps($subjprop,$isEquity,$trimIndicated = false,$multihood=fal
  * @param bool $trimIndicated
  * @return bool
  */
-function addToCompsArray(propertyClass $c,propertyClass $subjprop,$isEquity=false,$trimIndicated=false,$includevu=false){
+function addToCompsArray(propertyClass $c,propertyClass $subjprop,$isEquity=false,$trimIndicated=false,$includevu=false,$prevyear){
     global $LIVINGAREA;
     $compsseen = array();
     $debug = false;
@@ -1158,7 +1166,7 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop,$isEquity=fals
     }
 
     if(!$isEquity) {
-        setSaleInfo($c);
+        setSaleInfo($c,$prevyear);
     }
 
     //Check sale type.

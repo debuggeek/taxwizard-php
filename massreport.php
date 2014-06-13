@@ -10,6 +10,7 @@ $TRIMINDICATED = false;
 $INCLUDEMLS = false;
 $MULTIHOOD = false;
 $INCLUDEVU = false;
+$PREVYEAR = 1;  //By default go back 1 cal year for Sales
 
 global $INDICATEDVAL;
 
@@ -17,6 +18,11 @@ global $INDICATEDVAL;
 $isEquityComp = true;
 
 //Parse Inputs
+if(isset($_GET['multiyear'])){
+    $PREVYEAR = $_GET['multiyear'];
+}
+
+
 for($i=0; $i < $c; $i++)
 {
 	if($keys[$i] == 'propid'){
@@ -88,7 +94,7 @@ $property = getSubjProperty($propid);
 
 error_log("Finding best comps for ".$propid);
 
-$compsarray = findBestComps($property,$isEquityComp,$TRIMINDICATED,$MULTIHOOD,$INCLUDEVU);
+$compsarray = findBestComps($property,$isEquityComp,$TRIMINDICATED,$MULTIHOOD,$INCLUDEVU,$PREVYEAR);
 
 if(sizeof($compsarray) == 0){
     error_log("massreport: no comps found for ".$propid);
