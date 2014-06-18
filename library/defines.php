@@ -44,7 +44,7 @@ $HIGHVALIMPMARCN = array("High Value Improv MA RCN","CALCULATED","getHVImpMARCN"
 $HIGHVALIMPMARCNSQFT = array("High Value Improv MA RCN/SQFT","CALCULATED","getHVImpMARCNPerSQFT");
 $COMPLETE = array("% Complete","-CONST","-100");
 
-$LANDVALUEADJ =	array("Land Value Adj","PROP","land_hstd_val");
+$LANDVALUEADJ =	array("Land Value Adj","CALCULATED","getLandValueAdj");
 $LANDVALUEADJB =	array("Land Value Adj","PROP","land_non_hstd_val");
 $UNITPRICE = array("Unit Price","TABLE" => "SPECIAL_IMP","FIELD"=>"det_unitprice");
 $CLASSADJ = array("Class Adj","CALCULATED","getClassAdj");

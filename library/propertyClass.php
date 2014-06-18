@@ -165,7 +165,26 @@ class propertyClass{
 		}
 		return $value;
 	}
-	
+
+    function getLandValueAdj(){
+
+        $query = "SELECT land_hstd_val + land_non_hstd_val as result
+                  FROM PROP WHERE prop_id = ". $this->mPropID;;
+
+        sqldbconnect();
+        $result=mysql_query($query);
+        $num=mysql_numrows($result);
+
+        mysql_close();
+
+        if(!$result)
+            return "No Value Found!";
+
+        $row = mysql_fetch_array($result);
+        $this->mLandValAdj = $row['result'];
+        return $this->mLandValAdj;
+    }
+
 	function setLandValAdjDelta($subj)
 	{	
 		//echo "setLandValAdjDelta>> subj is " . $subj->mPropID . "<br>";
@@ -219,7 +238,7 @@ class propertyClass{
 			$var3 = $var1/$var2;
 			$var4 = $var3 - 1;
 			$result = $var4 * $this->mHighValImpMARCN;
-            error_log("setClassAdjDelta: ((".$var1."/".$var2.") - 1) *".$this->mHighValImpMARCN." = ".$result);
+            error_log("setClassAdjDelta[".$this->mPropID."]: ((".$var1."/".$var2.") - 1) *".$this->mHighValImpMARCN." = ".$result);
 			$this->mClassAdjDelta = $result;
 		}
 		else
@@ -344,7 +363,8 @@ class propertyClass{
 				AND imprv_det_id = det_id
 				AND IMP_DET.prop_id = SPECIAL_IMP.prop_id
 				AND IMP_DET.imprv_id = '$this->mPrimeImpId'";
-	
+
+        error_log("getLASizeAdj[".$this->mPropID."]: query=".$query);
 		sqldbconnect();
 		$result=mysql_query($query);
 		$num=mysql_numrows($result);
@@ -398,6 +418,7 @@ class propertyClass{
 			$propid = $this->mPropID;
 			$subquery = "";
 			$target = "det_calc_val";
+            $target2 = "det_val";
 			
 			$i=0;
 			while($i < count($allowablema))
@@ -407,7 +428,7 @@ class propertyClass{
 					$subquery .= " AND ";
 			}
 		
-			$query = "SELECT $TABLE_SPEC_IMP.$target FROM $TABLE_SPEC_IMP,$TABLE_IMP_DET
+			$query = "SELECT SPECIAL_IMP.$target,SPECIAL_IMP.$target2 FROM $TABLE_SPEC_IMP,$TABLE_IMP_DET
 			WHERE $TABLE_IMP_DET.prop_id = '$propid' AND $TABLE_SPEC_IMP.prop_id = '$propid'
 			AND $TABLE_IMP_DET.Imprv_det_id = $TABLE_SPEC_IMP.det_id
 			AND ( " . $subquery . ")";
@@ -415,7 +436,7 @@ class propertyClass{
 			if($this->getImpCount() > 1){
 				$query .=" AND IMP_DET.imprv_id = '$this->mPrimeImpId'";
 			}
-			//echo "$query" . "<br>";
+			error_log("getMktLevelerDetailAdj[".$this->mPropID."]: query=".$query);
 			sqldbconnect();
 			$result=mysql_query($query);
 			mysql_close();
@@ -432,7 +453,10 @@ class propertyClass{
 		
 			while($row = mysql_fetch_array($result))
 			{
-				$value += $row[$target];
+                if($row[$target] == 0)
+                    $value += $row[$target2];
+                else
+				    $value += $row[$target];
 			}
 			$this->mMktLevelerDetailAdj = $value;
 		}
