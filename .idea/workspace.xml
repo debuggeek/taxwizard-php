@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="facf13e2-b745-40ac-a01d-927e3483e8fe" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/library/functions.php" afterPath="$PROJECT_DIR$/library/functions.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <list id="584c3f85-8fe7-4c31-8a52-da1f31923854" name="Initial FiveStone" comment="" />
     <ignored path="Fivestone.iws" />
@@ -99,7 +98,7 @@
       <file leaf-file-name="functions.php" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/library/functions.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="1156" column="0" selection-start="29012" selection-end="29012" vertical-scroll-proportion="0.33260393" vertical-offset="17188" max-vertical-offset="19320">
+            <state line="1187" column="15" selection-start="30008" selection-end="30008" vertical-scroll-proportion="0.35658044" vertical-offset="17488" max-vertical-offset="19320">
               <folding />
             </state>
           </provider>
@@ -108,7 +107,7 @@
       <file leaf-file-name="massreport.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/massreport.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="1" column="0" selection-start="6" selection-end="6" vertical-scroll-proportion="-0.625" vertical-offset="0" max-vertical-offset="2235">
+            <state line="14" column="19" selection-start="355" selection-end="355" vertical-scroll-proportion="-8.75" vertical-offset="0" max-vertical-offset="2235">
               <folding />
             </state>
           </provider>
@@ -467,9 +466,9 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32952183" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2028754" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27209798" sideWeight="0.5300752" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27209798" sideWeight="0.4699248" order="1" side_tool="false" content_ui="combo" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.44813278" sideWeight="0.8556976" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27209798" sideWeight="0.52904564" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27209798" sideWeight="0.469917" order="1" side_tool="false" content_ui="combo" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.44813278" sideWeight="0.8556976" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.45020747" sideWeight="0.14430244" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32883817" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -857,14 +856,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/massreport.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="0" selection-start="6" selection-end="6" vertical-scroll-proportion="-0.625" vertical-offset="0" max-vertical-offset="2235">
+        <state line="14" column="19" selection-start="355" selection-end="355" vertical-scroll-proportion="-8.75" vertical-offset="0" max-vertical-offset="2235">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/library/functions.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1156" column="0" selection-start="29012" selection-end="29012" vertical-scroll-proportion="0.33260393" vertical-offset="17188" max-vertical-offset="19320">
+        <state line="1187" column="15" selection-start="30008" selection-end="30008" vertical-scroll-proportion="0.35658044" vertical-offset="17488" max-vertical-offset="19320">
           <folding />
         </state>
       </provider>

@@ -1184,8 +1184,8 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop,$isEquity=fals
     }
 
     $subjsqft = $subjprop->getFieldByName($LIVINGAREA[0]);
-    $min = .75 * $subjsqft;
-    $max = 1.25 * $subjsqft;
+    $min = .25 * $subjsqft;
+    $max = 1.75 * $subjsqft;
     $sqft = $c->getFieldByName($LIVINGAREA[0]);
 
     if($sqft < $min || $sqft > $max)
