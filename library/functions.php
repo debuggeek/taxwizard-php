@@ -118,6 +118,9 @@ function sqldbconnect()
 	return $link;
 }
 
+/**
+ * @deprecated
+ */
 function tableLookup($id,$glbfield)
 {
 	global $ACTUALYEARBUILT,$SALEDATE,$SALEPRICE,$MKTLEVELERDETAILADJ;
@@ -141,6 +144,9 @@ function tableLookup($id,$glbfield)
 	}
 }
 
+/**
+ * @deprecated
+ */
 function getSaleDate($propid)
 {
 	global $TABLE_SALES_MERGED,$SALEDATE,$comparrsd;
@@ -165,6 +171,9 @@ function getSaleDate($propid)
 	return $row[$SALEDATE[2]];
 }
 
+/**
+ * @deprecated
+ */
 function getSalePrice($propid)
 {
 	global $TABLE_SALES_MERGED,$SALEPRICE,$comparrsp;
@@ -195,7 +204,7 @@ function getSalePrice($propid)
 	return $row[$SALEPRICE[2]];
 }
 
-function setSaleInfo(propertyClass $compid,$prevyear,$compTable = null)
+function setSaleInfo(propertyClass $compid,$prevyear,$instance=0,$compTable = null)
 {
 	global $TABLE_SALES_MERGED,$SALEDATE,$SALEPRICE,$debug,$debugquery,$SALESOURCE,$SALETYPE;
 
@@ -224,25 +233,31 @@ function setSaleInfo(propertyClass $compid,$prevyear,$compTable = null)
 
 	if($num==0)
 		return "No Record Found";
+    /*
 	if($num > 1)
 		error_log("Found multiple sales for propid:".$compid->mPropID." finding lowest >0");
-	
+	*/
+
 	$tmpsalePrice = null;
 	$tmpsaleDate = null;
+    $rowNum = 0;
 	while($row = mysql_fetch_array($result)){
-		if($tmpsalePrice == null){
-			$tmpsalePrice = $row[$SALEPRICE[2]];
-			$tmpsaleDate = $row[$SALEDATE[2]];
-            $tmpsaleSource = $row[$SALESOURCE[2]];
-            $tmpSaleType = $row[$SALETYPE[2]];
-		}
-		else{
-			if($tmpsalePrice== 0 || ($row[$SALEPRICE[2]] > 0 && $row[$SALEPRICE[2]] < $tmpsalePrice))
-				$tmpsalePrice = $row[$SALEPRICE[2]];
-		    $tmpsaleDate = $row[$SALEDATE[2]];
-            $tmpsaleSource = $row[$SALESOURCE[2]];
-            $tmpSaleType = $row[$SALETYPE[2]];
-		}
+        if($rowNum == $instance){
+            if($tmpsalePrice == null){
+                $tmpsalePrice = $row[$SALEPRICE[2]];
+                $tmpsaleDate = $row[$SALEDATE[2]];
+                $tmpsaleSource = $row[$SALESOURCE[2]];
+                $tmpSaleType = $row[$SALETYPE[2]];
+            }
+            else{
+                if($tmpsalePrice== 0 || ($row[$SALEPRICE[2]] > 0 && $row[$SALEPRICE[2]] < $tmpsalePrice))
+                    $tmpsalePrice = $row[$SALEPRICE[2]];
+                $tmpsaleDate = $row[$SALEDATE[2]];
+                $tmpsaleSource = $row[$SALESOURCE[2]];
+                $tmpSaleType = $row[$SALETYPE[2]];
+            }
+        }
+        $rowNum++;
 	}
 	
 	$compid->mSaleDate = $tmpsaleDate;
@@ -1119,11 +1134,24 @@ function findBestComps($subjprop,$isEquity,$trimIndicated = false,$multihood=fal
 	if($debug) echo "<br/>subj: " . var_dump($subjprop) . "<br/>";
 	$comps = getHoodList($subjprop->getFieldByName($NEIGHB[0]),$isEquity,NULL,$multihood,$prevyear);
 
+    //Track for duplicates
+    $compsSeen = array();
 
     if($debug) echo "<br/>walking ".count($comps)." potential comps<br/>";
 	foreach($comps as $comp)
 	{
 		$c = getProperty($comp->getFieldByName($PROPID[0]));
+
+        if(!$isEquity) {
+            $compsCounts = array_count_values($compsSeen);
+            if(array_key_exists($c->mPropID,$compsCounts)){
+                //index off of the sale entry based on previously seen
+                setSaleInfo($c,$prevyear,$compsCounts[$c->mPropID]);
+            } else{
+                setSaleInfo($c,$prevyear,0);
+            }
+
+        }
 
         if(addToCompsArray($c,$subjprop,$isEquityComp,$trimIndicated,$includevu,$prevyear)){
             error_log("Adding ".$c->mPropID. " as comp");
@@ -1131,6 +1159,7 @@ function findBestComps($subjprop,$isEquity,$trimIndicated = false,$multihood=fal
         } else {
             error_log("Skipped adding ".$c->mPropID." as comp to ".$subjprop->mPropID);
         }
+        $compsSeen[] = $c->mPropID;
 	}
 	if ($debug) echo "compsarray count: ".count($compsarray);
 	return $compsarray;
@@ -1144,7 +1173,7 @@ function findBestComps($subjprop,$isEquity,$trimIndicated = false,$multihood=fal
  * @param bool $trimIndicated
  * @return bool
  */
-function addToCompsArray(propertyClass $c,propertyClass $subjprop,$isEquity=false,$trimIndicated=false,$includevu=false,$prevyear){
+function addToCompsArray(propertyClass $c,propertyClass $subjprop,$isEquity=false,$trimIndicated=false,$includevu=false){
     global $LIVINGAREA;
     $compsseen = array();
     $debug = false;
@@ -1163,10 +1192,6 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop,$isEquity=fals
     {
         error_log("addToCompsArray: ".$c->mPropID." removed as potential comp due to size min=".$min." max=".$max." size=".$sqft);
         return false;
-    }
-
-    if(!$isEquity) {
-        setSaleInfo($c,$prevyear);
     }
 
     //Check sale type.
@@ -1189,19 +1214,15 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop,$isEquity=fals
     if($pos === false){
 
         if($c->mPropID != $subjprop->mPropID){
-            $key = array_search($c->mPropID,$compsseen);
-            if($key == false){
-                calcDeltas($subjprop,$c);
-                if($trimIndicated){
-                    if(cmpProp($subjprop,$c)==1){
-                        error_log("Found comp ".$c->mPropID);
-                        return true;
-                    }
-                } else {
+            calcDeltas($subjprop,$c);
+            if($trimIndicated){
+                if(cmpProp($subjprop,$c)==1){
                     error_log("Found comp ".$c->mPropID);
                     return true;
                 }
-
+            } else {
+                error_log("Found comp ".$c->mPropID);
+                return true;
             }
         }
     } else {
