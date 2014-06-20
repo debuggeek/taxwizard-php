@@ -1,51 +1,37 @@
 <?php
 include_once("functions.php");
-$query = "SELECT prop,prop_mktval,Median_Sale5,Median_Sale10,Median_Eq11 FROM BATCH_PROP WHERE completed='true';";
+$query = "SELECT prop,prop_mktval,Median_Sale5,Median_Sale10,Median_Eq11 FROM BATCH_PROP WHERE completed='true'";
 
-//echo "Exporting file - process"."<br><br>";
+error_reporting(0);
 
-        header("Content-type: application/csv");
-        header("Content-Disposition: attachment; filename=download.csv");
-        header("Pragma: no-cache");
-        header("Expires: 0");
+header("Content-type: application/csv");
+header("Content-Disposition: attachment; filename=download.csv");
+header("Pragma: no-cache");
+header("Expires: 0");
 
-    $export = executeQuery ($query );
-
-    $fields = mysql_num_fields ( $export );
-/*
-    for ( $i = 0; $i < $fields; $i++ )
-    {
-        $header .= mysql_field_name( $export , $i ) . "\t";
-
-        echo $header;
-    }
-*/
-    while( $row = mysql_fetch_row( $export ) )
-    {
-        $line = '';
-        foreach( $row as $value )
-        {                                            
-            if ( ( !isset( $value ) ) || ( $value == "" ) )
-            {
-                $value = ",";
-            }
-            else
-            {
-                $value = str_replace( '"' , '""' , $value );
-                $value = '"' . $value . '"' . ",";
-            }
-            $line .= $value;
+$export = executeQuery ($query );
+$fields = mysql_num_fields ( $export );
+while( $row = mysql_fetch_row( $export ) ){
+    $line = '';
+    foreach( $row as $value ){
+        if ( ( !isset( $value ) ) || ( $value == "" ) ){
+            $value = ",";
         }
-        $data .= trim( $line ) . "\n";
+        else{
+            $value = str_replace( '"' , '""' , $value );
+            $value = '"' . $value . '"' . ",";
+        }
+        $line .= $value;
     }
-    $data = str_replace( "\r" , "" , $data );
+    $data .= trim( $line ) . "\n";
 
-    if ( $data == "" )
-    {
-        $data = "\n(0) Records Found!\n";                        
-    }
+}
+$data = str_replace( "Array" , "" , $data );
+$data = str_replace( "\r" , "" , $data );
 
-    echo "$data";
-
-    exit();
+if ( $data == "" ){
+    $data = "\n(0) Records Found!\n";
+}
+echo "$data";
+exit();
 ?>
