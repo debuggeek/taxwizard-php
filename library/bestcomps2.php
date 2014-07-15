@@ -42,7 +42,7 @@ if($abort){
 
 $property = getProperty($propid);
 
-$compsarray = findBestComps($property);
+$compsarray = findBestComps($property,$isEquityComp,.75);
 
 if(sizeof($compsarray) == 0)
 	return returnNoHits($propid);

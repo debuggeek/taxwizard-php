@@ -1109,11 +1109,12 @@ function cmpProp(propertyClass $prop1,propertyClass $prop2)
  * This function will also remove any properties of class 'XX'
  * @param String subject property
  * @param Boolean True if doing equity compare
+ * @param Double %of of sqft to consider comps against
  * @param (Optional) Boolean Trim out properties > then subject
  * @param (Optional) String SQL Table you wish to use to find comps
  * @return Array of comparable properties
  */
-function findBestComps($subjprop,$isEquity,$trimIndicated = false,$multihood=false,$includevu=false,$prevyear=1)
+function findBestComps($subjprop,$isEquity,$sqftRange,$trimIndicated = false,$multihood=false,$includevu=false,$prevyear=1)
 {
 	global $NEIGHB,$LIVINGAREA,$PROPID,$debug,$isEquityComp;
     $compsarray = array();
@@ -1153,7 +1154,7 @@ function findBestComps($subjprop,$isEquity,$trimIndicated = false,$multihood=fal
 
         }
 
-        if(addToCompsArray($c,$subjprop,$isEquityComp,$trimIndicated,$includevu,$prevyear)){
+        if(addToCompsArray($c,$subjprop,$sqftRange,$isEquityComp,$trimIndicated,$includevu)){
             error_log("Adding ".$c->mPropID. " as comp");
             $compsarray[] = $c;
         } else {
@@ -1173,7 +1174,7 @@ function findBestComps($subjprop,$isEquity,$trimIndicated = false,$multihood=fal
  * @param bool $trimIndicated
  * @return bool
  */
-function addToCompsArray(propertyClass $c,propertyClass $subjprop,$isEquity=false,$trimIndicated=false,$includevu=false){
+function addToCompsArray(propertyClass $c,propertyClass $subjprop,$sqftRange=.75, $isEquity=false,$trimIndicated=false,$includevu=false){
     global $LIVINGAREA;
     $compsseen = array();
     $debug = false;
@@ -1184,8 +1185,8 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop,$isEquity=fals
     }
 
     $subjsqft = $subjprop->getFieldByName($LIVINGAREA[0]);
-    $min = .25 * $subjsqft;
-    $max = 1.75 * $subjsqft;
+    $min = (1-$sqftRange) * $subjsqft;
+    $max = (1+$sqftRange) * $subjsqft;
     $sqft = $c->getFieldByName($LIVINGAREA[0]);
 
     if($sqft < $min || $sqft > $max)

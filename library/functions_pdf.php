@@ -99,13 +99,13 @@ function generatePropMultiPDF($propid){
  * Should be merged
  */
 function generateArray($property,$eqComp,$numComps=10){
-    global $TRIMINDICATED,$MULTIHOOD,$INCLUDEVU,$PREVYEAR,$INCLUDEMLS;
+    global $TRIMINDICATED,$MULTIHOOD,$INCLUDEVU,$PREVYEAR,$INCLUDEMLS,$SQFTPERCENT;
 
 	$COMPSTODISPLAY = $numComps;
 	if($eqComp)
 		$COMPSTODISPLAY = 11;
 
-    $compsarray = findBestComps($property,$eqComp,$TRIMINDICATED,$MULTIHOOD,$INCLUDEVU,$PREVYEAR);
+    $compsarray = findBestComps($property,$eqComp,$SQFTPERCENT,$TRIMINDICATED,$MULTIHOOD,$INCLUDEVU,$PREVYEAR);
 
 	if(count($compsarray) == 0)
 		return null;

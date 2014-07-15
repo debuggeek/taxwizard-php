@@ -49,7 +49,7 @@ if($abort){
 
 $property = getProperty($propid);
 
-$compsarray = findBestComps($property,$isEquityComp);
+$compsarray = findBestComps($property,$isEquityComp,.75);
 
 $subjsqft = $property->getFieldByName($LIVINGAREA[0]);
 $min = .8 * $subjsqft;

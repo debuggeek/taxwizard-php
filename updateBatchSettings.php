@@ -34,9 +34,11 @@ else
 
 $PREVYEAR=$_GET['multiyear'];
 
+$SQFTPCT=$_GET['sqftPct'];
+
 //$query="INSERT INTO BATCH_PROP_SETTINGS VALUES ('".$TRIMINDICATED."','".$MULTIHOOD."','".$INCLUDEVU."','".$INCLUDEMLS."','".$PREVYEAR."')";
-$query="INSERT INTO `BATCH_PROP_SETTINGS` ( `TrimIndicated`, `MultiHood`, `IncludeVU`, `IncludeMLS`, `NumPrevYears`)
-                                    VALUES('".$TRIMINDICATED."', '".$MULTIHOOD."', '".$INCLUDEVU."', '".$INCLUDEMLS."', ".$PREVYEAR.")";
+$query="INSERT INTO `BATCH_PROP_SETTINGS` ( `TrimIndicated`, `MultiHood`, `IncludeVU`, `IncludeMLS`, `NumPrevYears`, `SqftRange`)
+                                    VALUES('".$TRIMINDICATED."', '".$MULTIHOOD."', '".$INCLUDEVU."', '".$INCLUDEMLS."', ".$PREVYEAR.", ".$SQFTPCT.")";
 $result=executeQuery($query);
 if($result == TRUE){
     echo "Settings updated";

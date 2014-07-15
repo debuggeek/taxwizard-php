@@ -14,6 +14,7 @@ $INCLUDEMLS = false;
 $MULTIHOOD = false;
 $INCLUDEVU = false;
 $PREVYEAR = 1;  //By default go back 1 cal year for Sales
+$SQFTPERCENT = .75;
 
 global $INDICATEDVAL;
 
@@ -85,6 +86,10 @@ for($i=0; $i < $c; $i++)
     }
 }
 
+if(isset($_GET['sqftPct'])){
+    $SQFTPERCENT = trim($_GET['sqftPct']);
+}
+
 if($propid != "")	$abort = false;
 
 if($abort){
@@ -102,7 +107,7 @@ error_log("Finding best comps for ".$propid);
  * Should be merged
  */
 
-$compsarray = findBestComps($property,$isEquityComp,$TRIMINDICATED,$MULTIHOOD,$INCLUDEVU,$PREVYEAR);
+$compsarray = findBestComps($property,$isEquityComp,$SQFTPERCENT,$TRIMINDICATED,$MULTIHOOD,$INCLUDEVU,$PREVYEAR);
 
 if(sizeof($compsarray) == 0){
     error_log("massreport: no comps found for ".$propid);

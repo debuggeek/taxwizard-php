@@ -35,6 +35,7 @@ $MULTIHOOD=$row['MultiHood'];
 $INCLUDEVU=$row['IncludeVU'];
 $PREVYEAR=$row['NumPrevYears'];
 $INCLUDEMLS=$row['IncludeMLS'];
+$SQFTPCT=$row['SqftRange'];
 mysql_free_result($resultSettings);
 
 ?>
@@ -56,6 +57,7 @@ Choose a file to upload: <input name="file" type="file" /><br />
     <input type="checkbox" name="includevu" id="includevu" value="yes" <?php echo ($INCLUDEVU=='TRUE' ? 'checked' : '');?>>
     Include forclosures (VU)<br>
     Years back to include:<input type="text" name="multiyear" value=<?php echo $PREVYEAR;?> size="1"><br>
+    Percent of square footage to consider (.01-1.00):<input type="text" name="sqftPct" value=<?php echo $SQFTPCT;?> size="3"/><br>
     <br/>
     <input type="submit" value="Update Bulk Settings"/>
 </form>

@@ -12,6 +12,7 @@ $TRIMINDICATED=false;
 $MULTIHOOD=true;
 $INCLUDEVU=true;
 $PREVYEAR=1;
+$SQFTPERCENT = .75;
 
 $date = new DateTime();
 echo "\n".$date->format('Y-m-d H:i:s') . " >> Starting Batch Processing\n";
@@ -32,7 +33,8 @@ if(mysql_numrows($result) > 0){
     $INCLUDEVU=$row['IncludeVU']=== "TRUE" ? true : false;
     $INCLUDEMLS=$row['IncludeMLS']=== "TRUE" ? true : false;
     $PREVYEAR=$row['NumPrevYears'];
-    $output = "Executing with settings: Trim=".strbool($TRIMINDICATED)." Multihoods=".strbool($MULTIHOOD)." VUs=".strbool($INCLUDEVU)." mls=".strbool($INCLUDEMLS)." years=".strbool($PREVYEAR);
+    $SQFTPERCENT=$row['SqftRange'];
+    $output = "Executing with settings: Trim=".strbool($TRIMINDICATED)." Multihoods=".strbool($MULTIHOOD)." VUs=".strbool($INCLUDEVU)." mls=".strbool($INCLUDEMLS)." years=".$PREVYEAR. " sqftRange=".$SQFTPCT;
     error_log("batch_pdf: ". $output);
     echo "\n".$output ."\n";
 }
