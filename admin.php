@@ -30,8 +30,8 @@ Database:<?php echo $database ?>
 <a href="massreport.php?multiyear=1&limit=20&style=sales&propid=114667&S%26G=Search+and+Generate&sqftPct=.2">Issue 17: Should return 0 hits</a><br>
 <a href="massreport.php?multiyear=1&limit=20&style=sales&propid=114667&S%26G=Search+and+Generate&sqftPct=.75">Issue 17: Should return many hits</a><br>
 <a href="bestcomps.php?propid=141826&amp;display=100&amp;Submit=Search&amp;equity=false">Issue 14: Had Duplicate Comps</a><br>
-<a href="massreport.php?multiyear=1&limit=10&style=sales&propid=718039&S%26G=Search+and+Generate">Issue 11:Duplicate between MLS and Sales</a>
-<a href="massreport.php?includemls=off&multihood=off&limit=10&style=sales&propid=210850&S%26G=Search+and+Generate">Issue 8: Duplicate Comps</a>
+<a href="massreport.php?multiyear=1&limit=10&style=sales&propid=718039&S%26G=Search+and+Generate">Issue 11:Duplicate between MLS and Sales</a><br>
+<a href="massreport.php?includemls=off&multihood=off&limit=10&style=sales&propid=210850&S%26G=Search+and+Generate">Issue 8: Duplicate Comps</a><br>
 <br>
 <p><strong>Prospect information</strong>
 <?php 

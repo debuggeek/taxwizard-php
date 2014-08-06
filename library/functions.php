@@ -222,7 +222,7 @@ function setSaleInfo(propertyClass $compid,$prevyear,$instance=0,$compTable = nu
 	$query="SELECT sale_date,sale_price,source,sale_type FROM ". $compTable . " WHERE prop_id=".$compid->mPropID." AND (".$years.")";
 
 
-	if($debugquery) echo("<br/> setSaleDateAndPrice query:".$query."<br/>");
+	error_log("setSaleInfo:: query=".$query);
 		
 	$result=mysql_query($query);
 	if($result === false)
@@ -233,10 +233,10 @@ function setSaleInfo(propertyClass $compid,$prevyear,$instance=0,$compTable = nu
 
 	if($num==0)
 		return "No Record Found";
-    /*
+
 	if($num > 1)
-		error_log("Found multiple sales for propid:".$compid->mPropID." finding lowest >0");
-	*/
+		error_log("Found multiple sales for propid:".$compid->mPropID);
+
 
 	$tmpsalePrice = null;
 	$tmpsaleDate = null;
@@ -250,11 +250,12 @@ function setSaleInfo(propertyClass $compid,$prevyear,$instance=0,$compTable = nu
                 $tmpSaleType = $row[$SALETYPE[2]];
             }
             else{
-                if($tmpsalePrice== 0 || ($row[$SALEPRICE[2]] > 0 && $row[$SALEPRICE[2]] < $tmpsalePrice))
+                if($tmpsalePrice== 0 || ($row[$SALEPRICE[2]] > 0 && $row[$SALEPRICE[2]] < $tmpsalePrice)){
                     $tmpsalePrice = $row[$SALEPRICE[2]];
-                $tmpsaleDate = $row[$SALEDATE[2]];
-                $tmpsaleSource = $row[$SALESOURCE[2]];
-                $tmpSaleType = $row[$SALETYPE[2]];
+                    $tmpsaleDate = $row[$SALEDATE[2]];
+                    $tmpsaleSource = $row[$SALESOURCE[2]];
+                    $tmpSaleType = $row[$SALETYPE[2]];
+                }
             }
         }
         $rowNum++;
@@ -1155,14 +1156,14 @@ function findBestComps($subjprop,$isEquity,$sqftRange,$trimIndicated = false,$mu
         }
 
         if(addToCompsArray($c,$subjprop,$sqftRange,$isEquityComp,$trimIndicated,$includevu)){
-            error_log("Adding ".$c->mPropID. " as comp");
+            error_log("Adding ".$c->mPropID. " as comp::".$c);
             $compsarray[] = $c;
         } else {
             error_log("Skipped adding ".$c->mPropID." as comp to ".$subjprop->mPropID);
         }
         $compsSeen[] = $c->mPropID;
 	}
-	if ($debug) echo "compsarray count: ".count($compsarray);
+	error_log("findBestComps: compsarray count= ".count($compsarray). " sizeof=".sizeof($compsarray));
 	return $compsarray;
 }
 
@@ -1271,7 +1272,6 @@ function executeQuery($query){
 }
 
 function isNotMLS(propertyClass $property){
-
     $strCmpResult = strcasecmp($property->getSaleSource(), "MLS");
     return $strCmpResult != 0;
 }

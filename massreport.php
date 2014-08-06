@@ -119,9 +119,11 @@ if(!$INCLUDEMLS){
 }
 
 if(sizeof($compsarray) == 0){
-    error_log("massreport: no comps found for ".$propid);
+    error_log("massreport: no comps found after MLS Sort for ".$propid);
     return returnNoHits($propid);
 }
+
+error_log("massreport: found ".sizeof($compsarray)." comp(s) for ".$propid);
 
 usort($compsarray,"cmpProp");
 
