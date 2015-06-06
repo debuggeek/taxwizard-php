@@ -111,11 +111,30 @@ function getMedianValSqft($subjcomp)
  */
 function sqldbconnect()
 {
-	global $username,$password,$database;
+	global $servername,$username,$password,$database,$dbport;
 
-	$link = mysql_connect("localhost:8889",$username,$password);
-	@mysql_select_db($database) or die( "Unable to select database");
-	return $link;
+	// Create connection
+    $db = new mysqli($servername, $username, $password, $database, $dbport);
+
+	
+	// Check connection
+    if ($db->connect_error) {
+        die("Connection failed: " . $db->connect_error);
+    } 
+    
+//	@mysql_select_db($database) or die( "Unable to select database");
+	return $db;
+}
+
+/**
+ * @return queryResult
+ */
+
+function doSqlQuery($query){
+	$link = sqldbconnect();
+	$result=mysqli_query($link,$query);
+	mysqli_close($link);
+	return $result;
 }
 
 /**
@@ -847,15 +866,13 @@ function getPropertyWithFields($propid, $fieldsofinterest)
 	$query="SELECT * FROM ". $prop_table . " WHERE prop_id='$propid'";
 	if ($debug) echo $query;
 
-	sqldbconnect();
-	$result=mysql_query($query);
-	mysql_close();
+	$result = doSqlQuery($query);
 	if(!$result)
 	{
 		echo "Bad query:". $query;
 		return NULL;
 	}
-	$num=mysql_numrows($result);
+	$num=mysqli_num_rows($result);
 
 	if($num > 1)
 	{
@@ -865,7 +882,7 @@ function getPropertyWithFields($propid, $fieldsofinterest)
 	
 	$postcalcfields = array();
 	$currprop->mPropID= $propid;
-	while($row = mysql_fetch_array($result))
+	while($row = mysqli_fetch_array($result))
 	{
 		foreach($fieldsofinterest as $field)
 		{

@@ -123,9 +123,17 @@ function getMedianValSqft($subjcomp)
 
 function sqldbconnect()
 {
-	global $username,$password,$database;
+	global $servername,$username,$password,$database,$dbport;
 
-	mysql_connect('localhost',$username,$password);
+	// Create connection
+    $db = new mysqli($servername, $username, $password, $database, $dbport);
+
+	
+	// Check connection
+    if ($db->connect_error) {
+        die("Connection failed: " . $db->connect_error);
+    } 
+    
 	@mysql_select_db($database) or die( "Unable to select database");
 
 }

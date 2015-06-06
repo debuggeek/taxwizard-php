@@ -75,18 +75,16 @@ class propertyClass{
 
 		$query = "SELECT ".$UNITPRICE["FIELD"]." FROM `".$UNITPRICE["TABLE"]."` WHERE `prop_id`=".$this->mPropID." AND `det_use_unit_price` LIKE 'T'";
 		
-		sqldbconnect();
-		$result=mysql_query($query);
-		mysql_close();
+		$result=doSqlQuery($query);
 		if(!$result)
 			return "No Hits returned";
 		
-		$num=mysql_numrows($result);
+		$num=mysqli_num_rows($result);
 		
 		if($num==0)
 			return "No Value Found!";
 			
-		while($row = mysql_fetch_array($result))
+		while($row = mysqli_fetch_array($result))
 		{
 			$value += $row[$UNITPRICE["FIELD"]];
 		}
@@ -104,17 +102,15 @@ class propertyClass{
 		if($this->mHoodMIA != NULL)
 			return $this->mHoodMIA;
 
-		sqldbconnect();
 		$query="SELECT * FROM ". $NEIGHBMIA["TABLE"] . " WHERE prop_id=$prop_id";
 		//echo "getNMIA::query = " . $query . "<br>";
-		$result=mysql_query($query);
-		$num=mysql_numrows($result);
-		mysql_close();
+		$result = doSqlQuery($query);
+		$num=mysqli_num_rows($result);
 
 		if($num==0)
 		return "No Value Found!";
 
-		$row = mysql_fetch_array($result);
+		$row = mysqli_fetch_array($result);
 		$adjarray = explode(";",$row[$NEIGHBMIA["FIELD"]],100);
 		if(count($adjarray) ==0)
 		return "No Value Found!";
@@ -161,14 +157,12 @@ class propertyClass{
 
 		$query .= " AND IMP_DET.imprv_id = '$data'";
 		//echo "$query";
-		sqldbconnect();
-		$result=mysql_query($query);
-		mysql_close();
+		$result=doSqlQuery($query);
 		if(!$result){
 			return "No Value Found!";
 		}
 		$value=0;
-		while($row = mysql_fetch_array($result))
+		while($row = mysqli_fetch_array($result))
 		{
 			$value += $row[$field];
 		}
@@ -180,16 +174,13 @@ class propertyClass{
         $query = "SELECT land_hstd_val + land_non_hstd_val as result
                   FROM PROP WHERE prop_id = ". $this->mPropID;;
 
-        sqldbconnect();
-        $result=mysql_query($query);
-        $num=mysql_numrows($result);
-
-        mysql_close();
+        $result = doSqlQuery($query);
+        $num=mysqli_num_rows($result);
 
         if(!$result)
             return "No Value Found!";
 
-        $row = mysql_fetch_array($result);
+        $row = mysqli_fetch_array($result);
         $this->mLandValAdj = $row['result'];
         return $this->mLandValAdj;
     }
@@ -213,16 +204,14 @@ class propertyClass{
 			AND imprv_det_type_cd = '1ST' AND imprv_det_id = det_id AND IMP_DET.prop_id=SPECIAL_IMP.prop_id
 			AND SPECIAL_IMP.det_use_unit_price LIKE 'T'";
 
-		sqldbconnect();
-		$result=mysql_query($query);
-		$num=mysql_numrows($result);
+		$result=doSqlQuery($query);
 
 		mysql_close();
 
 		if(!$result)
 			return "No Value Found!";
 
-		$resultarray = mysql_fetch_array($result);
+		$resultarray = mysqli_fetch_array($result);
 
 		return $resultarray[0].$resultarray[1];
 	}
@@ -268,15 +257,13 @@ class propertyClass{
 			return $this->mYearBuilt;
 		
 		$query="SELECT yr_built FROM " . $TABLE_IMP_DET . " WHERE prop_id='$this->mPropID' AND imprv_id='$this->mPrimeImpId';";
-		sqldbconnect();
-		$result=mysql_query($query);
-		mysql_close();
+		$result=doSqlQuery($query);
 
 		if(!$result)
 			return "No Value Found!";
 
-		$num=mysql_numrows($result);
-		$row = mysql_fetch_array($result);
+		$num=mysqli_num_rows($result);
+		$row = mysqli_fetch_array($result);
 		$this->mYearBuilt = $row['yr_built'];
 		return $this->mYearBuilt;
 	}
@@ -303,14 +290,12 @@ class propertyClass{
 			AND ( " . $subquery . ")";
 	
 		//echo "$query";
-		sqldbconnect();
-		$result=mysql_query($query);
-		mysql_close();
+		$result=doSqlQuery($query);
 	
 		if(!$result)
 			return "No Value Found!";
 	
-		$row = mysql_fetch_array($result);
+		$row = mysqli_fetch_array($result);
 		return $row[$goodfield];
 	}
 	
@@ -374,16 +359,15 @@ class propertyClass{
 				AND IMP_DET.imprv_id = '$this->mPrimeImpId'";
 
         error_log("getLASizeAdj[".$this->mPropID."]: query=".$query);
-		sqldbconnect();
-		$result=mysql_query($query);
-		$num=mysql_numrows($result);
+		$result=doSqlQuery($query);
+		$num=mysqli_num_rows($result);
 			
 		if(!$result)
 		return "No Value Found!";
 	
 		$value=0;
 	
-		while($row = mysql_fetch_array($result))
+		while($row = mysqli_fetch_array($result))
 		{
 			$value += $row["det_area"];
 		}
@@ -446,21 +430,19 @@ class propertyClass{
 				$query .=" AND IMP_DET.imprv_id = '$this->mPrimeImpId'";
 			}
 			error_log("getMktLevelerDetailAdj[".$this->mPropID."]: query=".$query);
-			sqldbconnect();
-			$result=mysql_query($query);
-			mysql_close();
+			$result=doSqlQuery($query);
 		
 			if(!$result){
 				return "No Value Found!";
 			}
-			$num=mysql_numrows($result);
+			$num=mysqli_num_rows($result);
 		
 			if($num == 0 ){
 				return "No Value Found!";
 			}
 			$value=0;
 		
-			while($row = mysql_fetch_array($result))
+			while($row = mysqli_fetch_array($result))
 			{
                 if($row[$target] == 0)
                     $value += $row[$target2];
@@ -553,15 +535,13 @@ class propertyClass{
 		$query .= " AND IMP_DET.imprv_id = '$data'";
 		//echo "$query";
 
-		sqldbconnect();
-		$result=mysql_query($query);
-		mysql_close();
+		$result=doSqlQuery($query);
 
 		if(!$result)
 			return "No Value Found!";
 
 		$value=0;
-		while($row = mysql_fetch_array($result))
+		while($row = mysqli_fetch_array($result))
 		{
 			$value += $row['det_calc_val'];
 		}
@@ -577,15 +557,14 @@ class propertyClass{
 			return $this->mImprovCount;
 
 		$query="SELECT DISTINCT imprv_id FROM " . $TABLE_IMP_DET . " WHERE prop_id='$this->mPropID';";
-		sqldbconnect();
-		$result=mysql_query($query);
-		mysql_close();
+		
+		$result=doSqlQuery($query);
 
 		if(!$result)
 			return "No Value Found!";
 
-		$num=mysql_numrows($result);
-		$row = mysql_fetch_array($result);
+		$num=mysqli_num_rows($result);
+		$row = mysqli_fetch_array($result);
 		$this->mImprovCount = $num;
 		$this->mPrimeImpId = $row['imprv_id'];
 		return $num;
@@ -604,17 +583,15 @@ class propertyClass{
 		
 		$query="SELECT DISTINCT imprv_id,imprv_val FROM " . $TABLE_SPEC_IMP ." as specimp WHERE prop_id='$this->mPropID';";
 
-		sqldbconnect();
-		$result=mysql_query($query);
-		mysql_close();
+		$result=doSqlQuery($query);
 
 		if(!$result)
 			return "No Value Found!";
 
-		$num=mysql_numrows($result);
+		$num=mysqli_num_rows($result);
 		$value = 0;
 
-		while($row = mysql_fetch_array($result))
+		while($row = mysqli_fetch_array($result))
 		{
 			if($this->mPrimeImpId != $row['imprv_id'])
 			{

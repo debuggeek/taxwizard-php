@@ -16,13 +16,11 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
 
-SET @currDATEString ="07182014";
-SET @DBString = "cykoduck_TCAD" + @currDATEString;
 --
 -- Database: `cykoduck_TCAD07182014`
 --
-CREATE DATABASE IF NOT EXISTS @DBString DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
-USE DBString;
+CREATE DATABASE IF NOT EXISTS cykoduck_TCAD DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+USE cykoduck_TCAD;
 
 -- --------------------------------------------------------
 

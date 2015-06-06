@@ -1,16 +1,8 @@
 <?php
 $production=false;
-$username="user";
-$password="password";
-#$username="cykoduck_tcadusr";
-#$password="}-TcWT-+~9h&";
-//$database="cykoduck_TCAD";
-//$database="cykoduck_TCAD062811";
-//$database="TCAD060910";
-//$database="cykoduck_TCAD04182012";
-//$database="cykoduck_TCAD04232013";
-//$database="cykoduck_TCAD08092012";
-//$database="TCAD_06142012";
-#$database="cykoduck_TCAD07192013";
-$database="cykoduck_TCAD04262014";
+$servername = getenv('IP');
+$username = getenv('C9_USER');
+$password = "";
+$database="cykoduck_TCAD";
+$dbport = 3306;
 ?>

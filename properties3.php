@@ -27,14 +27,27 @@ $compInfo = array();
 
 //Parse Inputs
 $subjPropId = trim($_GET['s']);
-if($_GET['Submit'] == 'Build Sales Table'){
-    $isEquityComp = false;
+if(isset($_GET['Submit'])){
+    if($_GET['Submit'] == 'Build Sales Table'){
+        $isEquityComp = false;
+    }
 }
 
 $compInt = 1;
 while(true){
     if(isset($_GET['c'.$compInt])){
-        $compInfo[] = array("id"=>trim($_GET['c'.$compInt]),"salePrice"=>trim($_GET['c'.$compInt.'sp']),"saleDate"=>trim($_GET['c'.$compInt.'sd']));
+        $id = trim($_GET['c'.$compInt]);
+        if(isset($_GET['c'.$compInt.'sp'])){
+            $saleprice = trim($_GET['c'.$compInt.'sp']);
+        } else {
+            $saleprice = null;
+        }
+        if(isset($_GET['c'.$compInt.'sd'])){
+            $saledate = trim($_GET['c'.$compInt.'sd']);
+        } else {
+            $saledate = null;
+        }
+        $compInfo[] = array("id"=>$id,"salePrice"=>$saleprice,"saleDate"=>$saledate);
         $compInt++;
     } else {
         break;
