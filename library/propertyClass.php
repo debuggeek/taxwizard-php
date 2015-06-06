@@ -206,8 +206,6 @@ class propertyClass{
 
 		$result=doSqlQuery($query);
 
-		mysql_close();
-
 		if(!$result)
 			return "No Value Found!";
 
