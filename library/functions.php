@@ -122,7 +122,7 @@ function sqldbconnect()
         die("Connection failed: " . $db->connect_error);
     } 
     
-//	@mysql_select_db($database) or die( "Unable to select database");
+//	@mysqli_select_db($database) or die( "Unable to select database");
 	return $db;
 }
 
@@ -176,17 +176,15 @@ function getSaleDate($propid)
 	$year = date("Y");
 	$lastyear = $year -1;
 	
-	sqldbconnect();
 	$query="SELECT $SALEDATE[2] FROM ". $TABLE_SALES_MERGED  . " WHERE prop_id=$propid AND (sale_date LIKE '%$year%' OR sale_date LIKE '%$lastyear%')";
 
-	$result=mysql_query($query);
-	$num=mysql_numrows($result);
-	mysql_close();
+	$result=doSqlQuery($query);
+	$num=mysqli_num_rows($result);
 
 	if($num==0)
 	return "No Record Found";
 
-	$row = mysql_fetch_array($result);
+	$row = mysqli_fetch_array($result);
 	return $row[$SALEDATE[2]];
 }
 
@@ -203,13 +201,11 @@ function getSalePrice($propid)
 	$year = date("Y");
 	$lastyear = $year -1;
 
-	sqldbconnect();
 	$query="SELECT $SALEPRICE[2] FROM ". $TABLE_SALES_MERGED . " WHERE prop_id=$propid AND (sale_date LIKE '%$year%' OR sale_date LIKE '%$lastyear%')";
 
 	//echo $query;
-	$result=mysql_query($query);
-	$num=mysql_numrows($result);
-	mysql_close();
+	$result=doSqlQuery($query);
+	$num=mysqli_num_rows($result);
 
 	if($num==0)
 	{
@@ -219,7 +215,7 @@ function getSalePrice($propid)
 		return "No Record Found";
 	}
 
-	$row = mysql_fetch_array($result);
+	$row = mysqli_fetch_array($result);
 	return $row[$SALEPRICE[2]];
 }
 
@@ -232,7 +228,6 @@ function setSaleInfo(propertyClass $compid,$prevyear,$instance=0,$compTable = nu
 	if($compTable == null)
 		$compTable = $TABLE_SALES_MERGED;
 	
-	sqldbconnect();
     $years = "sale_date LIKE '%".$year."%'";
     for($i=1; $i <= $prevyear; $i++){
         $yearsBack = $year - $i ;
@@ -243,12 +238,11 @@ function setSaleInfo(propertyClass $compid,$prevyear,$instance=0,$compTable = nu
 
 	error_log("setSaleInfo:: query=".$query);
 		
-	$result=mysql_query($query);
+	$result=doSqlQuery($query);
 	if($result === false)
 		return $compid;
 		
-	$num=mysql_numrows($result);
-	mysql_close();
+	$num=mysqli_num_rows($result);
 
 	if($num==0)
 		return "No Record Found";
@@ -260,7 +254,7 @@ function setSaleInfo(propertyClass $compid,$prevyear,$instance=0,$compTable = nu
 	$tmpsalePrice = null;
 	$tmpsaleDate = null;
     $rowNum = 0;
-	while($row = mysql_fetch_array($result)){
+	while($row = mysqli_fetch_array($result)){
         if($rowNum == $instance){
             if($tmpsalePrice == null){
                 $tmpsalePrice = $row[$SALEPRICE[2]];
@@ -297,17 +291,15 @@ function getNMIA($data)
 	$hoodval = $data[$NEIGHB[0]];
 	$prop_id = $data[$PROPID[0]];
 
-	sqldbconnect();
 	$query="SELECT * FROM ". $NEIGHBMIA["TABLE"] . " WHERE prop_id=$prop_id";
 
-	$result=mysql_query($query);
-	$num=mysql_numrows($result);
-	mysql_close();
+	$result=doSqlQuery($query);
+	$num=mysqli_num_rows($result);
 
 	if($num==0)
 	return "No Value Found!";
 
-	$row = mysql_fetch_array($result);
+	$row = mysqli_fetch_array($result);
 	$adjarray = explode(";",$row[$NEIGHBMIA["FIELD"]],100);
 	if(count($adjarray) ==0)
 	return "No Value Found!";
@@ -330,22 +322,20 @@ function getLivingArea($propid)
 {
 	global $LIVINGAREA;
 
-	sqldbconnect();
 	$query="SELECT * FROM ". $LIVINGAREA["TABLE"] . " WHERE prop_id='$propid'";
 
 	//	echo $query;
     error_log("getLivingArea: query=".$query);
 
-	$result=mysql_query($query);
-	$num=mysql_numrows($result);
-	mysql_close();
+	$result=doSqlQuery($query);
+	$num=mysqli_num_rows($result);
 
 	if(!$result)
 	return "No Value Found!";
 	elseif($num > 1)
 	return "UNEXPECTED ERROR:More then 1 result found";
 
-	$row = mysql_fetch_array($result);
+	$row = mysqli_fetch_array($result);
 	return $row[$LIVINGAREA[2]];
 
 }
@@ -382,16 +372,14 @@ function getHVImpMARCNwImp($propid,$primeImpId)
 	}
 
 	//echo "$query";
-	sqldbconnect();
-	$result=mysql_query($query);
-	mysql_close();
+	$result=doSqlQuery($query);
 
 	if(!$result)
 	return "No Value Found!";
 
 	$value=0;
 
-	while($row = mysql_fetch_array($result))
+	while($row = mysqli_fetch_array($result))
 	{
 		$value += $row[$HIGHVALIMPMARCN[2]];
 	}
@@ -411,18 +399,15 @@ function getClassAdj($data)
 			AND SPECIAL_IMP.det_use_unit_price LIKE 'T'";
 
 	echo $query . "<BR/>";
-	sqldbconnect();
-	$result=mysql_query($query);
-	$num=mysql_numrows($result);
-
-	mysql_close();
+	$result=doSqlQuery($query);
+	$num=mysqli_num_rows($result);
 
 	if(!$result)
 	return "No Value Found!";
 	//elseif($num > 1)
 	//return "UNEXPECTED ERROR:More then 1 result found";
 
-	$resultarray = mysql_fetch_array($result);
+	$resultarray = mysqli_fetch_array($result);
 
 	return $resultarray[0].$resultarray[1];
 }*/
@@ -465,14 +450,12 @@ function getGoodAdj($data)
 		AND ( " . $subquery . ")";
 
 	//echo "$query";
-	sqldbconnect();
-	$result=mysql_query($query);
-	mysql_close();
+	$result=doSqlQuery($query);
 
 	if(!$result)
 		return "No Value Found!";
 
-	$row = mysql_fetch_array($result);
+	$row = mysqli_fetch_array($result);
 	return $row[$goodfield];
 }
 
@@ -518,21 +501,19 @@ function getMktLevelerDetailAdj($propid)
 		AND ( " . $subquery . ")" //AND IMP_DET.imprv_id = '$'";
 
 	//echo "$query" . "<br>";
-	sqldbconnect();
-	$result=mysql_query($query);
-	mysql_close();
+	$result=doSqlQuery($query);
 
 	if(!$result)
 	return "No Value Found!";
 	
-	$num=mysql_numrows($result);
+	$num=mysqli_num_rows($result);
 	
 	if($num == 0 )
 		return "No Value Found!";
 
 	$value=0;
 
-	while($row = mysql_fetch_array($result))
+	while($row = mysqli_fetch_array($result))
 	{
 		$value += $row[$MKTLEVELERDETAILADJ[2]];
 	}
@@ -569,16 +550,15 @@ function getLASizeAdj($data)
 			AND imprv_det_id = det_id
 			AND IMP_DET.prop_id = SPECIAL_IMP.prop_id";
 
-	sqldbconnect();
-	$result=mysql_query($query);
-	$num=mysql_numrows($result);
+	$result=doSqlQuery($query);
+	$num=mysqli_num_rows($result);
 		
 	if(!$result)
 	return "No Value Found!";
 
 	$value=0;
 
-	while($row = mysql_fetch_array($result))
+	while($row = mysqli_fetch_array($result))
 	{
 		$value += $row["det_area"];
 	}
@@ -593,22 +573,21 @@ function getYearBuilt($propid)
 	$mafield = "Imprv_det_type_cd";
 	$mafieldval = "1ST";
 
-	sqldbconnect();
 	$query="SELECT * FROM ". $ACTUALYEARBUILT["TABLE"]." WHERE prop_id='$propid' AND ".$mafield."='".$mafieldval."'";
 
-		$result=mysql_query($query);
+	$result=doSqlQuery($query);
 
 	if(!$result)
 		return "No Value Found!";
 		
-	$num=mysql_numrows($result);
+	$num=mysqli_num_rows($result);
 	
 	//if($num > 1)
 	//	return "UNEXPECTED ERROR:More then 1 result found";
 
 	$value=0;
 
-	$row = mysql_fetch_array($result);
+	$row = mysqli_fetch_array($result);
 	return $row[$ACTUALYEARBUILT[2]];
 }
 
@@ -696,10 +675,8 @@ function lookupProperty($propid)
 	$query="SELECT * FROM ". $prop_table . " WHERE prop_id='$propid'";
 	if ($debug) echo $query;
 
-	sqldbconnect();
-	$result=mysql_query($query);
-	$num=mysql_numrows($result);
-	mysql_close();
+	$result=doSqlQuery($query);
+	$num=mysqli_num_rows($result);
 	
 	if($result){
 		//$num_rows= $num; //$Attributes
@@ -710,7 +687,7 @@ function lookupProperty($propid)
 		$postcalcfields = array();
 		
 		$currprop = null;
-		while($row = mysql_fetch_array($result))
+		while($row = mysqli_fetch_array($result))
 		{
 			if($row['prop_id'] == $_SESSION['subjsess']->mPropID)
 			{
@@ -957,20 +934,17 @@ function lookupPropID($id,$fieldsofinterest){
 	$table="PROP";
 	$currprop = $_SESSION['target'];
 
-
-	sqldbconnect();
 	$query="SELECT * FROM ". $table . " WHERE prop_id='$id'";
 
 	if ($debug) echo $query;
 
-	$result=mysql_query($query);
-	$num=mysql_numrows($result);
-	mysql_close();
+	$result=doSqlQuery($query);
+	$num=mysqli_num_rows($result);
 
 
 	if($result){
 		$num_rows= $num; //$Attributes
-		while($row = mysql_fetch_array($result))
+		while($row = mysqli_fetch_array($result))
 		{
 			foreach($fieldsofinterest as $field)
 			{
@@ -1063,11 +1037,9 @@ function getHoodListQuery($query,$isEquity){
 	
 	if ($debug) echo $query;
 
-	sqldbconnect();
-	$result=mysql_query($query);
-	mysql_close();
+	$result=doSqlQuery($query);
 	
-	$num=mysql_numrows($result);
+	$num=mysqli_num_rows($result);
 	
 	//if($num > $breakcount)
 	//	echo "<BR>".$num." Exceeds ".$breakcount." truncating results<BR>".PHP_EOL;
@@ -1075,7 +1047,7 @@ function getHoodListQuery($query,$isEquity){
 	if($result){
 		$num_rows= $num; //$Attributes
 		$i = 0;
-		while($row = mysql_fetch_array($result)){
+		while($row = mysqli_fetch_array($result)){
 			$currprop = new propertyClass;
 			foreach($fieldsofinterest as $field)
 			{
@@ -1277,14 +1249,12 @@ function putPropHistory($propid,$mean_val,$indicated_val,$comps_csv){
  * @return resource|boolean 
  */
 function executeQuery($query){
-	$link = sqldbconnect();
-	$result=mysql_query($query) or die(error_log("Unable to update : " . mysql_error()));
-	if (mysql_errno()) {
-		$error = "MySQL error ".mysql_errno().": ".mysql_error()."  When executing:$query\n";
+	$result=doSqlQuery($query);
+	if (mysqli_errno()) {
+		$error = "MySQL error ".mysqli_errno().": ".mysqli_error()."  When executing:$query\n";
 		error_log($error,"mySQL");
 	}
-	error_log(mysql_info($link));
-	mysql_close();
+	error_log(mysqli_info($link));
 	return $result;
 }
 
