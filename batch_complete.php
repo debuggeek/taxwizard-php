@@ -18,25 +18,25 @@
 <?php
 include_once("library/functions.php");
 $queryAll="SELECT * FROM BATCH_PROP";
-$resultAll=executeQuery($queryAll);
-$numAll=mysql_numrows($resultAll);
-mysql_free_result($resultAll);
+$resultAll=doSqlQuery($queryAll);
+$numAll=mysqli_num_rows($resultAll);
+mysqli_free_result($resultAll);
 
 $query="SELECT * FROM BATCH_PROP WHERE completed='true'";
-$result=executeQuery($query);
-$num=mysql_numrows($result);
-mysql_free_result($result);
+$result=doSqlQuery($query);
+$num=mysqli_num_rows($result);
+mysqli_free_result($result);
 
 $queueQuery = "SELECT * FROM BATCH_PROP_SETTINGS WHERE id=(SELECT max(id) FROM BATCH_PROP_SETTINGS)";
-$resultSettings = executeQuery($queueQuery);
-$row = mysql_fetch_array($resultSettings);
+$resultSettings = doSqlQuery($queueQuery);
+$row = mysqli_fetch_array($resultSettings);
 $TRIMINDICATED=$row['TrimIndicated'];
 $MULTIHOOD=$row['MultiHood'];
 $INCLUDEVU=$row['IncludeVU'];
 $PREVYEAR=$row['NumPrevYears'];
 $INCLUDEMLS=$row['IncludeMLS'];
 $SQFTPCT=$row['SqftRange'];
-mysql_free_result($resultSettings);
+mysqli_free_result($resultSettings);
 
 ?>
 <br>
@@ -56,8 +56,8 @@ Choose a file to upload: <input name="file" type="file" /><br />
     Include related neighborhoods<br>
     <input type="checkbox" name="includevu" id="includevu" value="yes" <?php echo ($INCLUDEVU=='TRUE' ? 'checked' : '');?>>
     Include forclosures (VU)<br>
-    Years back to include:<input type="text" name="multiyear" value=<?php echo $PREVYEAR;?> size="1"><br>
-    Percent of square footage to consider (.01-1.00):<input type="text" name="sqftPct" value=<?php echo $SQFTPCT;?> size="3"/><br>
+    Years back to include:<input type="text" name="multiyear" size="1" value=<?php echo $PREVYEAR;?>><br>
+    Percent of square footage to consider (.01-1.00):<input type="text" name="sqftPct" size="3" value=<?php echo $SQFTPCT;?>><br>
     <br/>
     <input type="submit" value="Update Bulk Settings"/>
 </form>
@@ -77,8 +77,8 @@ Choose a file to upload: <input name="file" type="file" /><br />
 <br>
 <?php 
 $sql = "SELECT COUNT(prop) FROM BATCH_PROP WHERE completed='true'"; 
-$rs_result = executeQuery($sql); 
-$row = mysql_fetch_row($rs_result); 
+$rs_result = doSqlQuery($sql); 
+$row = mysqli_fetch_row($rs_result); 
 $total_records = $row[0]; 
 $total_pages = ceil($total_records / 20); 
 
@@ -91,7 +91,7 @@ for ($i=1; $i<=$total_pages; $i++) {
 if (isset($_GET["page"])) { $page  = $_GET["page"]; } else { $page=1; }; 
 $start_from = ($page-1) * 20; 
 $sql = "SELECT * FROM BATCH_PROP WHERE completed='true' ORDER BY prop ASC LIMIT $start_from, 20"; 
-$rs_result = executeQuery($sql);
+$rs_result = doSqlQuery($sql);
 ?> 
 <table>
 <tr><td>PropID (click for pdf)</td>
@@ -103,7 +103,7 @@ $rs_result = executeQuery($sql);
 <td><form action="reset.php" method="get"><button type="submit" name="subj" value="ALL">Reset All</button></form></td>
 </tr>
 <?php 
-while ($row = mysql_fetch_assoc($rs_result)) { 
+while ($row = mysqli_fetch_assoc($rs_result)) { 
 ?> 
             <tr>
             <td><? echo "<a href='download_pdf.php?subj=".$row["prop"]."'>".$row["prop"]."</a>"; ?></td>
