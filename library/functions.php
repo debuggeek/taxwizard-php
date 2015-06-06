@@ -1236,7 +1236,7 @@ function putPropHistory($propid,$mean_val,$indicated_val,$comps_csv){
 					WHERE prop_id=".$propid;
 	
 	if($debug) print("putPropHistory>> query:" . $query);
-	$sqlResult = executeQuery($query);
+	$sqlResult = doSqlQuery($query);
 		
 	if(!$sqlResult){
 		error_log("putPropHistory>> query failed:" . $query);

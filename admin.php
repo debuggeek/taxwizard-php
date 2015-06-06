@@ -38,7 +38,7 @@ Database:<?php echo $database ?>
 include_once("library/functions.php");
 
 $query="SELECT COUNT(prop_id) FROM PROSPECT_LIST";
-$result=executeQuery($query);
+$result=doSqlQuery($query);
 $resultCount=mysql_result($result,0,"COUNT(prop_id)");
 echo $resultCount." Prospects Found"
 ?>
