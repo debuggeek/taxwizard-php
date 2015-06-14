@@ -131,7 +131,10 @@ function sqldbconnect()
  */
 
 function doSqlQuery($query){
+	global $debugquery;
+	
 	$link = sqldbconnect();
+	if($debugquery) echo("query:".$query);
 	$result=mysqli_query($link,$query);
 	mysqli_close($link);
 	return $result;
