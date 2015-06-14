@@ -3,11 +3,13 @@
 <head>
 <link rel="stylesheet" type="text/css" href="index.css">
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
-<title>Tax Tiger TCAD Tools</title>
+<title>Five Stone Property Tax TCAD Tools</title>
  <?php include_once("library/accountinfo.php");?>
 </head>
 <body id="page4">
-<img src="fivestonetax-logo.png" width="615" height="141" title="" alt="">
+<img src="resources/FS-Logo-PropertyTax-wTagline.png" width="615" height="141" title="" alt="Five Stone Property Tax">
+<br>
+<br>
 <ul id="tabs">
 <li id="tab1"><a href="index.html">Table Lookups</a></li>
 <li id="tab2"><a href="batch_complete.php">Batch Processing</a></li>
