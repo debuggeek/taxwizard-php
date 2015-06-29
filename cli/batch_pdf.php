@@ -18,37 +18,37 @@ $date = new DateTime();
 echo "\n".$date->format('Y-m-d H:i:s') . " >> Starting Batch Processing\n";
 
 $queueQuery = "SELECT * FROM BATCH_PROP_SETTINGS WHERE id=(SELECT max(id) FROM BATCH_PROP_SETTINGS)";
-$result = executeQuery($queueQuery);
+$result = doSqlQuery($queueQuery);
 
-if(mysql_numrows($result) == 0){
+if(mysqli_num_rows($result) == 0){
     echo "\n Found no settings using defaults";
 }
-if(mysql_numrows($result) > 1){
+if(mysqli_num_rows($result) > 1){
     echo "\n Found multiple settings using first";
 }
-if(mysql_numrows($result) > 0){
-    $row = mysql_fetch_array($result);
+if(mysqli_num_rows($result) > 0){
+    $row = mysqli_fetch_array($result);
     $TRIMINDICATED= $row['TrimIndicated'] === "TRUE" ? true : false;
     $MULTIHOOD=$row['MultiHood']=== "TRUE" ? true : false;
     $INCLUDEVU=$row['IncludeVU']=== "TRUE" ? true : false;
     $INCLUDEMLS=$row['IncludeMLS']=== "TRUE" ? true : false;
     $PREVYEAR=$row['NumPrevYears'];
     $SQFTPERCENT=$row['SqftRange'];
-    $output = "Executing with settings: Trim=".strbool($TRIMINDICATED)." Multihoods=".strbool($MULTIHOOD)." VUs=".strbool($INCLUDEVU)." mls=".strbool($INCLUDEMLS)." years=".$PREVYEAR. " sqftRange=".$SQFTPCT;
+    $output = "Executing with settings: Trim=".strbool($TRIMINDICATED)." Multihoods=".strbool($MULTIHOOD)." VUs=".strbool($INCLUDEVU)." mls=".strbool($INCLUDEMLS)." years=".strval($PREVYEAR). " sqftRange=".strval($SQFTPERCENT);
     error_log("batch_pdf: ". $output);
     echo "\n".$output ."\n";
 }
-mysql_free_result($result);
+mysqli_free_result($result);
 
 //Query to check if any work to do
 $queueQuery = "SELECT prop FROM BATCH_PROP WHERE completed='false'";
-$result = executeQuery($queueQuery);
+$result = doSqlQuery($queueQuery);
 
 $completed = 0;
 $uncompleted = 0;
 
-if(mysql_numrows($result) > 0){
-	while($row = mysql_fetch_array($result)){
+if(mysqli_num_rows($result) > 0){
+	while($row = mysqli_fetch_array($result)){
 		$propid = $row['prop'];
 		$date = new DateTime();
 		echo $date->format('Y-m-d H:i:s') . " >> BatchPDF: Updating ".$propid;
@@ -64,28 +64,29 @@ if(mysql_numrows($result) > 0){
 																	Median_Sale10='".$retArray["medSale10"]."', 
 																	Median_Sale15='".$retArray["medSale15"]."',
 																	Median_Eq11='".$retArray["medEq11"]."' 
-																	WHERE prop='".$propid."'";
-			//error_log($updateQuery);
-			$link = sqldbconnect();
-			$result2=mysql_query($updateQuery) or die(error_log("Unable to update : " . mysql_error()));		
-			if(mysql_affected_rows($link)==1){
-				error_log("BatchPDF: Updated ".$propid."\n");
+																	WHERE prop='".$propid."';";
+			error_log($updateQuery);
+            $mysqli = sqldbconnect();
+            if ($mysqli->query($updateQuery)){
+				error_log("batch_pdf: Updated ".$propid."\n");
 				$completed++;
                                 echo "...Complete\n";
 			}else{
-				error_log("BatchPDF: Unable to update"."\n");
+				error_log("batch_pdf: Unable to update ".$propid."\n");
 				$uncompleted++;
-				echo "...ERROR\n";
+				echo "...ERROR: ".$mysqli->sqlstate." ".$mysqli->error."\n";
 			}	
 			$content = null;
-			mysql_close($link);
+            $mysqli->close();
 		}
-		if($debug==true)
-			break;
+		if($debug==true) {
+            error_log("batch_pdf: breaking while due to debug enabled");
+            break;
+        }
 	}
 	
 }
-mysql_free_result($result);
+mysqli_free_result($result);
 
 $date = new DateTime();
 echo $date->format('Y-m-d H:i:s') . " >> Completed Batch Processing.  Completed: ". $completed." Uncompleted: " . $uncompleted . "\n";

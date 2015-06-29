@@ -118,6 +118,9 @@ function generateArray($property,$eqComp,$numComps=10){
         //error_log("Size after=".str(count($compsarray)));
     }
 
+    //re-sort to reset their index of any removed
+    usort($compsarray,"cmpProp");
+
 	$comp_min = MIN($COMPSTODISPLAY,count($compsarray));
 	$subjcomparray = array();
 	$subjcomparray[0] = $property;

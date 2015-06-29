@@ -16,15 +16,15 @@ $finalpdf = null;
 
 if($propid == "ALL"){
 	$query="SELECT * FROM BATCH_PROP WHERE completed='true'";
-	$result=executeQuery($query);
-	$num=mysql_numrows($result);
+	$result=doSqlQuery($query);
+	$num=mysqli_num_rows($result);
 	error_log("download_pdf>>Found ".$num." property ids.");
 	
 	$file = tempnam("tmp", "zip");
 	$zip = new ZipArchive();
 	$res = $zip->open($file, ZipArchive::OVERWRITE);
 	if ($res === TRUE) {
-		while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+		while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
 			$zip->addFromString($row['prop'].'.pdf', base64_decode($row['pdfs']));		
 		}
 		$zip->close();
@@ -41,17 +41,17 @@ if($propid == "ALL"){
 else{
 	//
 	$query="SELECT * FROM BATCH_PROP WHERE prop='".$propid."'";
-	$result=executeQuery($query);
+	$result=doSqlQuery($query);
 	
 	if (!$result) die('Couldn\'t find '.$propid);
 	
-	$num_fields = mysql_num_fields($result);
-	$num=mysql_numrows($result);
+	$num_fields = mysqli_num_fields($result);
+	$num=mysqli_num_rows($result);
 	
 	if($num != 1)
 		die("Too many results");
 	
-	if($row = mysql_fetch_array($result)){
+	if($row = mysqli_fetch_array($result)){
 		$pdfs = $row['pdfs'];
 		$finalpdf = base64_decode($pdfs);
 	}

@@ -43,11 +43,13 @@ else{
 	      				$query = $query . "('" . $data[$c] . "','false'),";
 	      			}
 	      		}
+                error_log("debug: upload_file: ".$total_num." properties found : ");
 	      		echo "<p> $total_num properties found <br /></p>\n";
 	      		$query = trim($query,",");
 	      		//echo $query . "<br />";
+                error_log("debug: upload_file: query : ". $query);
 	      		fclose($handle);
-	      		if(executeQuery($query))
+	      		if(doSqlQuery($query))
 	      			echo "Successfully inserted into table<br />";
 	      		else
 	      			echo "Insertion error<br />";
