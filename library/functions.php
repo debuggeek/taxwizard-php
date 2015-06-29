@@ -107,23 +107,23 @@ function getMedianValSqft($subjcomp)
 }
 
 /**
- * @return link_identifier
+ * @return mysqli
  */
 function sqldbconnect()
 {
 	global $servername,$username,$password,$database,$dbport;
 
 	// Create connection
-    $db = new mysqli($servername, $username, $password, $database, $dbport);
+    $mysqli = new mysqli($servername, $username, $password, $database, $dbport);
 
 	
 	// Check connection
-    if ($db->connect_error) {
-        die("Connection failed: " . $db->connect_error);
+    if (mysqli_connect_errno()) {
+        die("Connection failed: " . mysqli_connect_error());
     } 
     
 //	@mysqli_select_db($database) or die( "Unable to select database");
-	return $db;
+	return $mysqli;
 }
 
 /**
@@ -132,11 +132,11 @@ function sqldbconnect()
 
 function doSqlQuery($query){
 	global $debugquery;
-	
-	$link = sqldbconnect();
+
+    $mysqli = sqldbconnect();
 	if($debugquery) echo("query:".$query);
-	$result=mysqli_query($link,$query);
-	mysqli_close($link);
+	$result=$mysqli->query($query);
+    $mysqli->close();
 	return $result;
 }
 

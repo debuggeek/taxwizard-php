@@ -124,7 +124,7 @@ if(sizeof($compsarray) == 0){
 }
 
 error_log("massreport: found ".sizeof($compsarray)." comp(s) for ".$propid);
-
+//resort to reset their index of any removed
 usort($compsarray,"cmpProp");
 
 $comp_min = MIN($COMPSTODISPLAY,count($compsarray));

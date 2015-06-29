@@ -1,2 +1,4 @@
 library/accountinfo.php
-.idea/workspace.xml
+.idea/
+*error_log
+upload/
