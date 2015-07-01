@@ -26,7 +26,7 @@ if($propid == "ALL")
 else
  	$query="UPDATE BATCH_PROP SET completed='false' WHERE prop='".$propid."'";
 
-$result=executeQuery($query);
+$result=doSqlQuery($query);
 if($result == TRUE){
 	//$query="INSERT INTO BATCH_PROP (prop) VALUES ('".$propid."')";
 	//$result=executeQuery($query);

@@ -46,6 +46,7 @@ else{
                 error_log("debug: upload_file: ".$total_num." properties found : ");
 	      		echo "<p> $total_num properties found <br /></p>\n";
 	      		$query = trim($query,",");
+                $query = $query . "on duplicate key UPDATE completed= 'false', pdfs='', prop_mktval='', Median_Sale5='', Median_Sale10='', Median_Sale15='', Median_Eq11='' ";
 	      		//echo $query . "<br />";
                 error_log("debug: upload_file: query : ". $query);
 	      		fclose($handle);

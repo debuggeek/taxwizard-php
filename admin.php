@@ -41,7 +41,7 @@ include_once("library/functions.php");
 
 $query="SELECT COUNT(prop_id) FROM PROSPECT_LIST";
 $result=doSqlQuery($query);
-$resultCount=mysql_result($result,0,"COUNT(prop_id)");
+$resultCount=mysqli_result($result,0,"COUNT(prop_id)");
 echo $resultCount." Prospects Found"
 ?>
 <form name="form" action="prospects.php" method="get" target="_blank">

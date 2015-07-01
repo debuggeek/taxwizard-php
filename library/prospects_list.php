@@ -19,8 +19,8 @@
 include_once("functions.php");
 
 $query="SELECT * FROM PROSPECT_LIST WHERE market_val>0";
-$result=executeQuery($query);
-$num=mysql_numrows($result);
+$result=doSqlQuery($query);
+$num=mysqli_num_rows($result);
 ?>
 <br>
 <h2>Found <?php echo $num?> potential prospects</h2>
@@ -38,14 +38,14 @@ Showing first 100
 <?php
 $i=0;
 while ($i < Min($num,100)) {
-	$f1=mysql_result($result,$i,"prop_id");
-	$f2=mysql_result($result,$i,"prop_owner");
-	$f3=mysql_result($result,$i,"prop_addr");
-	$f4=mysql_result($result,$i,"computed_date");
-	$f5=mysql_result($result,$i,"market_val");
-	$f6=mysql_result($result,$i,"mean_val");
-	$f7=mysql_result($result,$i,"diff");
-	$f8=mysql_result($result,$i,"comps_csv");
+	$f1=mysqli_result($result,$i,"prop_id");
+	$f2=mysqli_result($result,$i,"prop_owner");
+	$f3=mysqli_result($result,$i,"prop_addr");
+	$f4=mysqli_result($result,$i,"computed_date");
+	$f5=mysqli_result($result,$i,"market_val");
+	$f6=mysqli_result($result,$i,"mean_val");
+	$f7=mysqli_result($result,$i,"diff");
+	$f8=mysqli_result($result,$i,"comps_csv");
 ?>
 <tr>
 <td><?php echo "<a href='comps_pdf.php?subj=".$f1."&complist=".$f8."'>PDF</a>"; ?></td>

@@ -8,8 +8,8 @@ $INSERTS=0;
 function getTotalHoodCount(){
 	sqldbconnect();
 	$query = "SELECT DISTINCT hood_cd FROM PROP";
-	$result=mysql_query($query);
-	$num=mysql_numrows($result);
+	$result=mysqli_query($query);
+	$num=mysqli_num_rows($result);
 
 	return $num;
 }
@@ -51,8 +51,8 @@ function setupProspectView(){
 				WHERE sale_price > 0
 				AND (`sale_date` LIKE  '%".$year."%' OR `sale_date` LIKE  '%".$lastyear."%')";
 
-	$result=mysql_query($query);
-	mysql_close();
+	$result=mysqli_query($query);
+	mysqli_close();
 	return $result;
 }
 
@@ -64,8 +64,8 @@ function removeProspectView(){
 	sqldbconnect();
 	$query = "DROP VIEW PROSPECT";
 
-	$result=mysql_query($query);
-	mysql_close();
+	$result=mysqli_query($query);
+	mysqli_close();
 	return $result;
 }
 
@@ -76,8 +76,8 @@ function removeProspectView(){
 function insertProspectTable($prop_id){
 	sqldbconnect();
 	$query = "INSERT INTO PROSPECT_LIST (prop_id) VALUES (". $prop_id.")";
-	$result=mysql_query($query);
-	mysql_close();
+	$result=mysqli_query($query);
+	mysqli_close();
 
 	return $result;
 }
@@ -98,12 +98,12 @@ function getProspectHoods($maxCount,$minCount){
 	
 	if($DEBUG_PROSPECTS) echo("getProspectsFromHoodList>>".$query."<br>");
 
-	$sqlResult=executeQuery($query);
+	$sqlResult=doSqlQuery($query);
 
 	if(!$sqlResult)
 		return null;
 
-	while($row = mysql_fetch_array($sqlResult))
+	while($row = mysqli_fetch_array($sqlResult))
 	{
 		$result[]=$row['hood_cd'];
 	}
@@ -121,12 +121,12 @@ function getProspectsFromHood($hood_in){
 	$query = "SELECT prop_id
 				FROM PROP
 				WHERE hood_cd='".$hood_in."'";
-	$sqlResult=executeQuery($query);
+	$sqlResult=doSqlQuery($query);
 
 	if(!$sqlResult)
 		return null;
 
-	while($row = mysql_fetch_array($sqlResult))
+	while($row = mysqli_fetch_array($sqlResult))
 	{
 		$result[]=$row['prop_id'];
 	}
@@ -152,11 +152,11 @@ function getProspectsFromHoodList($hoodList_in){
 
 	if($DEBUG_PROSPECTS) echo("getProspectsFromHoodList>>".$query."<br>");
 
-	$sqlResult=executeQuery($query);
+	$sqlResult=doSqlQuery($query);
 	if(!$sqlResult)
 		return "No Value Found!";
 
-	while($row = mysql_fetch_array($sqlResult))
+	while($row = mysqli_fetch_array($sqlResult))
 	{
 		$result[] = $row['prop_id'];
 		if(insertProspectTable($row['prop_id']))
@@ -174,15 +174,15 @@ function getLookupStats(){
 	$query = "SELECT COUNT(prop_id)
 				FROM PROSPECT_LIST
 				WHERE market_val=0";
-	$sqlResult = executeQuery($query);
-	$row = mysql_fetch_array($sqlResult);
+	$sqlResult = doSqlQuery($query);
+	$row = mysqli_fetch_array($sqlResult);
 
 	$result['remaining'] = $row['COUNT(prop_id)'];
 
 	$query2 = "SELECT COUNT(prop_id)
 				FROM PROSPECT_LIST";
-	$sqlResult = executeQuery($query2);
-	$row = mysql_fetch_array($sqlResult);
+	$sqlResult = doSqlQuery($query2);
+	$row = mysqli_fetch_array($sqlResult);
 	$result['total'] = $row['COUNT(prop_id)'];
 
 	return $result;
@@ -202,8 +202,8 @@ function processLookups($numToProcess=null,$start=0){
 	if ($numToProcess != null)
 		$query = $query. " LIMIT ". $start .",".$numToProcess;
 	
-	$sqlResult = executeQuery($query);
-	while($row = mysql_fetch_array($sqlResult)){
+	$sqlResult = doSqlQuery($query);
+	while($row = mysqli_fetch_array($sqlResult)){
 			$singResult = processSingleton($row['prop_id'],false,4,true);
 			if($DEBUG_PROSPECTS) {
 				if($singResult['comps'] == "")
@@ -231,16 +231,16 @@ function moveToNone($propID){
 	global $DEBUG_PROSPECTS;
 	
 	$query = "INSERT PROSPECT_LIST_NONE (prop_id) VALUES (".$propID.");";
-	if(executeQuery($query)){
+	if(doSqlQuery($query)){
 			$query2 = "DELETE FROM PROSPECT_LIST WHERE prop_id=".$propID;
-			if(!executeQuery($query2)){
-				$msg = "Unable to remove ".$propID." from table PROSPECT_LIST:".mysql_error();
+			if(!doSqlQuery($query2)){
+				$msg = "Unable to remove ".$propID." from table PROSPECT_LIST:".mysqli_error();
 				error_log($msg);
 				if($DEBUG_PROSPECTS) echo $msg . "<br>";
 				return false;
 			}
 	}else{
-		$msg = "Unable to insert ".$propID." into table PROSPECT_LIST_NONE:".mysql_error();
+		$msg = "Unable to insert ".$propID." into table PROSPECT_LIST_NONE:".mysqli_error();
 		error_log($msg);
 		if($DEBUG_PROSPECTS) echo $msg . "<br>";
 		return false;
@@ -267,8 +267,8 @@ function updateProspect($prop_id,$singletonResult){
 	
 	echo $query;
 	
-	if(!executeQuery($query)){
-		$msg = "Unable to update ".$prop_id." in table PROSPECT_LIST:".mysql_error();
+	if(!doSqlQuery($query)){
+		$msg = "Unable to update ".$prop_id." in table PROSPECT_LIST:".mysqli_error();
 		error_log($msg);
 		if($DEBUG_PROSPECTS) echo $msg . "<br>";
 		return false;

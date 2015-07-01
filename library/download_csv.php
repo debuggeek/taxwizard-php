@@ -9,9 +9,9 @@ header("Content-Disposition: attachment; filename=download.csv");
 header("Pragma: no-cache");
 header("Expires: 0");
 
-$export = executeQuery ($query );
-$fields = mysql_num_fields ( $export );
-while( $row = mysql_fetch_row( $export ) ){
+$export = doSqlQuery($query );
+$fields = mysqli_num_fields( $export );
+while( $row = mysqli_fetch_row( $export ) ){
     $line = '';
     foreach( $row as $value ){
         if ( ( !isset( $value ) ) || ( $value == "" ) ){
