@@ -1,5 +1,5 @@
 <?php
-$debug = false;
+$debug = true;
 $debugquery = false;
 include_once 'defines.php';
 include_once 'propertyClass.php';
@@ -134,9 +134,16 @@ function doSqlQuery($query){
 	global $debugquery;
 
     $mysqli = sqldbconnect();
-	if($debugquery) echo("query:".$query);
+	if($debugquery) error_log("query:".$query);
 	$result=$mysqli->query($query);
     $mysqli->close();
+    if($debugquery){
+        if (!$result){
+            error_log("false query came back:".$result);
+        } else {
+            error_log("query came back:".var_dump($result));
+        }
+    }
 	return $result;
 }
 
@@ -389,47 +396,7 @@ function getHVImpMARCNwImp($propid,$primeImpId)
 	return $value;
 
 }
-/*MOVED TO CLASS
-function getClassAdj($data)
-{
-	global $CLASSADJ,$HIGHVALIMPMARCN,$PROPID,$allowablema;
-	$impids = array();
-	$propid = $data[$PROPID[0]];
 
-	$query = "SELECT det_class_code,det_subclass FROM IMP_DET, SPECIAL_IMP
-			WHERE IMP_DET.prop_id='$propid'
-			AND imprv_det_type_cd = '1ST' AND imprv_det_id = det_id AND IMP_DET.prop_id=SPECIAL_IMP.prop_id
-			AND SPECIAL_IMP.det_use_unit_price LIKE 'T'";
-
-	echo $query . "<BR/>";
-	$result=doSqlQuery($query);
-	$num=mysqli_num_rows($result);
-
-	if(!$result)
-	return "No Value Found!";
-	//elseif($num > 1)
-	//return "UNEXPECTED ERROR:More then 1 result found";
-
-	$resultarray = mysqli_fetch_array($result);
-
-	return $resultarray[0].$resultarray[1];
-}*/
-/*
-function getClassAdjDelta($subj,$comp)
-{
-	global $CLASSADJ,$HIGHVALIMPMARCN,$HIGHVALIMPMARCNSQFT,$PROPID;
-
-	$RCNfunc = $HIGHVALIMPMARCNSQFT[2];
-	$prop1=(int)$subj[$PROPID[0]];
-	$prop2=(int)$comp[$PROPID[0]];
-	$var1 = (float)$RCNfunc($subj);
-	$var2 = (float)$RCNfunc($comp);
-	$var3 = $var1/$var2;
-	$var4 = $var3 - 1;
-	$result = $var4 * $comp[$HIGHVALIMPMARCN[0]];
-	return $result;
-}
-*/
 function getGoodAdj($data)
 {
 	global $PROPID,$GOODADJ,$allowablema,$mafield;
@@ -480,50 +447,6 @@ function getGoodAdjDelta($subj,$comp)
 
 	return ($var1 - $var2)/100 * ($var3-$var4);
 }
-
-/*
-function getMktLevelerDetailAdj($propid)
-{
-	global $MKTLEVELERDETAILADJ,$allowablema,$mafield;
-	$table = $MKTLEVELERDETAILADJ["TABLE"];
-	$imprvidtable = "IMP_DET";
-
-	$subquery = "";
-
-	$i=0;
-	while($i < count($allowablema))
-	{
-		$subquery .= "imprv_det_type_cd != '$allowablema[$i]'";
-		if (++$i < count($allowablema))
-		$subquery .= " AND ";
-	}
-
-	$query = "SELECT $MKTLEVELERDETAILADJ[2] FROM $table,$imprvidtable 
-		WHERE $imprvidtable.prop_id = '$propid' AND $table.prop_id = '$propid'
-		AND $imprvidtable.Imprv_det_id = $table.det_id
-		AND ( " . $subquery . ")" //AND IMP_DET.imprv_id = '$'";
-
-	//echo "$query" . "<br>";
-	$result=doSqlQuery($query);
-
-	if(!$result)
-	return "No Value Found!";
-	
-	$num=mysqli_num_rows($result);
-	
-	if($num == 0 )
-		return "No Value Found!";
-
-	$value=0;
-
-	while($row = mysqli_fetch_array($result))
-	{
-		$value += $row[$MKTLEVELERDETAILADJ[2]];
-	}
-	return $value;
-
-}
-*/
 
 function getMktLevelerDetailAdjDelta($subj,$comp)
 {
@@ -976,7 +899,8 @@ function lookupPropID($id,$fieldsofinterest){
  * @param String $hood
  * @param Boolean $isEquity
  * @param int $limit - Limit on number of elements returned
- * @param String $compTable - Table to compare with
+ * @param Boolean $multihood - Expand scope outside given property hood
+ * @param int $prevyear - how many years to go back
  * @return Ambigous <propertyClass[], multitype:propertyClass >
  */
 function getHoodList($hood,$isEquity,$limit,$multihood=FALSE,$prevyear=1){
@@ -994,7 +918,7 @@ function getHoodList($hood,$isEquity,$limit,$multihood=FALSE,$prevyear=1){
 	if($isEquity)
 		$query="SELECT * FROM ". $NEIGHB[1] . " WHERE ". $hoodSearch;
 	else{
-        /*
+        /* Sample Query:
          * SELECT PROP.prop_id,sale_price,source
             FROM PROP, SALES_MLS_MERGED AS s
             WHERE hood_cd = 'W2005'
@@ -1107,7 +1031,7 @@ function cmpProp(propertyClass $prop1,propertyClass $prop2)
  * @param (Optional) String SQL Table you wish to use to find comps
  * @return Array of comparable properties
  */
-function findBestComps($subjprop,$isEquity,$sqftRange,$trimIndicated = false,$multihood=false,$includevu=false,$prevyear=1)
+function findBestComps($subjprop,$isEquity,$sqftRange,$trimIndicated = false,$multihood=false,$includevu=false,$prevyear=1,$subclassrange)
 {
 	global $NEIGHB,$LIVINGAREA,$PROPID,$debug,$isEquityComp;
     $compsarray = array();
@@ -1147,7 +1071,7 @@ function findBestComps($subjprop,$isEquity,$sqftRange,$trimIndicated = false,$mu
 
         }
 
-        if(addToCompsArray($c,$subjprop,$sqftRange,$isEquityComp,$trimIndicated,$includevu)){
+        if(addToCompsArray($c,$subjprop,$sqftRange,$isEquityComp,$trimIndicated,$includevu,$subclassrange)){
             error_log("Adding ".$c->mPropID. " as comp::".$c);
             $compsarray[] = $c;
         } else {
@@ -1165,9 +1089,11 @@ function findBestComps($subjprop,$isEquity,$sqftRange,$trimIndicated = false,$mu
  * @param propertyClass $subjprop
  * @param bool $isEquity
  * @param bool $trimIndicated
+ * @param bool $includevu
+ * @param int $subclassrange - how wide a net to consider in subclasses + and -
  * @return bool
  */
-function addToCompsArray(propertyClass $c,propertyClass $subjprop,$sqftRange=.75, $isEquity=false,$trimIndicated=false,$includevu=false){
+function addToCompsArray(propertyClass $c,propertyClass $subjprop,$sqftRange=.75, $isEquity=false,$trimIndicated=false,$includevu=false,$subclassrange=2){
     global $LIVINGAREA;
     $compsseen = array();
     $debug = false;
@@ -1203,26 +1129,61 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop,$sqftRange=.75
     //2013 : Can't include XX
 
     $badClass = "XX"; //don't include this type as it's not a good property to use
-    $classadj = $c->getClassAdj();
-    $pos = stripos($classadj,$badClass);
-    if($pos === false){
-
-        if($c->mPropID != $subjprop->mPropID){
-            calcDeltas($subjprop,$c);
-            if($trimIndicated){
-                if(cmpProp($subjprop,$c)==1){
-                    error_log("Found comp ".$c->mPropID);
-                    return true;
-                }
-            } else {
+    $classAdjArray = $c->getClassAdj();
+    $pos = stripos($classAdjArray[0],$badClass);
+	//Only review further if badClass string not found
+    if($pos !== false){
+    	error_log("Property has badclass ".$badClass);
+    	return false;
+    }
+    
+    if(!fallsInsideClassRange($subjprop->getClassAdj(), $classAdjArray,$subclassrange)){
+    	return false;
+    }
+    
+    if($c->mPropID != $subjprop->mPropID){
+        calcDeltas($subjprop,$c);
+        if($trimIndicated){
+            if(cmpProp($subjprop,$c)==1){
                 error_log("Found comp ".$c->mPropID);
                 return true;
             }
+        } else {
+            error_log("Found comp ".$c->mPropID);
+            return true;
         }
-    } else {
-        error_log("Property has badclass ".$badClass);
     }
+    
     return false;
+}
+
+function fallsInsideClassRange(Array $subjClassAdj,Array $compClassAdj, $range){
+	global $debug;
+	
+	$subClassRanges = array('2-','2','2+','3-','3','3+','4-','4','4+','5-','5','5+','6-','6','6+','7-','7','7+','8-','8','8+');
+	$subjPos = array_search($subjClassAdj[1],$subClassRanges);
+	if($subjPos === false){
+		error_log("fallsInsideClassRange: Couldn't find ". $subjClassAdj[1] . " in " . $subClassRanges . " for subject  SubClassAdj NOT in range");
+		return false;
+	}
+	$compPos = array_search($compClassAdj[1],$subClassRanges);
+	if($compPos === false){
+		error_log("fallsInsideClassRange: Couldn't find ". $compClassAdj[1] . " in " . $subClassRanges . " for comp assuming SubClassAdj NOT in range");
+		return false;
+	}
+	if($debug){
+		$string = "fallsInsideClassRange: subjPos: ". $subjPos . " compPos: ". $compPos . " range: ". $range;
+		print($string);
+		error_log($string);
+	}
+	if($compPos > $subjPos + $range){
+		return false;
+	}
+	if($compPos < $subjPos - $range){
+		return false;
+	}
+	
+	return true;
 }
 
 function putPropHistory($propid,$mean_val,$indicated_val,$comps_csv){

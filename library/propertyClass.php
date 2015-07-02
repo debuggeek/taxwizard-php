@@ -211,7 +211,7 @@ class propertyClass{
 
 		$resultarray = mysqli_fetch_array($result);
 
-		return $resultarray[0].$resultarray[1];
+		return $resultarray;
 	}
 	
 	
@@ -702,8 +702,10 @@ class propertyClass{
 		//echo "setting field " .$fieldConst." to ".$value."<br>";
 		if($fieldConst == NULL)
 			return;
-			
-		$value = trim($value);
+		
+		if(is_string($value)){	
+			$value = trim($value);
+		}
 		switch($fieldConst)
 		{
 			case($PROPID[0]):
@@ -752,7 +754,7 @@ class propertyClass{
 				$this->mLandValAdj = $value;
 				break;
 			case($CLASSADJ[0]):
-				$this->mClassAdj = $value;
+				$this->mClassAdj = $value[0].$value[1];
 				break;
 			case($ACTUALYEARBUILT[0]):
 				$this->mYearBuilt = $value;

@@ -15,6 +15,7 @@ $MULTIHOOD = false;
 $INCLUDEVU = false;
 $PREVYEAR = 1;  //By default go back 1 cal year for Sales
 $SQFTPERCENT = .75;
+$SUBCLASSRANGE = 2;
 
 global $INDICATEDVAL;
 
@@ -90,6 +91,12 @@ if(isset($_GET['sqftPct'])){
     $SQFTPERCENT = trim($_GET['sqftPct']);
 }
 
+if(isset($_GET['classrange'])){
+    if(strcmp($_GET['classrange'],'on') == 0){
+        $SUBCLASSRANGE = trim($_GET['range']);
+    }
+}
+
 if($propid != "")	$abort = false;
 
 if($abort){
@@ -107,7 +114,7 @@ error_log("Finding best comps for ".$propid);
  * Should be merged
  */
 
-$compsarray = findBestComps($property,$isEquityComp,$SQFTPERCENT,$TRIMINDICATED,$MULTIHOOD,$INCLUDEVU,$PREVYEAR);
+$compsarray = findBestComps($property,$isEquityComp,$SQFTPERCENT,$TRIMINDICATED,$MULTIHOOD,$INCLUDEVU,$PREVYEAR,$SUBCLASSRANGE);
 
 if(sizeof($compsarray) == 0){
     error_log("massreport: no comps found for ".$propid);
