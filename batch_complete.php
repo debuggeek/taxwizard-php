@@ -38,7 +38,8 @@ $INCLUDEVU=$row['IncludeVU'];
 $PREVYEAR=$row['NumPrevYears'];
 $INCLUDEMLS=$row['IncludeMLS'];
 $SQFTPCT=$row['SqftRange'];
-$CLASSRANGE=$row['ClassRange'];
+$SUBCLASSRANGE=$row['ClassRange'];
+$PERCENTGOODRANGE=$row['PercentGood'];
 mysqli_free_result($resultSettings);
 
 ?>
@@ -59,7 +60,8 @@ Choose a file to upload: <input name="file" type="file" /><br />
     Include related neighborhoods<br>
     <input type="checkbox" name="includevu" id="includevu" value="yes" <?php echo ($INCLUDEVU=='TRUE' ? 'checked' : '');?>>
     Include forclosures (VU)<br>
-    Range of subclasses to include:<input type="text" name="range" size="1" value=<?php echo $CLASSRANGE;?>><br>
+    Range of subclasses to include:<input type="text" name="range" size="1" value=<?php echo $SUBCLASSRANGE;?>><br>
+    % Good Adjustment Range (amount above and below subject):<input type="text" name="pctGoodRange"  size="3" value=<?php echo $PERCENTGOODRANGE;?>>%<br>
     Years back to include:<input type="text" name="multiyear" size="1" value=<?php echo $PREVYEAR;?>><br>
     Percent of square footage to consider (.01-1.00):<input type="text" name="sqftPct" size="3" value=<?php echo $SQFTPCT;?>><br>
     <br/>

@@ -1,20 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Nick
- * Date: 7/1/15
- * Time: 9:19 PM
- */
+
 include "library/functions.php";
 
 $propid = 708686;
-$isEquityComp = false;
-$SQFTPERCENT = 1.0;
-$TRIMINDICATED = false;
-$MULTIHOOD = false;
-$INCLUDEVU = false;
-$PREVYEAR = 1;
-$SUBCLASSRANGE = 3;
+$queryContext = new queryContext();
 
 $debug=true;
 error_reporting(E_ALL);
@@ -30,8 +19,10 @@ print "Finish Test";
 
 
 function findBestCompsTest(){
-    global $property,$isEquityComp,$SQFTPERCENT,$TRIMINDICATED,$MULTIHOOD,$INCLUDEVU,$PREVYEAR,$SUBCLASSRANGE;
-    $compsarray = findBestComps($property,$isEquityComp,$SQFTPERCENT,$TRIMINDICATED,$MULTIHOOD,$INCLUDEVU,$PREVYEAR,$SUBCLASSRANGE);
+    global $property,$queryContext;
 
-    assert(sizeof($compsarray) == 5);
+
+    $compsarray = findBestComps($property,$queryContext);
+
+    assert(sizeof($compsarray) == 10);
 }

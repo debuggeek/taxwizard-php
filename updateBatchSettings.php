@@ -38,9 +38,11 @@ $PREVYEAR=$_GET['multiyear'];
 
 $SQFTPCT=$_GET['sqftPct'];
 
+$PERCENTGOODRANGE = $_GET['pctGoodRange'];
+
 //$query="INSERT INTO BATCH_PROP_SETTINGS VALUES ('".$TRIMINDICATED."','".$MULTIHOOD."','".$INCLUDEVU."','".$INCLUDEMLS."','".$PREVYEAR."')";
-$query="INSERT INTO `BATCH_PROP_SETTINGS` ( `TrimIndicated`, `MultiHood`, `IncludeVU`, `IncludeMLS`, `NumPrevYears`, `SqftRange`, `ClassRange`)
-                                    VALUES('".$TRIMINDICATED."', '".$MULTIHOOD."', '".$INCLUDEVU."', '".$INCLUDEMLS."', ".$PREVYEAR.", ".$SQFTPCT.",".$CLASSRANGE.")";
+$query="INSERT INTO `BATCH_PROP_SETTINGS` ( `TrimIndicated`, `MultiHood`, `IncludeVU`, `IncludeMLS`, `NumPrevYears`, `SqftRange`, `ClassRange`, `PercentGood`)
+                                    VALUES('".$TRIMINDICATED."', '".$MULTIHOOD."', '".$INCLUDEVU."', '".$INCLUDEMLS."', ".$PREVYEAR.", ".$SQFTPCT.",".$CLASSRANGE.",". $PERCENTGOODRANGE .")";
 $result=doSqlQuery($query);
 if($result == TRUE){
     echo "Settings updated";

@@ -2,6 +2,7 @@
 include_once 'defines.php';
 include_once "MPDF56/mpdf.php";
 include_once 'presentation.php';
+include_once 'functions.php';
 
 function strbool($value)
 {
@@ -28,7 +29,7 @@ function generatePropMultiPDF($propid){
 	$property = getSubjProperty($propid);
 	$retArray["prop_mktvl"] = $property->mMarketVal;
 	//Generate Sales 15
-	$subjcomparray15 = generateArray($property,false,15);
+	$subjcomparray15 = generatePdfArray($property,false,15);
 	if ($subjcomparray15 == null)
 		$html15 = "No Sales Comps for ".$propid;
 	else{
@@ -81,7 +82,7 @@ function generatePropMultiPDF($propid){
 	}
 
 	//Generate Equity 10
-	$subjcomparrayEq = generateArray($property,true);
+	$subjcomparrayEq = generatePdfArray($property,true);
 	$_SESSION[$MEANVAL[0]] = getMeanVal($subjcomparrayEq);
 	$_SESSION[$MEANVALSQFT[0]] = getMeanValSqft($subjcomparrayEq);
 	$_SESSION[$MEDIANVAL[0]] = getMedianVal($subjcomparrayEq);
@@ -94,42 +95,26 @@ function generatePropMultiPDF($propid){
 	return $retArray;
 }
 
-/*
- * This has to be kept in sync with massreport.php
- * Should be merged
- */
-function generateArray($property,$eqComp,$numComps=10){
-    global $TRIMINDICATED,$MULTIHOOD,$INCLUDEVU,$PREVYEAR,$INCLUDEMLS,$SQFTPERCENT;
 
-	$COMPSTODISPLAY = $numComps;
-	if($eqComp)
-		$COMPSTODISPLAY = 11;
+function generatePdfArray(propertyClass $property,$eqComp,$numComps=10){
+    global $TRIMINDICATED,$MULTIHOOD,$INCLUDEVU,$PREVYEAR,$INCLUDEMLS,$SQFTPERCENT,$SUBCLASSRANGE,$PERCENTGOODRANGE;
 
-    $compsarray = findBestComps($property,$eqComp,$SQFTPERCENT,$TRIMINDICATED,$MULTIHOOD,$INCLUDEVU,$PREVYEAR);
+    $COMPSTODISPLAY = $numComps;
+    if($eqComp)
+        $COMPSTODISPLAY = 11;
 
-	if(count($compsarray) == 0)
-		return null;
+    $queryContext = new queryContext();
+    $queryContext->trimIndicated = $TRIMINDICATED;
+    $queryContext->multiHood = $MULTIHOOD;
+    $queryContext->includeVu = $INCLUDEVU;
+    $queryContext->prevYear = $PREVYEAR;
+    $queryContext->includeMls = $INCLUDEMLS;
+    $queryContext->sqftPercent = $SQFTPERCENT;
+    $queryContext->subClassRange = $SUBCLASSRANGE;
+    $queryContext->percentGoodRange = $PERCENTGOODRANGE;
+    $queryContext->compsToDisplay = $COMPSTODISPLAY;
+    $queryContext->isEquityComp = $eqComp;
 
-	usort($compsarray,"cmpProp");
-
-    if(!$INCLUDEMLS){
-        //error_log("Excluding MLS data. Size before=".var_dump(count($compsarray)));
-        $compsarray = array_filter($compsarray,"isNotMLS");
-        //error_log("Size after=".str(count($compsarray)));
-    }
-
-    //re-sort to reset their index of any removed
-    usort($compsarray,"cmpProp");
-
-	$comp_min = MIN($COMPSTODISPLAY,count($compsarray));
-	$subjcomparray = array();
-	$subjcomparray[0] = $property;
-
-	for($i=0; $i < $comp_min; $i++)
-	{
-		$subjcomparray[$i+1] = $compsarray[$i];
-	}
-	return $subjcomparray;
+    return generateArray($property,$queryContext);
 }
-
 ?>

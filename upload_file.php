@@ -58,7 +58,7 @@ else{
 	      }
 	      //Execute the batch pdf
 	      if($production==false)
-	      	$phpCmd = "/Applications/MAMP/bin/php/php5.2.17/bin/php ";
+	      	$phpCmd = "/Applications/MAMP/bin/php/php5.4.34/bin/php ";
 	      else
 	      	$phpCmd = "php-cli ";
 	      $filename = "./cli/batch_pdf.php";
