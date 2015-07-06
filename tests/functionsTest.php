@@ -5,6 +5,9 @@ include "library/functions.php";
 $propid = 708686;
 $queryContext = new queryContext();
 
+$queryContext->netAdjustEnabled = true;
+$queryContext->netAdjustAmount = 10000;
+
 $debug=true;
 error_reporting(E_ALL);
 

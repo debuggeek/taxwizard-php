@@ -50,9 +50,18 @@ else
 
 $PERCENTGOODRANGE = $_GET['pctGoodRange'];
 
+if(isset($_GET['netadjust']))
+    $NET_ADJ_ENABLED='TRUE';
+else
+    $NET_ADJ_ENABLED='FALSE';
+
+$NET_ADJ_AMOUNT = $_GET['netadjustamount'];
+
 //$query="INSERT INTO BATCH_PROP_SETTINGS VALUES ('".$TRIMINDICATED."','".$MULTIHOOD."','".$INCLUDEVU."','".$INCLUDEMLS."','".$PREVYEAR."')";
-$query="INSERT INTO `BATCH_PROP_SETTINGS` ( `TrimIndicated`, `MultiHood`, `IncludeVU`, `IncludeMLS`, `NumPrevYears`, `SqftRange`, `ClassRange`, `ClassRangeEnabled`, `PercentGood` , `PercentGoodEnabled`)
-                                    VALUES('".$TRIMINDICATED."', '".$MULTIHOOD."', '".$INCLUDEVU."', '".$INCLUDEMLS."', ".$PREVYEAR.", ".$SQFTPCT.",".$CLASSRANGE.",". $SUBCLASSENABLED . "," . $PERCENTGOODRANGE . ",". $PERCENTGOODENABLED .")";
+$query="INSERT INTO `BATCH_PROP_SETTINGS` ( `TrimIndicated`, `MultiHood`, `IncludeVU`, `IncludeMLS`, `NumPrevYears`, `SqftRange`,
+                                            `ClassRange`, `ClassRangeEnabled`, `PercentGood` , `PercentGoodEnabled`, `NetAdj`, `NetAdjEnabled`)
+                                    VALUES('".$TRIMINDICATED."', '".$MULTIHOOD."', '".$INCLUDEVU."', '".$INCLUDEMLS."', ".$PREVYEAR.", ".$SQFTPCT.",".
+                                            $CLASSRANGE.",". $SUBCLASSENABLED . "," . $PERCENTGOODRANGE . ",". $PERCENTGOODENABLED . "," . $NET_ADJ_AMOUNT . "," . $NET_ADJ_ENABLED .")";
 $result=doSqlQuery($query);
 if($result == TRUE){
     echo "Settings updated";

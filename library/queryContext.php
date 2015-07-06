@@ -14,6 +14,8 @@ class queryContext {
     public $subClassRangeEnabled = false;
     public $percentGoodRange = 10;
     public $percentGoodRangeEnabled = false;
+    public $netAdjustEnabled = false;
+    public $netAdjustAmount = 0;
 
     //Treat like equity by default so we use market val and not sales price
     public $isEquityComp = true;

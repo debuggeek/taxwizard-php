@@ -650,6 +650,8 @@ class propertyClass{
 		$var6 = (int)$this->mSegAdjDelta;
 		
 		$this->mNetAdj = (int)($var1+$var2 + $var3 + $var4 + $var5 + $var6);
+
+        return $this->mNetAdj;
 	}
 	
 	function setMeanVal($numComps){

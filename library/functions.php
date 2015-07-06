@@ -1148,20 +1148,27 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop,queryContext $
             return false;
         }
     }
-    
-    if($c->mPropID != $subjprop->mPropID){
-        calcDeltas($subjprop,$c);
-        if($queryContext->trimIndicated){
-            if(cmpProp($subjprop,$c)==1){
-                if($traceComps) error_log("addToCompsArray: Found comp ".$c->mPropID);
-                return true;
-            }
-        } else {
+
+    calcDeltas($subjprop,$c);
+
+    if ($queryContext->netAdjustEnabled){
+        error_log("addToCompsArray: Filtering for net adjustment amount of " . $queryContext->netAdjustAmount);
+        if(!fallsWithinNetAdjRange($c, $queryContext->netAdjustAmount)){
+            error_log("addToCompsArray: failed to fall inside net adjustment range ");
+            return false;
+        }
+    }
+
+    if($queryContext->trimIndicated){
+        if(cmpProp($subjprop,$c)==1){
             if($traceComps) error_log("addToCompsArray: Found comp ".$c->mPropID);
             return true;
         }
+    } else {
+        if($traceComps) error_log("addToCompsArray: Found comp ".$c->mPropID);
+        return true;
     }
-    
+
     return false;
 }
 
@@ -1208,6 +1215,25 @@ function fallsWithinPercentGood(propertyClass $comp, propertyClass $subjprop, $r
 
     if($compPercentGood > $subjPercentGood + $range){
         if($debug) error_log("fallsWithinPercentGood: Comp falls above range");
+        return false;
+    }
+
+    return true;
+}
+
+function fallsWithinNetAdjRange(propertyClass $comp, $range){
+    global $debug;
+    $compNetAdj = intval($comp->getNetAdj());
+
+    if($debug) error_log("fallsWithinNetAdjRange: comp ". $compNetAdj . " range ". $range);
+
+    if($compNetAdj < $range * -1){
+        if($debug) error_log("fallsWithinNetAdjRange: Comp falls below range");
+        return false;
+    }
+
+    if($compNetAdj > $range){
+        if($debug) error_log("fallsWithinNetAdjRange: Comp falls above range");
         return false;
     }
 

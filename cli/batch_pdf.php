@@ -38,6 +38,8 @@ if(mysqli_num_rows($result) > 0){
     $PERCENTGOODRANGE=$row['PercentGood'];
     $SUBCLASSENABLED=$row['ClassRangeEnabled'];
     $PERCENTGOODENABLED=$row['PercentGoodEnabled'];
+    $NET_ADJ_ENABLED=$row['NetAdjEnabled'];
+    $NET_ADJ_AMOUNT=$row['NetAdj'];
     //REMEMBER if you add here you have to put into functions_pdf too
     $output = "Executing with settings: Trim=".strbool($TRIMINDICATED).
                                         " Multihoods=".strbool($MULTIHOOD).
@@ -48,7 +50,9 @@ if(mysqli_num_rows($result) > 0){
                                         " subclassRange=".strval($SUBCLASSRANGE).
                                         " subclassEnabled=".strbool($SUBCLASSENABLED).
                                         " percentGoodRange=".strval($PERCENTGOODRANGE).
-                                        " percentGoodEnabled=".strbool($PERCENTGOODENABLED);
+                                        " percentGoodEnabled=".strbool($PERCENTGOODENABLED).
+                                        " netAdjEnabled=" . strbool($NET_ADJ_ENABLED).
+                                        " netAdjAmount=" . strval($NET_ADJ_AMOUNT);
     error_log("batch_pdf: ". $output);
     echo "\n".$output ."\n";
 }

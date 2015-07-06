@@ -97,7 +97,9 @@ function generatePropMultiPDF($propid){
 
 
 function generatePdfArray(propertyClass $property,$eqComp,$numComps=10){
-    global $TRIMINDICATED,$MULTIHOOD,$INCLUDEVU,$PREVYEAR,$INCLUDEMLS,$SQFTPERCENT,$SUBCLASSRANGE,$PERCENTGOODRANGE, $SUBCLASSENABLED, $PERCENTGOODENABLED;
+    global $TRIMINDICATED,$MULTIHOOD,$INCLUDEVU,$PREVYEAR,$INCLUDEMLS,$SQFTPERCENT,
+           $SUBCLASSRANGE,$PERCENTGOODRANGE, $SUBCLASSENABLED, $PERCENTGOODENABLED,
+           $NET_ADJ_ENABLED,$NET_ADJ_AMOUNT;
 
     $COMPSTODISPLAY = $numComps;
     if($eqComp)
@@ -116,6 +118,8 @@ function generatePdfArray(propertyClass $property,$eqComp,$numComps=10){
     $queryContext->isEquityComp = $eqComp;
     $queryContext->subClassRangeEnabled = $SUBCLASSENABLED;
     $queryContext->percentGoodRangeEnabled = $PERCENTGOODENABLED;
+    $queryContext->netAdjustEnabled = $NET_ADJ_ENABLED;
+    $queryContext->netAdjustAmount = $NET_ADJ_AMOUNT;
 
     return generateArray($property,$queryContext);
 }

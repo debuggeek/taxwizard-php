@@ -66,6 +66,13 @@ if(isset($_GET['pctGoodRangeEnabled'])){
     }
 }
 
+if(isset($_GET['netadjust'])){
+    if(strcmp($_GET['netadjust'], 'on') ==0 ) {
+        $queryContext->netAdjustEnabled = true;
+        $queryContext->netAdjustAmount = trim($_GET['netAdjustAmt']);
+    }
+}
+
 if($queryContext->subjPropId == ""){
 	echo "<p>Please enter a value</p>";
 	exit;
@@ -79,8 +86,9 @@ error_log("Finding best comps for ".$property->mPropID);
 
 $subjcomparray = generateArray($property, $queryContext);
 
-if($subjcomparray == null){
+if($subjcomparray == null || sizeof($subjcomparray) == 1){
     returnNoHits($property->mPropID);
+    exit;
 }
 
 $_SESSION[$MEANVAL[0]] = getMeanVal($subjcomparray);
