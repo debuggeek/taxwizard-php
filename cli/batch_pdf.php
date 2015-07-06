@@ -36,6 +36,9 @@ if(mysqli_num_rows($result) > 0){
     $SQFTPERCENT=$row['SqftRange'];
     $SUBCLASSRANGE=$row['ClassRange'];
     $PERCENTGOODRANGE=$row['PercentGood'];
+    $SUBCLASSENABLED=$row['ClassRangeEnabled'];
+    $PERCENTGOODENABLED=$row['PercentGoodEnabled'];
+    //REMEMBER if you add here you have to put into functions_pdf too
     $output = "Executing with settings: Trim=".strbool($TRIMINDICATED).
                                         " Multihoods=".strbool($MULTIHOOD).
                                         " VUs=".strbool($INCLUDEVU).
@@ -43,7 +46,9 @@ if(mysqli_num_rows($result) > 0){
                                         " years=".strval($PREVYEAR).
                                         " sqftRange=".strval($SQFTPERCENT).
                                         " subclassRange=".strval($SUBCLASSRANGE).
-                                        " percentGoodRange=".strval($PERCENTGOODRANGE);
+                                        " subclassEnabled=".strbool($SUBCLASSENABLED).
+                                        " percentGoodRange=".strval($PERCENTGOODRANGE).
+                                        " percentGoodEnabled=".strbool($PERCENTGOODENABLED);
     error_log("batch_pdf: ". $output);
     echo "\n".$output ."\n";
 }

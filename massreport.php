@@ -52,14 +52,18 @@ if(isset($_GET['sqftPct'])){
     $queryContext->sqftPercent = trim($_GET['sqftPct']);
 }
 
-if(isset($_GET['classrange'])){
-    if(strcmp($_GET['classrange'],'on') == 0){
+if(isset($_GET['rangeEnabled'])){
+    if(strcmp($_GET['rangeEnabled'],'on') == 0){
+        $queryContext->subClassRangeEnabled = true;
         $queryContext->subClassRange = trim($_GET['range']);
     }
 }
 
-if(isset($_GET['pctGoodRange'])){
-    $queryContext->percentGoodRange = trim($_GET['pctGoodRange']);
+if(isset($_GET['pctGoodRangeEnabled'])){
+    if(strcmp($_GET['pctGoodRangeEnabled'], 'on') ==0 ) {
+        $queryContext->percentGoodRangeEnabled = true;
+        $queryContext->percentGoodRange = trim($_GET['pctGoodRange']);
+    }
 }
 
 if($queryContext->subjPropId == ""){

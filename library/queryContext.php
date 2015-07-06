@@ -11,7 +11,9 @@ class queryContext {
     public $prevYear = 1;
     public $sqftPercent = .75;
     public $subClassRange = 2;
+    public $subClassRangeEnabled = false;
     public $percentGoodRange = 10;
+    public $percentGoodRangeEnabled = false;
 
     //Treat like equity by default so we use market val and not sales price
     public $isEquityComp = true;

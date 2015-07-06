@@ -1087,33 +1087,33 @@ function findBestComps(propertyClass $subjprop, queryContext $queryContext)
  * @param queryContext $queryContext
  * @return bool
  */
-function addToCompsArray(propertyClass $c,propertyClass $subjprop,queryContext $queryContext){
+function addToCompsArray(propertyClass $c,propertyClass $subjprop,queryContext $queryContext)
+{
     global $LIVINGAREA;
     $compsseen = array();
     $traceComps = false;
 
-    if($c->mPropID == $subjprop->mPropID){
-        error_log("addToCompsArray: Skipping Comp prop id matched subject:".$c->mPropID);
+    if ($c->mPropID == $subjprop->mPropID) {
+        error_log("addToCompsArray: Skipping Comp prop id matched subject:" . $c->mPropID);
         return false;
     }
 
     $subjsqft = $subjprop->getFieldByName($LIVINGAREA[0]);
-    $min = (1-$queryContext->sqftPercent) * $subjsqft;
-    $max = (1+$queryContext->sqftPercent) * $subjsqft;
+    $min = (1 - $queryContext->sqftPercent) * $subjsqft;
+    $max = (1 + $queryContext->sqftPercent) * $subjsqft;
     $sqft = $c->getFieldByName($LIVINGAREA[0]);
 
-    if($sqft < $min || $sqft > $max)
-    {
-        if($traceComps) error_log("addToCompsArray: ".$c->mPropID." removed as potential comp due to size min=".$min." max=".$max." size=".$sqft);
+    if ($sqft < $min || $sqft > $max) {
+        if ($traceComps) error_log("addToCompsArray: " . $c->mPropID . " removed as potential comp due to size min=" . $min . " max=" . $max . " size=" . $sqft);
         return false;
     }
 
     //Check sale type.
     //2014 : Can't include VU
-    if(!$queryContext->isEquityComp && $queryContext->includeVu==false){
+    if (!$queryContext->isEquityComp && $queryContext->includeVu == false) {
         $badSaleTypes = "VU";
-        if($c->mSaleType == $badSaleTypes){
-            if($traceComps) error_log("addToCompsArray: Sale type was bad: ".$c->mSaleType);
+        if ($c->mSaleType == $badSaleTypes) {
+            if ($traceComps) error_log("addToCompsArray: Sale type was bad: " . $c->mSaleType);
             return false;
         }
     }
@@ -1124,25 +1124,29 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop,queryContext $
 
     $badClass = "XX"; //don't include this type as it's not a good property to use
     $classAdjArray = $c->getClassAdj();
-    if($classAdjArray == null){
-        error_log("ERROR> addToCompsArray: Property has no class data: ".$c->mPropID);
+    if ($classAdjArray == null) {
+        error_log("ERROR> addToCompsArray: Property has no class data: " . $c->mPropID);
         return false;
     }
-    $pos = stripos($classAdjArray[0],$badClass);
-	//Only review further if badClass string not found
-    if($pos !== false){
-        if($traceComps) error_log("addToCompsArray: Property has badclass ".$badClass);
-    	return false;
-    }
-    
-    if(!fallsInsideClassRange($subjprop->getClassAdj(), $classAdjArray,$queryContext->subClassRange)){
-        if($traceComps) error_log("addToCompsArray: failed to fall inside class range ");
-    	return false;
+    $pos = stripos($classAdjArray[0], $badClass);
+    //Only review further if badClass string not found
+    if ($pos !== false) {
+        if ($traceComps) error_log("addToCompsArray: Property has badclass " . $badClass);
+        return false;
     }
 
-    if(!fallsWithinPercentGood($c, $subjprop, $queryContext->percentGoodRange)){
-        if($traceComps) error_log("addToCompsArray: failed to fall inside percent good range ");
-        return false;
+    if ($queryContext->subClassRangeEnabled) {
+        if (!fallsInsideClassRange($subjprop->getClassAdj(), $classAdjArray, $queryContext->subClassRange)) {
+            if ($traceComps) error_log("addToCompsArray: failed to fall inside class range ");
+            return false;
+        }
+    }
+
+    if ($queryContext->percentGoodRangeEnabled) {
+        if (!fallsWithinPercentGood($c, $subjprop, $queryContext->percentGoodRange)) {
+            if ($traceComps) error_log("addToCompsArray: failed to fall inside percent good range ");
+            return false;
+        }
     }
     
     if($c->mPropID != $subjprop->mPropID){

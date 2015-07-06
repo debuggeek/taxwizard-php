@@ -32,17 +32,27 @@ if(isset($_GET['includemls']))
 else
     $INCLUDEMLS='FALSE';
 
-$CLASSRANGE=$_GET['range'];
-
 $PREVYEAR=$_GET['multiyear'];
 
 $SQFTPCT=$_GET['sqftPct'];
 
+if(isset($_GET['subclassenabled']))
+    $SUBCLASSENABLED='TRUE';
+else
+    $SUBCLASSENABLED='FALSE';
+
+$CLASSRANGE=$_GET['range'];
+
+if(isset($_GET['pctgoodenabled']))
+    $PERCENTGOODENABLED='TRUE';
+else
+    $PERCENTGOODENABLED='FALSE';
+
 $PERCENTGOODRANGE = $_GET['pctGoodRange'];
 
 //$query="INSERT INTO BATCH_PROP_SETTINGS VALUES ('".$TRIMINDICATED."','".$MULTIHOOD."','".$INCLUDEVU."','".$INCLUDEMLS."','".$PREVYEAR."')";
-$query="INSERT INTO `BATCH_PROP_SETTINGS` ( `TrimIndicated`, `MultiHood`, `IncludeVU`, `IncludeMLS`, `NumPrevYears`, `SqftRange`, `ClassRange`, `PercentGood`)
-                                    VALUES('".$TRIMINDICATED."', '".$MULTIHOOD."', '".$INCLUDEVU."', '".$INCLUDEMLS."', ".$PREVYEAR.", ".$SQFTPCT.",".$CLASSRANGE.",". $PERCENTGOODRANGE .")";
+$query="INSERT INTO `BATCH_PROP_SETTINGS` ( `TrimIndicated`, `MultiHood`, `IncludeVU`, `IncludeMLS`, `NumPrevYears`, `SqftRange`, `ClassRange`, `ClassRangeEnabled`, `PercentGood` , `PercentGoodEnabled`)
+                                    VALUES('".$TRIMINDICATED."', '".$MULTIHOOD."', '".$INCLUDEVU."', '".$INCLUDEMLS."', ".$PREVYEAR.", ".$SQFTPCT.",".$CLASSRANGE.",". $SUBCLASSENABLED . "," . $PERCENTGOODRANGE . ",". $PERCENTGOODENABLED .")";
 $result=doSqlQuery($query);
 if($result == TRUE){
     echo "Settings updated";
