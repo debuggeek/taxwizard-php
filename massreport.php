@@ -7,134 +7,90 @@ include_once 'library/presentation.php';
 include_once 'MPDF56/mpdf.php';
 
 $debug = false;
-$COMPSTODISPLAY = 100;
-$LIMIT=NULL;
-$TRIMINDICATED = false;
-$INCLUDEMLS = false;
-$MULTIHOOD = false;
-$INCLUDEVU = false;
-$PREVYEAR = 1;  //By default go back 1 cal year for Sales
-$SQFTPERCENT = .75;
 
 global $INDICATEDVAL;
 
-//Treat like equity so we use market val and not sales price
-$isEquityComp = true;
+$queryContext = new queryContext();
 
 //Parse Inputs
 if(isset($_GET['multiyear'])){
-    $PREVYEAR = $_GET['multiyear'];
+    $queryContext->prevYear = $_GET['multiyear'];
 }
 
-for($i=0; $i < $c; $i++)
-{
-	if($keys[$i] == 'propid'){
-		$targ = $_GET['propid'];
-		$targ = trim($targ);
-		$propid = $targ;
-		$targ = NULL;
-	}
-	if($keys[$i] == 'display'){
-		$targ = $_GET['display'];
-		$targ = trim($targ);
-		$COMPSTODISPLAY = intval($targ);
-		$targ = NULL;
-	}
-	if($keys[$i] == 'style'){
-		$targ = $_GET['style'];
-		$targ = trim($targ);
-		if($targ == 'sales')
-			$isEquityComp = false;
-		if($targ == 'on')
-			
-		$targ = NULL;
-	}
-	if($keys[$i] == "trimindicated"){
-		$targ = $_GET['trimindicated'];
-		$targ = trim($targ);
-		if($targ == "on")
-			$TRIMINDICATED = true;
-		$targ = NULL;
-	}
-	if($keys[$i] == "includemls"){
-		$targ = $_GET['includemls'];
-		$targ = trim($targ);
-		if($targ == "on")
-			$INCLUDEMLS = true;	
-		$targ = NULL;
-	}
-	if($keys[$i] == "limit"){
-		$targ = $_GET['limit'];
-		$targ = trim($targ);
-		if($targ > 0)
-			$COMPSTODISPLAY = $targ;
-		$targ = NULL;
-	}
-	if($keys[$i] == "multihood"){
-		$targ = $_GET['multihood'];
-		$targ = trim($targ);
-		if($targ == "on")
-			$MULTIHOOD = true;
-		$targ = NULL;
-	}
-    if($keys[$i] == "includevu"){
-        $targ = $_GET['includevu'];
-        $targ = trim($targ);
-        if($targ == "on")
-            $INCLUDEVU = true;
-        $targ = NULL;
+if(isset($_GET['display'])){
+    $queryContext->compsToDisplay = intval(trim($_GET['display']));
+}
+if(isset($_GET['propid'])){
+    $queryContext->subjPropId = trim($_GET['propid']);
+}
+if(isset($_GET['trimindicated'])){
+    if (trim($_GET['trimindicated']) == 'on'){
+        $queryContext->trimIndicated = true;
+    }
+}
+if(isset($_GET['style'])){
+    if (trim($_GET['style']) == 'sales'){
+        $queryContext->isEquityComp = false;
+    }
+}
+if(isset($_GET['includemls'])){
+    if (trim($_GET['includemls']) == 'on'){
+        $queryContext->includeMls = true;
+    }
+}
+if(isset($_GET['multihood'])){
+    if (trim($_GET['multihood']) == 'on'){
+        $queryContext->multiHood = true;
     }
 }
 
-if(isset($_GET['sqftPct'])){
-    $SQFTPERCENT = trim($_GET['sqftPct']);
+if(isset($_GET['includevu'])) {
+    $queryContext->includeVu = trim($_GET['includevu']);
 }
 
-if($propid != "")	$abort = false;
+if(isset($_GET['sqftPct'])){
+    $queryContext->sqftPercent = trim($_GET['sqftPct']);
+}
 
-if($abort){
+if(isset($_GET['rangeEnabled'])){
+    if(strcmp($_GET['rangeEnabled'],'on') == 0){
+        $queryContext->subClassRangeEnabled = true;
+        $queryContext->subClassRange = trim($_GET['range']);
+    }
+}
+
+if(isset($_GET['pctGoodRangeEnabled'])){
+    if(strcmp($_GET['pctGoodRangeEnabled'], 'on') ==0 ) {
+        $queryContext->percentGoodRangeEnabled = true;
+        $queryContext->percentGoodRange = trim($_GET['pctGoodRange']);
+    }
+}
+
+if(isset($_GET['netadjust'])){
+    if(strcmp($_GET['netadjust'], 'on') ==0 ) {
+        $queryContext->netAdjustEnabled = true;
+        $queryContext->netAdjustAmount = trim($_GET['netAdjustAmt']);
+    }
+}
+
+if($queryContext->subjPropId == ""){
 	echo "<p>Please enter a value</p>";
 	exit;
 }
 
-$property = getSubjProperty($propid);
+if($debug) error_log(var_dump($queryContext));
 
-error_log("Finding best comps for ".$propid);
+$property = getSubjProperty($queryContext->subjPropId);
 
+error_log("Finding best comps for ".$property->mPropID);
 
-/*
- * This has to be kept in sync with functions_pdf.php
- * Should be merged
- */
+$subjcomparray = generateArray($property, $queryContext);
 
-$compsarray = findBestComps($property,$isEquityComp,$SQFTPERCENT,$TRIMINDICATED,$MULTIHOOD,$INCLUDEVU,$PREVYEAR);
-
-if(sizeof($compsarray) == 0){
-    error_log("massreport: no comps found for ".$propid);
-    return returnNoHits($propid);
+if($subjcomparray == null || sizeof($subjcomparray) == 1){
+    returnNoHits($property->mPropID);
+    exit;
 }
 
-if(!$INCLUDEMLS){
-    $compsarray = array_filter($compsarray,"isNotMLS");
-}
-
-if(sizeof($compsarray) == 0){
-    error_log("massreport: no comps found after MLS Sort for ".$propid);
-    return returnNoHits($propid);
-}
-
-error_log("massreport: found ".sizeof($compsarray)." comp(s) for ".$propid);
-//resort to reset their index of any removed
-usort($compsarray,"cmpProp");
-
-$comp_min = MIN($COMPSTODISPLAY,count($compsarray));
-$subjcomparray = array();
-$subjcomparray[0] = $property;
-
-for($i=0; $i < $comp_min; $i++)
-{
-    $subjcomparray[$i+1] = $compsarray[$i];
-}
 $_SESSION[$MEANVAL[0]] = getMeanVal($subjcomparray);
 $_SESSION[$MEANVALSQFT[0]] = getMeanValSqft($subjcomparray);
 $_SESSION[$MEDIANVAL[0]] = getMedianVal($subjcomparray);

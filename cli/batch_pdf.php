@@ -12,7 +12,7 @@ $TRIMINDICATED=false;
 $MULTIHOOD=true;
 $INCLUDEVU=true;
 $PREVYEAR=1;
-$SQFTPERCENT = .75;
+$SQFTPERCENT = .5;
 
 $date = new DateTime();
 echo "\n".$date->format('Y-m-d H:i:s') . " >> Starting Batch Processing\n";
@@ -34,7 +34,25 @@ if(mysqli_num_rows($result) > 0){
     $INCLUDEMLS=$row['IncludeMLS']=== "TRUE" ? true : false;
     $PREVYEAR=$row['NumPrevYears'];
     $SQFTPERCENT=$row['SqftRange'];
-    $output = "Executing with settings: Trim=".strbool($TRIMINDICATED)." Multihoods=".strbool($MULTIHOOD)." VUs=".strbool($INCLUDEVU)." mls=".strbool($INCLUDEMLS)." years=".strval($PREVYEAR). " sqftRange=".strval($SQFTPERCENT);
+    $SUBCLASSRANGE=$row['ClassRange'];
+    $PERCENTGOODRANGE=$row['PercentGood'];
+    $SUBCLASSENABLED=$row['ClassRangeEnabled'];
+    $PERCENTGOODENABLED=$row['PercentGoodEnabled'];
+    $NET_ADJ_ENABLED=$row['NetAdjEnabled'];
+    $NET_ADJ_AMOUNT=$row['NetAdj'];
+    //REMEMBER if you add here you have to put into functions_pdf too
+    $output = "Executing with settings: Trim=".strbool($TRIMINDICATED).
+                                        " Multihoods=".strbool($MULTIHOOD).
+                                        " VUs=".strbool($INCLUDEVU).
+                                        " mls=".strbool($INCLUDEMLS).
+                                        " years=".strval($PREVYEAR).
+                                        " sqftRange=".strval($SQFTPERCENT).
+                                        " subclassRange=".strval($SUBCLASSRANGE).
+                                        " subclassEnabled=".strbool($SUBCLASSENABLED).
+                                        " percentGoodRange=".strval($PERCENTGOODRANGE).
+                                        " percentGoodEnabled=".strbool($PERCENTGOODENABLED).
+                                        " netAdjEnabled=" . strbool($NET_ADJ_ENABLED).
+                                        " netAdjAmount=" . strval($NET_ADJ_AMOUNT);
     error_log("batch_pdf: ". $output);
     echo "\n".$output ."\n";
 }
@@ -65,7 +83,7 @@ if(mysqli_num_rows($result) > 0){
 																	Median_Sale15='".$retArray["medSale15"]."',
 																	Median_Eq11='".$retArray["medEq11"]."' 
 																	WHERE prop='".$propid."';";
-			error_log($updateQuery);
+			if($debugquery) error_log($updateQuery);
             $mysqli = sqldbconnect();
             if ($mysqli->query($updateQuery)){
 				error_log("batch_pdf: Updated ".$propid."\n");

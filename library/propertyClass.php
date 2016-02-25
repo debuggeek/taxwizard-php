@@ -199,10 +199,13 @@ class propertyClass{
 		$impids = array();
 		$propid = $this->mPropID;
 
-		$query = "SELECT det_class_code,det_subclass FROM IMP_DET, SPECIAL_IMP
+        //Changed in 2015 because found 'T' to be singular on property in SPECIAL_IMP
+		/*$query = "SELECT det_class_code,det_subclass FROM IMP_DET, SPECIAL_IMP
 			WHERE IMP_DET.prop_id='$propid'
 			AND imprv_det_type_cd = '1ST' AND imprv_det_id = det_id AND IMP_DET.prop_id=SPECIAL_IMP.prop_id
-			AND SPECIAL_IMP.det_use_unit_price LIKE 'T'";
+			AND SPECIAL_IMP.det_use_unit_price LIKE 'T'";*/
+
+        $query = "SELECT det_class_code,det_subclass FROM SPECIAL_IMP WHERE prop_id='$propid' AND det_use_unit_price LIKE 'T'";
 
 		$result=doSqlQuery($query);
 
@@ -211,11 +214,13 @@ class propertyClass{
 
 		$resultarray = mysqli_fetch_array($result);
 
-		return $resultarray[0].$resultarray[1];
+		return $resultarray;
 	}
 	
 	
 	function setClassAdjDelta($subjdetailadj){
+        global $debugquery;
+
 		$option = 1;
 		if($this->mClassAdjDelta != null)
 			return;
@@ -234,7 +239,7 @@ class propertyClass{
 			$var3 = $var1/$var2;
 			$var4 = $var3 - 1;
 			$result = $var4 * $this->mHighValImpMARCN;
-            error_log("setClassAdjDelta[".$this->mPropID."]: ((".$var1."/".$var2.") - 1) *".$this->mHighValImpMARCN." = ".$result);
+            if($debugquery) error_log("setClassAdjDelta[".$this->mPropID."]: ((".$var1."/".$var2.") - 1) *".$this->mHighValImpMARCN." = ".$result);
 			$this->mClassAdjDelta = $result;
 		}
 		else
@@ -333,7 +338,7 @@ class propertyClass{
 	
 	
 	function getLASizeAdj(){
-		global $allowablema;
+		global $allowablema,$debugquery;
 		
 		if ($this->mLASizeAdj != null)
 		 	return $this->mLASizeAdj;
@@ -356,7 +361,7 @@ class propertyClass{
 				AND IMP_DET.prop_id = SPECIAL_IMP.prop_id
 				AND IMP_DET.imprv_id = '$this->mPrimeImpId'";
 
-        error_log("getLASizeAdj[".$this->mPropID."]: query=".$query);
+        if($debugquery) error_log("getLASizeAdj[".$this->mPropID."]: query=".$query);
 		$result=doSqlQuery($query);
 		$num=mysqli_num_rows($result);
 			
@@ -374,6 +379,8 @@ class propertyClass{
 	}
 	
 	function setLASizeAdjDelta($subjdetailadj){
+        global $debugquery;
+
 		if($this->mSubj == true)
 			return NULL;
 		if($this->mLASizeAdjDelta != null)
@@ -385,7 +392,7 @@ class propertyClass{
 		$var3 = number_format($subjdetailadj->getHVImpMARCNPerSQFT(),2);
 
 		$this->mLASizeAdjDelta = ($var1-$var2)*$var3;
-        error_log("getLASizeAdjDelta: (".$var1."-".$var2.")*".$var3." = ".$this->mLASizeAdjDelta);
+        if($debugquery) error_log("getLASizeAdjDelta: (".$var1."-".$var2.")*".$var3." = ".$this->mLASizeAdjDelta);
 		//Now that we have a LASizeAdjDelta we can also compute the HVIMASQFTDIFF
 		$this->setHVImpSqftDiff($subjdetailadj);
 	}
@@ -405,7 +412,7 @@ class propertyClass{
 	{
 		if($this->mMktLevelerDetailAdj == null)
 		{
-			global $MKTLEVELERDETAILADJ,$TABLE_IMP_DET,$TABLE_SPEC_IMP,$allowablema,$mafield;
+			global $MKTLEVELERDETAILADJ,$TABLE_IMP_DET,$TABLE_SPEC_IMP,$allowablema,$mafield,$debugquery;
 			$propid = $this->mPropID;
 			$subquery = "";
 			$target = "det_calc_val";
@@ -427,7 +434,7 @@ class propertyClass{
 			if($this->getImpCount() > 1){
 				$query .=" AND IMP_DET.imprv_id = '$this->mPrimeImpId'";
 			}
-			error_log("getMktLevelerDetailAdj[".$this->mPropID."]: query=".$query);
+			if($debugquery) error_log("getMktLevelerDetailAdj[".$this->mPropID."]: query=".$query);
 			$result=doSqlQuery($query);
 		
 			if(!$result){
@@ -643,6 +650,8 @@ class propertyClass{
 		$var6 = (int)$this->mSegAdjDelta;
 		
 		$this->mNetAdj = (int)($var1+$var2 + $var3 + $var4 + $var5 + $var6);
+
+        return $this->mNetAdj;
 	}
 	
 	function setMeanVal($numComps){
@@ -702,8 +711,10 @@ class propertyClass{
 		//echo "setting field " .$fieldConst." to ".$value."<br>";
 		if($fieldConst == NULL)
 			return;
-			
-		$value = trim($value);
+		
+		if(is_string($value)){	
+			$value = trim($value);
+		}
 		switch($fieldConst)
 		{
 			case($PROPID[0]):
@@ -752,7 +763,7 @@ class propertyClass{
 				$this->mLandValAdj = $value;
 				break;
 			case($CLASSADJ[0]):
-				$this->mClassAdj = $value;
+				$this->mClassAdj = $value[0].$value[1];
 				break;
 			case($ACTUALYEARBUILT[0]):
 				$this->mYearBuilt = $value;

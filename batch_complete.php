@@ -38,6 +38,13 @@ $INCLUDEVU=$row['IncludeVU'];
 $PREVYEAR=$row['NumPrevYears'];
 $INCLUDEMLS=$row['IncludeMLS'];
 $SQFTPCT=$row['SqftRange'];
+$SUBCLASSRANGE=$row['ClassRange'];
+$SUBCLASSENABLED=$row['ClassRangeEnabled'];
+$PERCENTGOODRANGE=$row['PercentGood'];
+$PERCENTGOODENABLED=$row['PercentGoodEnabled'];
+$NET_ADJ_ENABLED=$row['NetAdjEnabled'];
+$NET_ADJ_AMOUNT=$row['NetAdj'];
+//REMEMBER adding something here means you also need to add to batch_pdf.php and updateBatchSettings.php
 mysqli_free_result($resultSettings);
 
 ?>
@@ -58,6 +65,12 @@ Choose a file to upload: <input name="file" type="file" /><br />
     Include related neighborhoods<br>
     <input type="checkbox" name="includevu" id="includevu" value="yes" <?php echo ($INCLUDEVU=='TRUE' ? 'checked' : '');?>>
     Include forclosures (VU)<br>
+    <input type="checkbox" name="subclassenabled" id="subclassenabled" value="yes" <?php echo ($SUBCLASSENABLED=='TRUE' ? 'checked' : '');?>>
+    Range of subclasses to include:<input type="text" name="range" size="1" value=<?php echo $SUBCLASSRANGE;?>><br>
+    <input type="checkbox" name="pctgoodenabled" id="pctgoodenabled" value="yes" <?php echo ($PERCENTGOODENABLED=='TRUE' ? 'checked' : '');?>>
+    % Good Adjustment Range (amount above and below subject):<input type="text" name="pctGoodRange"  size="3" value=<?php echo $PERCENTGOODRANGE;?>>%<br>
+    <input type="checkbox" name="netadjust" id="netadjust" value="yes " <?php echo($NET_ADJ_ENABLED=='TRUE' ? 'checked' : '');?>>
+    Filter based on net adjustment value of <input type="text" name="netadjustamount"  size="7" value=<?php echo$NET_ADJ_AMOUNT;?>><br>
     Years back to include:<input type="text" name="multiyear" size="1" value=<?php echo $PREVYEAR;?>><br>
     Percent of square footage to consider (.01-1.00):<input type="text" name="sqftPct" size="3" value=<?php echo $SQFTPCT;?>><br>
     <br/>
