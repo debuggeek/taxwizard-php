@@ -1,4 +1,6 @@
+/vendor
 library/accountinfo.php
 .idea/
 *error_log
+/composer.lock
 upload/

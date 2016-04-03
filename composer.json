@@ -1,0 +1,6 @@
+{
+  "require": {
+    "mpdf/mpdf": "5.6.1",
+    "phpunit/phpunit": "5.3.0"
+  }
+}

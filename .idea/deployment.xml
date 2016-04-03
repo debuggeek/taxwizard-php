@@ -1,18 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="Fivestone local MAMP">
+  <component name="PublishConfigData" autoUpload="Always" serverName="localhost">
     <serverData>
-      <paths name="Fivestone local MAMP">
+      <paths name="localhost">
         <serverdata>
           <mappings>
-            <mapping deploy="/" local="$PROJECT_DIR$" web="/fivestone/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="debuggeek.com">
-        <serverdata>
-          <mappings>
-            <mapping deploy="~/public_html/debuggeek.com/taxtiger-stage" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
@@ -20,4 +13,3 @@
     <option name="myAutoUpload" value="ALWAYS" />
   </component>
 </project>
-
