@@ -1,9 +1,20 @@
 @CHARSET "UTF-8";
 body
 {
-background-color:cream;
+background-color:white;
 text-align:center;
 }
+
+.loader {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background: url('resources/page-loader.gif') 50% 50% no-repeat rgb(249,249,249);
+}
+
 h1
 {
 font-size:36pt;
@@ -25,6 +36,7 @@ td,th
 border:1px solid black;
 color:blue;
 text-align:left;
+white-space: nowrap;
 }
 
 th
@@ -32,16 +44,33 @@ th
 font-weight:bold;
 color:black;
 }
-.LandValueAdj,.ClassAdj,.\%GoodAdj,\%GoodAdjustment,.L\/ASizeAdj,.MktLevelerDetailAdj,.Segments\&Adj
+
+.value,.LandValueAdj,.ClassAdj,.\%GoodAdj,\%GoodAdjustment,.L\/ASizeAdj,.MktLevelerDetailAdj,.Segments\&Adj
 {
-color:blue;
-float:left;
+    color:blue;
+    float:left;
+    white-space: nowrap;
 }
 
-.LandValAdjDelta,.ClassAdjDelta,.GoodAdjDelta,.LASizeAdjDelta,.MktLevelerDetailAdjDelta,.NetAdjustment,.IndicatedValue,.IndicatedValue\/SQFT,
+.SalePrice,.SalePrice\/Sqft
+{
+    text-align:right;
+}
+
+.subvalue
+{
+    color: grey;
+    float: left;
+    white-space: nowrap;
+    padding-left: 5px;
+}
+
+.delta,.LandValAdjDelta,.ClassAdjDelta,.GoodAdjDelta,.LASizeAdjDelta,.MktLevelerDetailAdjDelta,.NetAdjustment,.IndicatedValue,.IndicatedValue\/SQFT,
 	.MeanValue,.MeanValue\/SQFT,.MedianValue,.MedianValue\/SQFT,.SegAdjDelta
 {
-color:red;
-float:right;
-text-align:right;
+    color:red;
+    float: right;
+    text-align:right;
+    padding-left: 5px;
+    white-space: nowrap;
 }

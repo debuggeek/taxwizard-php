@@ -4,34 +4,38 @@ $debugquery = false;
 include_once 'defines.php';
 include_once 'propertyClass.php';
 include_once 'queryContext.php';
+include_once 'PropertyDAO.php';
+//include_once 'DataAccessors.php';
+
+//$dataAccessors = new DataAccessors();
 //FUNCTIONS
+//
+//function getMrktSqft($data)
+//{
+//	global $MARKETVALUE,$LIVINGAREA;
+//	return number_format($data[$MARKETVALUE[0]] / $data[$LIVINGAREA[0]],2);
+//}
 
-function getMrktSqft($data)
-{
-	global $MARKETVALUE,$LIVINGAREA;
-	return number_format($data[$MARKETVALUE[0]] / $data[$LIVINGAREA[0]],2);
-}
 
+//function getSPSqft($data)
+//{
+//	global $SALEPRICE,$LIVINGAREA;
+//	$saleprice = $data[$SALEPRICE[0]];
+//	$livingarea = $data[$LIVINGAREA[0]];
+//
+//	if(is_numeric($saleprice) && is_numeric($livingarea))
+//	return $saleprice / $livingarea;
+//	else
+//	return "ERROR";
+//}
 
-function getSPSqft($data)
-{
-	global $SALEPRICE,$LIVINGAREA;
-	$saleprice = $data[$SALEPRICE[0]];
-	$livingarea = $data[$LIVINGAREA[0]];
-
-	if(is_numeric($saleprice) && is_numeric($livingarea))
-	return $saleprice / $livingarea;
-	else
-	return "ERROR";
-}
-
-function getHVImpSqft($data)
-{
-	global $HIGHVALIMPMARCN,$LIVINGAREA;
-
-	return number_format($data[$HIGHVALIMPMARCN[0]] / $data[$LIVINGAREA[0]],2);
-	return "funcgetHVImpSqft";
-}
+//function getHVImpSqft($data)
+//{
+//	global $HIGHVALIMPMARCN,$LIVINGAREA;
+//
+//	return number_format($data[$HIGHVALIMPMARCN[0]] / $data[$LIVINGAREA[0]],2);
+//	return "funcgetHVImpSqft";
+//}
 
 function getMeanVal($subjcomp)
 {
@@ -244,7 +248,7 @@ function setSaleInfo(propertyClass $compid,$prevyear,$instance=0,$compTable = nu
         $yearsBack = $year - $i ;
         $years = $years . "OR sale_date LIKE '%".$yearsBack."%' ";
     }
-	$query="SELECT sale_date,sale_price,source,sale_type FROM ". $compTable . " WHERE prop_id=".$compid->mPropID." AND (".$years.")";
+	$query="SELECT sale_date,sale_price,source,sale_type FROM ". $compTable . " WHERE prop_id=".$compid->getPropID()." AND (".$years.")";
 
 
     if($debugquery) error_log("setSaleInfo:: query=".$query);
@@ -259,7 +263,7 @@ function setSaleInfo(propertyClass $compid,$prevyear,$instance=0,$compTable = nu
 		return "No Record Found";
 
 	if($num > 1)
-		error_log("Found multiple sales for propid:".$compid->mPropID);
+		error_log("Found multiple sales for propid:".$compid->getPropID());
 
 
 	$tmpsalePrice = null;
@@ -286,7 +290,7 @@ function setSaleInfo(propertyClass $compid,$prevyear,$instance=0,$compTable = nu
 	}
 	
 	$compid->mSaleDate = $tmpsaleDate;
-	$compid->mSalePrice = $tmpsalePrice;
+	$compid->setSalePrice($tmpsalePrice);
     $compid->mSaleSource = $tmpsaleSource;
     $compid->mSaleType = $tmpSaleType;
 	return $compid;
@@ -296,37 +300,37 @@ function setSaleInfo(propertyClass $compid,$prevyear,$instance=0,$compTable = nu
  * @param propertyClass $data
  * @return string|string|Ambigous <>|string
 */
-function getNMIA($data)
-{
-	global $NEIGHBMIA,$NEIGHB,$PROPID;
-	$hoodval = $data[$NEIGHB[0]];
-	$prop_id = $data[$PROPID[0]];
-
-	$query="SELECT * FROM ". $NEIGHBMIA["TABLE"] . " WHERE prop_id=$prop_id";
-
-	$result=doSqlQuery($query);
-	$num=mysqli_num_rows($result);
-
-	if($num==0)
-	return "No Value Found!";
-
-	$row = mysqli_fetch_array($result);
-	$adjarray = explode(";",$row[$NEIGHBMIA["FIELD"]],100);
-	if(count($adjarray) ==0)
-	return "No Value Found!";
-
-	foreach($adjarray as $entry)
-	{
-		$entryarray = explode(":",$entry,2);
-		if(count($entryarray) != 0)
-		{
-			if(strcmp($hoodval,trim($entryarray[0]))== 0)
-			return $entryarray[1];
-		}
-	}
-
-	return "No Value Found!";
-}
+//function getNMIA($data)
+//{
+//	global $NEIGHBMIA,$NEIGHB,$PROPID;
+//	$hoodval = $data[$NEIGHB[0]];
+//	$prop_id = $data[$PROPID[0]];
+//
+//	$query="SELECT * FROM ". $NEIGHBMIA["TABLE"] . " WHERE prop_id=$prop_id";
+//
+//	$result=doSqlQuery($query);
+//	$num=mysqli_num_rows($result);
+//
+//	if($num==0)
+//	return "No Value Found!";
+//
+//	$row = mysqli_fetch_array($result);
+//	$adjarray = explode(";",$row[$NEIGHBMIA["FIELD"]],100);
+//	if(count($adjarray) ==0)
+//	return "No Value Found!";
+//
+//	foreach($adjarray as $entry)
+//	{
+//		$entryarray = explode(":",$entry,2);
+//		if(count($entryarray) != 0)
+//		{
+//			if(strcmp($hoodval,trim($entryarray[0]))== 0)
+//			return $entryarray[1];
+//		}
+//	}
+//
+//	return "No Value Found!";
+//}
  
 
 function getLivingArea($propid)
@@ -398,56 +402,56 @@ function getHVImpMARCNwImp($propid,$primeImpId)
 
 }
 
-function getGoodAdj($data)
-{
-	global $PROPID,$GOODADJ,$allowablema,$mafield;
-	$goodfield = $GOODADJ["FIELD"];
-	$goodtable = $GOODADJ["TABLE"];
-	$propid = $data[$PROPID[0]];
-	$imprvidtable = "IMP_DET";
-	
-	$subquery = "";
-	$i=0;
-	while($i < count($allowablema))
-	{
-		$subquery .= "$mafield = '$allowablema[$i]'";
-		if (++$i < count($allowablema))
-			$subquery .= " OR ";
-	}
-	$query = "SELECT $goodfield FROM $goodtable,$imprvidtable
-		WHERE $imprvidtable.prop_id='$propid'
-		AND $goodtable.prop_id='$propid'
-		AND $imprvidtable.Imprv_det_id = $goodtable.det_id
-		AND ( " . $subquery . ")";
+//function getGoodAdj($data)
+//{
+//	global $PROPID,$GOODADJ,$allowablema,$mafield;
+//	$goodfield = $GOODADJ["FIELD"];
+//	$goodtable = $GOODADJ["TABLE"];
+//	$propid = $data[$PROPID[0]];
+//	$imprvidtable = "IMP_DET";
+//
+//	$subquery = "";
+//	$i=0;
+//	while($i < count($allowablema))
+//	{
+//		$subquery .= "$mafield = '$allowablema[$i]'";
+//		if (++$i < count($allowablema))
+//			$subquery .= " OR ";
+//	}
+//	$query = "SELECT $goodfield FROM $goodtable,$imprvidtable
+//		WHERE $imprvidtable.prop_id='$propid'
+//		AND $goodtable.prop_id='$propid'
+//		AND $imprvidtable.Imprv_det_id = $goodtable.det_id
+//		AND ( " . $subquery . ")";
+//
+//	//echo "$query";
+//	$result=doSqlQuery($query);
+//
+//	if(!$result)
+//		return "No Value Found!";
+//
+//	$row = mysqli_fetch_array($result);
+//	return $row[$goodfield];
+//}
 
-	//echo "$query";
-	$result=doSqlQuery($query);
 
-	if(!$result)
-		return "No Value Found!";
-
-	$row = mysqli_fetch_array($result);
-	return $row[$goodfield];
-}
-
-
-function getGoodAdjDelta($subj,$comp)
-{
-	global $SALEPRICE,$MARKETVALUE,$LANDVALUEADJ,$GOODADJ,$isEquityComp;
-
-	if($isEquityComp)
-		$var1 = $comp[$MARKETVALUE[0]];
-	else
-		$var1 = $comp[$SALEPRICE[0]];
-	$var2 = $comp[$LANDVALUEADJ[0]];
-	$var3 = $subj[$GOODADJ[2]];
-	$var4 = $comp[$GOODADJ[2]];
-
-	if($var1 == 0 || $var2 == 0 || $var3 == 0 || $var4 ==0)
-		echo "<BR>ERROR: getGoodAdjDelta has null value for var1:". $var1." var2:".$var2." var3:".$var3." var4:".$var4;
-
-	return ($var1 - $var2)/100 * ($var3-$var4);
-}
+//function getGoodAdjDelta($subj,$comp)
+//{
+//	global $SALEPRICE,$MARKETVALUE,$LANDVALUEADJ,$GOODADJ,$isEquityComp;
+//
+//	if($isEquityComp)
+//		$var1 = $comp[$MARKETVALUE[0]];
+//	else
+//		$var1 = $comp[$SALEPRICE[0]];
+//	$var2 = $comp[$LANDVALUEADJ[0]];
+//	$var3 = $subj[$GOODADJ[2]];
+//	$var4 = $comp[$GOODADJ[2]];
+//
+//	if($var1 == 0 || $var2 == 0 || $var3 == 0 || $var4 ==0)
+//		echo "<BR>ERROR: getGoodAdjDelta has null value for var1:". $var1." var2:".$var2." var3:".$var3." var4:".$var4;
+//
+//	return ($var1 - $var2)/100 * ($var3-$var4);
+//}
 
 function getMktLevelerDetailAdjDelta($subj,$comp)
 {
@@ -457,42 +461,42 @@ function getMktLevelerDetailAdjDelta($subj,$comp)
 
 }
 
-function getLASizeAdj($data)
-{
-	global $PROPID,$allowablema;
-	$propid = $data[$PROPID[0]];
-	$subquery = "";
-
-	$i=0;
-	while($i < count($allowablema))
-	{
-		$subquery .= "imprv_det_type_cd='$allowablema[$i]'";
-		if (++$i < count($allowablema))
-		$subquery .= " OR ";
-	}
-
-	$query = "SELECT det_area FROM IMP_DET, SPECIAL_IMP
-			WHERE IMP_DET.prop_id='$propid'
-			AND ( " . $subquery . ")
-			AND imprv_det_id = det_id
-			AND IMP_DET.prop_id = SPECIAL_IMP.prop_id";
-
-	$result=doSqlQuery($query);
-	$num=mysqli_num_rows($result);
-		
-	if(!$result)
-	return "No Value Found!";
-
-	$value=0;
-
-	while($row = mysqli_fetch_array($result))
-	{
-		$value += $row["det_area"];
-	}
-
-	return $value;
-
-}
+//function getLASizeAdj($data)
+//{
+//	global $PROPID,$allowablema;
+//	$propid = $data[$PROPID[0]];
+//	$subquery = "";
+//
+//	$i=0;
+//	while($i < count($allowablema))
+//	{
+//		$subquery .= "imprv_det_type_cd='$allowablema[$i]'";
+//		if (++$i < count($allowablema))
+//		$subquery .= " OR ";
+//	}
+//
+//	$query = "SELECT det_area FROM IMP_DET, SPECIAL_IMP
+//			WHERE IMP_DET.prop_id='$propid'
+//			AND ( " . $subquery . ")
+//			AND imprv_det_id = det_id
+//			AND IMP_DET.prop_id = SPECIAL_IMP.prop_id";
+//
+//	$result=doSqlQuery($query);
+//	$num=mysqli_num_rows($result);
+//		
+//	if(!$result)
+//	return "No Value Found!";
+//
+//	$value=0;
+//
+//	while($row = mysqli_fetch_array($result))
+//	{
+//		$value += $row["det_area"];
+//	}
+//
+//	return $value;
+//
+//}
 
 function getYearBuilt($propid)
 {
@@ -555,19 +559,19 @@ function getHVImpSqftDiff($subj,$comp)
 
 }
 
-function is_NumberField($fieldname)
-{
-	global $MARKETVALUE,$MARKETPRICESQFT,$LIVINGAREA,$SALEPRICE,$SALEPRICESQFT,
-	$IMPROVEMENTCNT,$HIGHVALIMPMARCN,$HIGHVALIMPMARCNSQFT,
-	$LANDVALUEADJ,$LASIZEADJ,$HIGHVALIMPMASQFTDIFF,$MKTLEVELERDETAILADJ,$SEGMENTSADJ;
-
-	$numberfields = array($MARKETVALUE[0],$MARKETPRICESQFT[0],$LIVINGAREA[0],
-	$SALEPRICE[0],$SALEPRICESQFT[0],
-	$HIGHVALIMPMARCN[0],$HIGHVALIMPMARCNSQFT[0],
-	$LANDVALUEADJ[0],$LASIZEADJ[0],$HIGHVALIMPMASQFTDIFF[0],$SEGMENTSADJ[0]);//$IMPROVEMENTCNT[0],$MKTLEVELERDETAILADJ[0]
-	//	echo var_dump($numberfields);
-	return in_array($fieldname,$numberfields);
-}
+//function is_NumberField($fieldname)
+//{
+//	global $MARKETVALUE,$MARKETPRICESQFT,$LIVINGAREA,$SALEPRICE,$SALEPRICESQFT,
+//	$IMPROVEMENTCNT,$HIGHVALIMPMARCN,$HIGHVALIMPMARCNSQFT,
+//	$LANDVALUEADJ,$LASIZEADJ,$HIGHVALIMPMASQFTDIFF,$MKTLEVELERDETAILADJ,$SEGMENTSADJ;
+//
+//	$numberfields = array($MARKETVALUE[0],$MARKETPRICESQFT[0],$LIVINGAREA[0],
+//	$SALEPRICE[0],$SALEPRICESQFT[0],
+//	$HIGHVALIMPMARCN[0],$HIGHVALIMPMARCNSQFT[0],
+//	$LANDVALUEADJ[0],$LASIZEADJ[0],$HIGHVALIMPMASQFTDIFF[0],$SEGMENTSADJ[0]);//$IMPROVEMENTCNT[0],$MKTLEVELERDETAILADJ[0]
+//	//	echo var_dump($numberfields);
+//	return in_array($fieldname,$numberfields);
+//}
 
 function hasDelta($class){
 	global $landvaladjdelta,$classadjdelta,$goodadjdelta,$lasizeadjdelta,$mktlevelerdetailadjdelta,$segmentsadjdelta;
@@ -595,6 +599,21 @@ function hasDelta($class){
 	}
 }
 
+function hasMultiRow($class){
+	global $SEGMENTSADJ, $segmentsadjMultiRow;
+
+	if($class == NULL)
+		return NULL;
+
+	switch($class)
+	{
+		case($SEGMENTSADJ[0]):
+			return $segmentsadjMultiRow;
+		default:
+			return NULL;
+	}
+}
+
 function lookupProperty($propid)
 {
 	global $prop_table,$debug,$fieldsofinteresteq,$NETADJ,$INDICATEDVAL,$INDICATEDVALSQFT,$LANDVALUEADJ,$LANDVALUEADJB;
@@ -616,7 +635,7 @@ function lookupProperty($propid)
 		$currprop = null;
 		while($row = mysqli_fetch_array($result))
 		{
-			if($row['prop_id'] == $_SESSION['subjsess']->mPropID)
+			if($row['prop_id'] == $_SESSION['subjsess']->getPropID())
 			{
 				$currprop = $_SESSION['subjsess'];
 				$currprop->mSubj = true;
@@ -624,7 +643,7 @@ function lookupProperty($propid)
 			else{
 				for($i=1;$i <= $_SESSION['numcomps'];$i++)
 				{
-					if($row['prop_id'] == $_SESSION['comp'.$i]->mPropID)
+					if($row['prop_id'] == $_SESSION['comp'.$i]->getPropID())
 					{
 						$currprop = $_SESSION['comp'.$i];
 						$currprop->mSubj = false;
@@ -665,7 +684,7 @@ function lookupProperty($propid)
 				}
 				elseif($field[1] == "TABLELOOKUP") // NEED ANOTHER TABLE LOOKUP
 				{
-					$currprop->setField($field[0], tablelookup($currprop->mPropID,$field[0]));
+					$currprop->setField($field[0], tablelookup($currprop->getPropID(),$field[0]));
 				}
 				elseif($field[1] == "GLOBALCALCULATED")
 				{
@@ -689,7 +708,7 @@ function lookupProperty($propid)
 					else
 						$currprop->setField($field[0],$row[$field[2]]);
 				}
-				if(strcmp($currprop->mPropID,$_SESSION['subjsess']->mPropID) != 0 && 
+				if(strcmp($currprop->getPropID(),$_SESSION['subjsess']->getPropID()) != 0 && 
 				   ($delta = hasDelta($field[0])) != NULL)
 				   {
 				   	$func = "set".$delta;
@@ -719,6 +738,10 @@ function lookupProperty($propid)
 	}
 }
 
+/**
+ * @param propertyClass $subj
+ * @param propertyClass $currprop
+ */
 function calcDeltas($subj,$currprop)
 {
 	global $fieldsofinteresteq,$NETADJ,$INDICATEDVAL,$INDICATEDVALSQFT;
@@ -731,6 +754,9 @@ function calcDeltas($subj,$currprop)
 		   	$currprop->$func($subj);
 		}
 	}
+
+	$currprop->setImpDets(ImpHelper::compareImpDetails_AddDelta($subj->getImpDets(), $currprop->getImpDets()));
+
 	$currprop->$NETADJ[2]();
 	$currprop->$INDICATEDVAL[2]();
 	$currprop->$INDICATEDVALSQFT[2]();
@@ -738,7 +764,7 @@ function calcDeltas($subj,$currprop)
 
 function getSubjProperty($propid){
     $property = getProperty($propid);
-    $property->mSubj = true;
+    $property->setisSubj(true);
     return $property;
 }
 
@@ -748,8 +774,14 @@ function getSubjProperty($propid){
  *
  * Note: this function will NOT give delta information just basic and calculated data of property
  */
-function getProperty($propid)
+function getProperty($propid, $newMethod=true)
 {
+	if($newMethod){
+		global $servername,$username,$password,$database,$dbport;
+		$propDao = new PropertyDAO($servername, $username, $password, $database);
+		$currprop = $propDao->getPropertyById($propid);
+		return $currprop;
+	}
     global $fieldsofinteresteq;
     return getPropertyWithFields($propid,$fieldsofinteresteq);
 }
@@ -785,7 +817,7 @@ function getPropertyWithFields($propid, $fieldsofinterest)
 	}
 	
 	$postcalcfields = array();
-	$currprop->mPropID= $propid;
+	$currprop->setPropID($propid);
 	while($row = mysqli_fetch_array($result))
 	{
 		foreach($fieldsofinterest as $field)
@@ -819,7 +851,7 @@ function getPropertyWithFields($propid, $fieldsofinterest)
 			}
 			elseif($field[1] == "TABLELOOKUP") // NEED ANOTHER TABLE LOOKUP
 			{
-				$currprop->setField($field[0], tablelookup($currprop->mPropID,$field[0]));
+				$currprop->setField($field[0], tablelookup($currprop->getPropID(),$field[0]));
 			}
 			elseif($field[1] == "GLOBALCALCULATED")
 			{
@@ -848,7 +880,19 @@ function getPropertyWithFields($propid, $fieldsofinterest)
 			$currprop->setField($field[0],$currprop->$field[2]());
 		}
 	}
+
+	populateImpDet($currprop);
+
 	return $currprop;
+}
+
+/**
+ * @param propertyClass $property
+ */
+function populateImpDet($property){
+	global $servername,$username,$password,$database,$dbport;
+	$propDao = new PropertyDAO($servername, $username, $password, $database);
+	$property->setImpDets($propDao->getImpDet($property->getPropID()));
 }
 
 /**
@@ -982,16 +1026,16 @@ function getHoodListQuery($query,$isEquity){
 				$currprop->setField($field[0],$row[$field[2]]);
 			}
 			//Removes any properties that have a bad living area value
-			$val = getLivingArea($currprop->mPropID);
+			$val = getLivingArea($currprop->getPropID());
 			if ($val > 0){
 				$currprop->setField($LIVINGAREA[0],$val);
 				$hood_props[] = $currprop;
 			}
 			else{
 				if($debug)
-					echo "<br>Error on propid:".$currprop->mPropID."...removing due to LivingArea of ".$val."<br>".PHP_EOL;
+					echo "<br>Error on propid:".$currprop->getPropID()."...removing due to LivingArea of ".$val."<br>".PHP_EOL;
 				else
-					error_log("Error on propid: ".$currprop->mPropID."...removing due to LivingArea of ".$val);
+					error_log("Error on propid: ".$currprop->getPropID()."...removing due to LivingArea of ".$val);
 			}
 			$i++;
 			//if($i > $breakcount)
@@ -1010,10 +1054,10 @@ function cmpProp(propertyClass $prop1,propertyClass $prop2)
 
 	$prop1_Ind = intval($prop1->getIndicatedVal());
 	if($prop1_Ind == 0)
-		error_log("Error during comparison for indicated value of propid:".$prop1->mPropID);
+		error_log("Error during comparison for indicated value of propid:".$prop1->getPropID());
 	$prop2_Ind = intval($prop2->getIndicatedVal());
 	if($prop2_Ind == 0)
-		error_log("Error during comparison for indicated value of propid:".$prop2->mPropID);
+		error_log("Error during comparison for indicated value of propid:".$prop2->getPropID());
 	if($debug) echo "<br/>Comparing indicated values of".$prop1_Ind." and ".$prop2_Ind."<br/>";
     if ($prop1_Ind == $prop2_Ind) {
         return 0;
@@ -1059,9 +1103,9 @@ function findBestComps(propertyClass $subjprop, queryContext $queryContext)
 
         if(!$isEquityComp) {
             $compsCounts = array_count_values($compsSeen);
-            if(array_key_exists($c->mPropID,$compsCounts)){
+            if(array_key_exists($c->getPropID(),$compsCounts)){
                 //index off of the sale entry based on previously seen
-                setSaleInfo($c,$queryContext->prevYear,$compsCounts[$c->mPropID]);
+                setSaleInfo($c,$queryContext->prevYear,$compsCounts[$c->getPropID()]);
             } else{
                 setSaleInfo($c,$queryContext->prevYear,0);
             }
@@ -1069,12 +1113,12 @@ function findBestComps(propertyClass $subjprop, queryContext $queryContext)
         }
 
         if(addToCompsArray($c,$subjprop,$queryContext)){
-            if($debug) error_log("findBestComps: Adding ".$c->mPropID. " as comp::".$c);
+            if($debug) error_log("findBestComps: Adding ".$c->getPropID(). " as comp::".$c);
             $compsarray[] = $c;
         } else {
-            if($debug) error_log("findBestComps: Skipped adding ".$c->mPropID." as comp to ".$subjprop->mPropID);
+            if($debug) error_log("findBestComps: Skipped adding ".$c->getPropID()." as comp to ".$subjprop->getPropID());
         }
-        $compsSeen[] = $c->mPropID;
+        $compsSeen[] = $c->getPropID();
 	}
 	error_log("findBestComps: compsarray count= ".count($compsarray). " sizeof=".sizeof($compsarray));
 	return $compsarray;
@@ -1093,8 +1137,8 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop,queryContext $
     $compsseen = array();
     $traceComps = false;
 
-    if ($c->mPropID == $subjprop->mPropID) {
-        error_log("addToCompsArray: Skipping Comp prop id matched subject:" . $c->mPropID);
+    if ($c->getPropID() == $subjprop->getPropID()) {
+        error_log("addToCompsArray: Skipping Comp prop id matched subject:" . $c->getPropID());
         return false;
     }
 
@@ -1104,7 +1148,7 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop,queryContext $
     $sqft = $c->getFieldByName($LIVINGAREA[0]);
 
     if ($sqft < $min || $sqft > $max) {
-        if ($traceComps) error_log("addToCompsArray: " . $c->mPropID . " removed as potential comp due to size min=" . $min . " max=" . $max . " size=" . $sqft);
+        if ($traceComps) error_log("addToCompsArray: " . $c->getPropID() . " removed as potential comp due to size min=" . $min . " max=" . $max . " size=" . $sqft);
         return false;
     }
 
@@ -1125,7 +1169,7 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop,queryContext $
     $badClass = "XX"; //don't include this type as it's not a good property to use
     $classAdjArray = $c->getClassAdj();
     if ($classAdjArray == null) {
-        error_log("ERROR> addToCompsArray: Property has no class data: " . $c->mPropID);
+        error_log("ERROR> addToCompsArray: Property has no class data: " . $c->getPropID());
         return false;
     }
     $pos = stripos($classAdjArray[0], $badClass);
@@ -1161,11 +1205,11 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop,queryContext $
 
     if($queryContext->trimIndicated){
         if(cmpProp($subjprop,$c)==1){
-            if($traceComps) error_log("addToCompsArray: Found comp ".$c->mPropID);
+            if($traceComps) error_log("addToCompsArray: Found comp ".$c->getPropID());
             return true;
         }
     } else {
-        if($traceComps) error_log("addToCompsArray: Found comp ".$c->mPropID);
+        if($traceComps) error_log("addToCompsArray: Found comp ".$c->getPropID());
         return true;
     }
 
@@ -1278,7 +1322,7 @@ function generateArray(propertyClass $property,queryContext $queryContext)
     $compsarray = findBestComps($property, $queryContext);
 
     if (sizeof($compsarray) == 0) {
-        error_log("massreport: no comps found for " . $property->mPropID);
+        error_log("massreport: no comps found for " . $property->getPropID());
         return null;
     }
 
@@ -1287,10 +1331,10 @@ function generateArray(propertyClass $property,queryContext $queryContext)
     }
 
     if (sizeof($compsarray) == 0) {
-        error_log("massreport: no comps found after MLS Sort for " . $property->mPropID);
+        error_log("massreport: no comps found after MLS Sort for " . $property->getPropID());
     }
 
-    error_log("massreport: found " . sizeof($compsarray) . " comp(s) for " . $property->mPropID);
+    error_log("massreport: found " . sizeof($compsarray) . " comp(s) for " . $property->getPropID());
 
     //resort to reset their index of any removed
     usort($compsarray, "cmpProp");

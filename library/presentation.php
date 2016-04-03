@@ -1,6 +1,5 @@
 <?php
 
-
 function iterateProps($proparray){
 	echo "<pre>";
 	echo "PropID     Market Value     SQFT     Value/Sqft     Savings     Agent<br>".PHP_EOL;
@@ -52,285 +51,6 @@ function generateLetter(){
 	echo "</BODY></HTML>";
 }
 
-
-function createEQTable($comparray){
-	global $fieldsofinteresteq,$isEquityComp;
-	$isEquityComp = true;
-	
-	echo '<H2>Comp Equity Grid - Tax Tiger - '.date('l jS \of F Y h:i:s A').'</H2>'.PHP_EOL;
-	echo '<table>'.PHP_EOL;
-	for($i=0; $i <= count($fieldsofinteresteq); $i++)
-	{
-		echo "\t<tr>".PHP_EOL;
-		for($j=0; $j <= count($comparray); $j++)
-		{
-			if($j == 0)
-				$data = null;
-			elseif($j == 1)
-				$data = $_SESSION['subjsess'];
-			else
-				$data = $_SESSION['comp'.$comparray[$j-2]];
-				
-			//var_dump($data);
-			if($i==0) //Header Row
-			{
-				if($j==0)//leave first cell empty
-					echo "\t\t<td></td>";
-				else
-				{
-					if($j==1)
-						echo "\t\t<th class='colhead'>Subject</th>".PHP_EOL;
-					else
-						echo "\t\t<th class='colhead'>Comp ".($comparray[$j-2])."</th>".PHP_EOL;
-				}
-			}
-			else
-			{
-				if($j==0) //Description column
-				{
-					echo "\t\t<th>".$fieldsofinteresteq[$i-1][0]."</th>".PHP_EOL;
-				}
-				else
-				{
-					$currval = $data->getFieldByName($fieldsofinteresteq[$i-1][0]);
-					if($currval == NULL)
-					{
-						echo "\t\t<td class='unknown'>&nbsp</td>".PHP_EOL;
-						continue;
-					}
-					// ADD BACK IF YOU DON"T WANT '0' in left half of column
-					elseif(is_numeric ($currval) && $currval == 0)
-					{
-						echo "\t\t<td class='unknown'>&nbsp</td>".PHP_EOL;
-						continue;
-					}
-					else
-					{
-						echo "\t\t<td>";
-						$class = $fieldsofinteresteq[$i-1][0];
-						$trimmedclass = str_replace(" ","",$class);
-						echo "<div class='".$trimmedclass."' >".$currval."</div>";
-						if($j > 1 && ($delta = hasDelta($class)) != NULL){
-							$currval = $data->getFieldByName($delta);
-							if(is_numeric ($currval) && $currval == 0)
-							
-								echo "&nbsp".PHP_EOL;
-							else
-								echo "<div class='".$delta."' >".$currval."</div>";
-						}
-						echo "</td>".PHP_EOL;
-					}
-				}
-			}
-		}
-		
-	}
-	echo "</table>";
-	$isEquityComp = false;
-}
-
-function createEQTable2($subjcomparray){
-	global $fieldsofinteresteq,$isEquityComp;
-	$isEquityComp = true;
-	emitHTMLHeader();
-	echo '<div class="page">';
-	echo '<H2>Comp Equity Grid - Tax Tiger - '.date('l jS \of F Y h:i:s A').'</H2>'.PHP_EOL;
-	echo '<table>'.PHP_EOL;
-	for($i=0; $i <= count($fieldsofinteresteq); $i++)
-	{
-		echo "\t<tr>".PHP_EOL;
-		for($j=0; $j < count($subjcomparray); $j++)
-		{
-			$data = $subjcomparray[$j];		
-			//var_dump($data);
-			if($i==0) //Header Row
-			{
-				if($j==0)//leave first cell empty
-					echo "\t\t<td></td>\t\t<th class='colhead'>Subject</th>".PHP_EOL;
-				else
-					echo "\t\t<th class='colhead'>Comp ".$j."</th>".PHP_EOL;
-			}
-			else
-			{
-				if($j==0) {//Description column
-					echo "\t\t<th>".$fieldsofinteresteq[$i-1][0]."</th>".PHP_EOL;
-				}
-				//Check for the GlobalCAlculated fields in the subj column
-				if($j ==0 && strcmp($fieldsofinteresteq[$i-1][1],'GLOBALCALCULATED') == 0)
-					{   
-						$currval = $_SESSION[$fieldsofinteresteq[$i-1][0]];
-					}
-				else
-					$currval = $data->getFieldByName($fieldsofinteresteq[$i-1][0]);
-					
-				if($currval == NULL)
-				{
-					echo "\t\t<td class='unknown'>&nbsp</td>".PHP_EOL;
-					continue;
-				}
-				// ADD BACK IF YOU DON"T WANT '0' in left half of column
-				elseif(is_numeric ($currval) && $currval == 0)
-				{
-					echo "\t\t<td class='unknown'>&nbsp</td>".PHP_EOL;
-					continue;
-				}
-				else
-				{
-					$class = $fieldsofinteresteq[$i-1][0];
-					$trimmedclass = str_replace(" ","",$class);
-					
-					echo "\t\t<td><div class='".$trimmedclass."' >".$currval."</div>";
-					
-					if($j > 1 && ($delta = hasDelta($class)) != NULL){
-						$currval = $data->getFieldByName($delta);
-						if(is_numeric ($currval) && $currval == 0)
-						
-							echo "&nbsp".PHP_EOL;
-						else
-							echo "<div class='".$delta."' >".$currval."</div>";
-					}
-					echo "</td>".PHP_EOL;
-				}
-			}
-		}
-		
-	}
-	echo "</table>";
-	emitHTMLFooter();
-	$isEquityComp = false;
-}
-
-function createEQTableCSV($subjcomparray){
-	global $fieldsofinteresteq,$isEquityComp;
-	$isEquityComp = true;
-	cvsHeader();
-	echo 'Comp Equity Grid - Tax Tiger - '.date('l jS \of F Y h:i:s A').PHP_EOL;
-	for($i=0; $i <= count($fieldsofinteresteq); $i++)
-	{
-		for($j=0; $j < count($subjcomparray); $j++)
-		{
-			$data = $subjcomparray[$j];
-				
-			//var_dump($data);
-			if($i==0) //Header Row
-			{
-				if($j==0)
-					echo ";Subject";
-				else
-					echo ";Comp ".($j);
-			}
-			else
-			{
-				if($j==0) //Description column
-					echo $fieldsofinteresteq[$i-1][0];
-				
-				$currval = $data->getFieldByName($fieldsofinteresteq[$i-1][0]);
-				if($currval == NULL)
-				{
-					echo ";";
-					continue;
-				}
-				// ADD BACK IF YOU DON"T WANT '0' in left half of column
-				elseif(is_numeric ($currval) && $currval == 0)
-				{
-					echo ";";
-					continue;
-				}
-				else
-				{
-					$class = $fieldsofinteresteq[$i-1][0];
-					$trimmedclass = str_replace(" ","",$class);
-					
-					echo ";".$currval;
-					
-					//Only display delta's for comps
-					if($j > 0 && ($delta = hasDelta($class)) != NULL){
-						$currval = $data->getFieldByName($delta);
-						if(is_numeric ($currval) && $currval == 0)
-						
-							echo "()";
-						else
-							echo "(".$currval.")";
-					}
-				}
-			}		
-		}
-		echo PHP_EOL;
-	}
-	$isEquityComp = false;
-}
-
-function createSalesTable2($subjcomparray){
-	global $fieldsofinterest,$isEquityComp;
-	$isEquityComp = true;
-	emitHTMLHeader();
-	echo '<div class="page">';
-	echo '<H2>Comp Sales Grid - Tax Tiger - '.date('l jS \of F Y h:i:s A').'</H2>'.PHP_EOL;
-	echo '<table>'.PHP_EOL;
-	for($i=0; $i <= count($fieldsofinterest); $i++)
-	{
-		echo "\t<tr>".PHP_EOL;
-		for($j=0; $j < count($subjcomparray); $j++)
-		{
-			$data = $subjcomparray[$j];
-			//var_dump($data);
-			if($i==0) //Header Row
-			{
-				if($j==0)//leave first cell empty
-					echo "\t\t<td></td>\t\t<th class='colhead'>Subject</th>".PHP_EOL;
-				else
-					echo "\t\t<th class='colhead'>Comp ".$j."</th>".PHP_EOL;
-			}
-			else
-			{
-				if($j==0) {//Description column
-					echo "\t\t<th>".$fieldsofinterest[$i-1][0]."</th>".PHP_EOL;
-				}
-				//Check for the GlobalCAlculated fields in the subj column
-				if($j ==0 && strcmp($fieldsofinterest[$i-1][1],'GLOBALCALCULATED') == 0)
-				{
-					$currval = $_SESSION[$fieldsofinterest[$i-1][0]];
-				}
-				else
-					$currval = $data->getFieldByName($fieldsofinterest[$i-1][0]);
-					
-				if($currval == NULL)
-				{
-					echo "\t\t<td class='unknown'>&nbsp</td>".PHP_EOL;
-					continue;
-				}
-				// ADD BACK IF YOU DON"T WANT '0' in left half of column
-				elseif(is_numeric ($currval) && $currval == 0)
-				{
-					echo "\t\t<td class='unknown'>&nbsp</td>".PHP_EOL;
-					continue;
-				}
-				else
-				{
-					$class = $fieldsofinterest[$i-1][0];
-					$trimmedclass = str_replace(" ","",$class);
-						
-					echo "\t\t<td><div class='".$trimmedclass."' >".$currval."</div>";
-						
-					if($j > 0 && ($delta = hasDelta($class)) != NULL){
-						$currval = $data->getFieldByName($delta);
-						if(is_numeric ($currval) && $currval == 0){
-							echo "&nbsp".PHP_EOL;
-						}
-						else{
-							echo "<div class='".$delta."' >".$currval."</div>";
-						}
-					}
-					echo "</td>".PHP_EOL;
-				}
-			}
-		}
-
-	}
-	echo "</table>";
-	emitHTMLFooter();
-}
-
 function returnNoHits($propid){
 	emitHTMLHeader();
 	echo '<div class="nohitpage">';
@@ -338,8 +58,13 @@ function returnNoHits($propid){
 	emitHTMLFooter();
 }
 
-function createGenericTable($subjcomparray,$isEquityComp){
+/**
+ * @param $subjcomparray
+ * @param $isEquityComp
+ */
+function createGenericTable($subjcomparray, $isEquityComp){
 	global $fieldsofinterest,$fieldsofinteresteq;
+
 	emitHTMLHeader();
 	echo '<div class="page">';
 	if($isEquityComp){
@@ -349,7 +74,7 @@ function createGenericTable($subjcomparray,$isEquityComp){
 		echo '<H2>Comp Sales Grid - Tax Tiger - '.date('l jS \of F Y h:i:s A').'</H2>'.PHP_EOL;
 		$relaventfields = $fieldsofinterest;
 	}
-	
+
 	echo '<table>'.PHP_EOL;
 	for($i=0; $i <= count($relaventfields); $i++)
 	{
@@ -377,107 +102,35 @@ function createGenericTable($subjcomparray,$isEquityComp){
 				}
 				else
 					$currval = $data->getFieldByName($relaventfields[$i-1][0]);
-					
+
 				if($currval == NULL)
 				{
 					echo "\t\t<td class='unknown'>&nbsp</td>".PHP_EOL;
 					continue;
 				}
-				// ADD BACK IF YOU DON"T WANT '0' in left half of column
-				elseif(is_numeric ($currval) && $currval == 0)
-				{
-					echo "\t\t<td class='unknown'>&nbsp</td>".PHP_EOL;
-					continue;
-				}
+//				// ADD BACK IF YOU DON"T WANT '0' in left half of column
+//				elseif(is_numeric ($currval) && $currval == 0)
+//				{
+//					echo "\t\t<td class='unknown'>&nbsp</td>".PHP_EOL;
+//					continue;
+//				}
 				else
 				{
 					$class = $relaventfields[$i-1][0];
 					$trimmedclass = str_replace(" ","",$class);
 
-					echo "\t\t<td><div class='".$trimmedclass."' >".$currval."</div>";
+					if(($multiRowField = hasMultiRow($class)) != NULL){
+						outputMultiDataRows($multiRowField,$class, $trimmedclass,  $subjcomparray);
+					} else {
 
-					if($j > 0 && ($delta = hasDelta($class)) != NULL){
-						$currval = $data->getFieldByName($delta);
-						if(is_numeric ($currval) && $currval == 0){
-							echo "&nbsp".PHP_EOL;
-						}
-						else{
-							echo "<div class='".$delta."' >".$currval."</div>";
-						}
-					}
-					echo "</td>".PHP_EOL;
-				}
-			}
-		}
+						echo "\t\t<td><div class='".$trimmedclass."' >".$currval."</div>";
 
-	}
-	echo "</table>";
-	emitHTMLFooter();
-}
-function createSalesTable($comparray){
-	global $fieldsofinterest,$SEGMENTSADJ;
-	echo '<div class="page">';
-	echo '<H2>Comp Sales Grid - Tax Tiger - '.date('l jS \of F Y h:i:s A').'</H2>'.PHP_EOL;
-	echo '<table>'.PHP_EOL;
-	for($i=0; $i <= count($fieldsofinterest); $i++)
-	{
-		echo "\t<tr>".PHP_EOL;
-		for($j=0; $j <= count($comparray); $j++)
-		{
-			if($j == 0)
-				$data = null;
-			elseif($j == 1)
-				$data = $_SESSION['subjsess'];
-			else
-				$data = $_SESSION['comp'.$comparray[$j-2]];
-				
-			//var_dump($data);
-			if($i==0) //Header Row
-			{
-				if($j==0)//leave first cell empty
-					echo "\t\t<td></td>";
-				else
-				{
-					if($j==1)
-						echo "\t\t<th class='colhead'>Subject</th>".PHP_EOL;
-					else
-						echo "\t\t<th class='colhead'>Comp ".($comparray[$j-2])."</th>".PHP_EOL;
-				}
-			}
-			else
-			{
-				if($j==0) //Description column
-				{
-					echo "\t\t<th>".$fieldsofinterest[$i-1][0]."</th>".PHP_EOL;
-				}
-				else
-				{
-					$class = $fieldsofinterest[$i-1][0];
-					$currval = $data->getFieldByName($class);
-					if($currval == NULL)
-					{
-						echo "\t\t<td class='unknown'>&nbsp</td>".PHP_EOL;
-						continue;
-					}
-					// ADD BACK IF YOU DON"T WANT '0' in left half of column
-					elseif(is_numeric ($currval) && $currval == 0 && $class != $SEGMENTSADJ[0])
-					{
-						echo "\t\t<td class='unknown'>&nbsp</td>".PHP_EOL;
-						continue;
-					}
-					else
-					{
-						echo "\t\t<td>";
-						$trimmedclass = str_replace(" ","",$class);
-						echo "<div class='".$trimmedclass."' >".$currval."</div>";
-						if($j > 1 && ($delta = hasDelta($class)) != NULL){
+						if($j > 0 && ($delta = hasDelta($class)) != NULL){
 							$currval = $data->getFieldByName($delta);
-							if(is_numeric ($currval) && $currval == 0)			
-							{			
+							if(is_numeric ($currval) && $currval == 0){
 								echo "&nbsp".PHP_EOL;
 							}
-							else
-							{
+							else{
 								echo "<div class='".$delta."' >".$currval."</div>";
 							}
 						}
@@ -486,10 +139,92 @@ function createSalesTable($comparray){
 				}
 			}
 		}
-		
+		echo "\t</tr>".PHP_EOL;
 	}
 	echo "</table>";
-	echo '</div>'; // Page Div
+	emitHTMLFooter();
+}
+
+function outputMultiDataRows($multiRowField, $class, $trimmedclass, $subjcomparray)
+{
+	global $segmentsadjMultiRow;
+
+	if($multiRowField == $segmentsadjMultiRow){
+		outputSegAdj($subjcomparray);
+		return;
+	}
+
+	$maxRows = 1;
+	//Start the next row and skip the first column
+	//When we are called we are in the Subj column
+	for($row=0; $row < $maxRows; $row++){
+		for($col=0; $col < count($subjcomparray); $col++){
+			$property = $subjcomparray[$col];
+			$dataArray = $property->getFieldByName($multiRowField);
+			//echo var_dump($dataArray);
+			if(count($dataArray) > $maxRows){
+				$maxRows = count($dataArray) -1;
+			}
+			if($row >= count($dataArray)){
+				//close and move to next column;
+				echo "\t\t<td/>".PHP_EOL;
+				continue;
+			}
+			$element = $dataArray[$row];
+			echo "\t\t<td><div class='" . $trimmedclass . "'>" . $element->getDisplay() . "</div>";
+
+			if (!$property->mSubj && ($delta = hasDelta($class)) != NULL) {
+				$currval = $property->getFieldByName($delta);
+				if (is_numeric($currval) && $currval == 0) {
+					echo "&nbsp";
+				} else {
+					echo "<div class='" . $delta . "' >" . $currval . "</div>";
+				}
+			}
+			echo "</td>" . PHP_EOL;
+		}
+		echo "\t</tr>" .PHP_EOL;
+		echo "\t<tr>" . PHP_EOL;
+		echo "\t\t<td class='unknown'>&nbsp</td>" . PHP_EOL;
+	}
+}
+
+function outputSegAdj($subjcomparray){
+	$maxRows = 1;
+	//Start the next row and skip the first column
+	//When we are called we are in the Subj column
+	for($row=0; $row < $maxRows; $row++){
+		for($col=0; $col < count($subjcomparray); $col++){
+			/* @var $property propertyClass */
+			$property = $subjcomparray[$col];
+			$impDets = $property->getImpDets();
+			//echo var_dump($dataArray);
+			if(count($impDets) > $maxRows){
+				$maxRows = count($impDets);
+			}
+			if($row >= count($impDets)){
+				//close and move to next column;
+				echo "\t\t<td/>".PHP_EOL;
+				continue;
+			}
+			/* @var $impDetail ImprovementDetailClass */
+			$impDetail = $impDets[$row];
+			echo "\t\t<td><div class='Segments&Adj'>" . $impDetail->getDisplay() . "</div>";
+
+			if (!$property->isSubj()) {
+				$currval = $impDetail->getAdjustmentDelta();
+				if (is_numeric($currval) && $currval == 0) {
+					echo "&nbsp";
+				} else {
+					echo "<div class='SegAdjDelta'>" . $currval . "</div>";
+				}
+			}
+			echo "</td>" . PHP_EOL;
+		}
+		echo "\t</tr>" .PHP_EOL;
+		echo "\t<tr>" . PHP_EOL;
+		echo "\t\t<td class='unknown'>&nbsp</td>" . PHP_EOL;
+	}
 }
 
 
@@ -584,6 +319,215 @@ function emitXML(propertyClass $propClasses){
 function emitHTMLFooter(){
 	echo '</BODY>'.PHP_EOL;
 	echo '<HTML>';
+}
+
+
+/**
+ * @param $subjcomparray
+ * @param $isEquityComp
+ */
+function generateJsonRows($fullTable, $isEquityComp){
+	global $fieldsofinterest,$fieldsofinteresteq, $SEGMENTSADJ;
+	if($isEquityComp){
+		$relaventfields = $fieldsofinteresteq;
+	}else{
+		$relaventfields = $fieldsofinterest;
+	}
+	$subjcomparray = $fullTable["subjComps"];
+
+	$obj = new stdClass();
+	$obj->isEquity=$isEquityComp;
+	$obj->compCount = count($subjcomparray)-1;//Don't count the subj
+	$obj->rows = array();
+
+	$roundtwo = array();
+	foreach($relaventfields as $field){
+		if($field[1] == "GLOBALCALCULATED"){
+			$roundtwo[] = $field;
+		} else if($field[0] !== $SEGMENTSADJ[0]) {
+			$currRow = array();
+			$currRow['description'] = $field[0];
+			for ($i = 0; $i < count($subjcomparray); $i++) {
+				/* @var propertyClass $prop */
+				$prop = $subjcomparray[$i];
+				$currCol = 'col' . ($i + 1);
+				if (!hasDelta($field[0])) {
+					$currRow[$currCol] = $prop->getFieldByName($field[0]);
+				} else {
+					$currRow[$currCol] = populateDeltaObj($prop, $field);
+				}
+			}
+			$obj->rows[] = $currRow;
+		} else {
+			// Dealing with segments and Adj as only case right now
+			$obj->rows = array_merge($obj->rows, addPrimaryImprovements($subjcomparray, $field));
+			//TODO Add secondary improvements
+			$obj->rows = array_merge($obj->rows, addSecondaryImprovements($subjcomparray));
+		}
+		
+		
+	}
+
+	foreach($roundtwo as $field){
+		$currRow = array();
+		$currRow['description'] = $field[0];
+		for ($i = 0; $i < count($subjcomparray); $i++) {
+			$currCol = 'col' . ($i + 1);
+			if($currCol == 'col1') {
+				//Always only go in first col
+				$currRow[$currCol] = $fullTable[$field['KEY']];
+			} else {
+				$currRow[$currCol] = null;
+			}
+		}
+		$obj->rows[] = $currRow;
+	}
+
+	return json_encode($obj, JSON_PRETTY_PRINT);
+}
+
+/**
+ * @param propertyClass() $subjcomparray
+ * @param $field
+ * @return array()
+ */
+function addPrimaryImprovements($subjcomparray, $field){
+	$resultRows = array();
+	$maxOverallImp = getMaxPrimaryImpCount($subjcomparray);
+	$ListofPropsImprv = array();
+	for ($i = 0; $i < count($subjcomparray); $i++) {
+		$ListofPropsImprv[$i] = ImpHelper::getPrimaryImprovements($subjcomparray[$i]->getImpDets());
+	}
+	$seenDetIds = array();
+	for ($i = 0; $i < $maxOverallImp; $i++) {
+		$currRow = array();
+		if ($i == 0) {
+			//only first row has description
+			$currRow['description'] = $field[0];
+		} else {
+			$currRow['description'] = null;
+		}
+		//We start with the order in subject
+		$subjImprovments = $ListofPropsImprv[0];
+		if($i < count($subjImprovments)) {
+			//While we have improvements that exist in subject
+			$currImpDetCode = $subjImprovments[$i]->getImprvDetTypeCd();
+			for ($j = 0; $j < count($ListofPropsImprv); $j++) {
+				$currImpList = $ListofPropsImprv[$j];
+				$currCol = 'col' . ($j + 1);
+				$improvement = ImpHelper::getImprovObjByCode($currImpList, $currImpDetCode);
+				$currRow[$currCol] = populateSegObj($improvement);
+				$seenDetIds[] = $improvement->getImprvDetId();
+			}
+		} else {
+			//Now we just need to get the rest of the improvements on the comps
+			for ($j = 0; $j < count($ListofPropsImprv); $j++) {
+				$currImpList = $ListofPropsImprv[$j];
+				$currCol = 'col' . ($j + 1);
+				if($j == 0){
+					//we know the subject doesn't have this
+					$currRow[$currCol] = populateSegObj(null);
+				} else {
+					$foundOne = false;
+					foreach($currImpList as $improvDetail){
+						/* @var ImprovementDetailClass $improvDetail */
+						if(!in_array($improvDetail->getImprvDetId(), $seenDetIds)){
+							$currRow[$currCol] = populateSegObj($improvDetail);
+							$seenDetIds[] = $improvDetail->getImprvDetId();
+							$foundOne = true;
+							break;
+						}
+					}
+					if(!$foundOne){
+						// If we couldn't find one then it's an empty cell
+						$currRow[$currCol] = null;
+					}
+				}
+			}
+		}
+		$resultRows[] = $currRow;
+	}
+	return $resultRows;
+}
+
+/**
+ * @param $subjcomparray
+ * @return array()
+ */
+function addSecondaryImprovements($subjcomparray){
+	$resultRows = array();
+	$currRow = array();
+	$currRow['description'] = "Secondary Imp";
+	for($i=0; $i < count($subjcomparray); $i++){
+		/* @var propertyClass $currProp */
+		$currProp = $subjcomparray[$i];
+		$currCol = 'col' . ($i + 1);
+		$deltaObj = new stdClass();
+		$deltaObj->value = $currProp->getSegAdj();
+		$deltaObj->delta = $currProp->getSegAdjDelta();
+		$currRow[$currCol] = $deltaObj;
+	}
+	$resultRows[] = $currRow;
+	return $resultRows;
+}
+
+/**
+ * @param ImprovementDetailClass $improvement
+ * @return stdClass
+ */
+function populateSegObj($improvement){
+	$obj = new stdClass();
+	$obj->value = $improvement ? $improvement->getImprvDetTypeDesc() : null;
+	$obj->subvalue = $improvement ? $improvement->getDetArea() : null;
+	$obj->delta = $improvement ? $improvement->getAdjustmentDelta() : null;
+	return $obj;
+}
+
+/**
+ * @param propertyClass $prop
+ * @param array $field
+ * @return stdClass with value and delta populated
+ */
+function populateDeltaObj($prop, $field){
+	$delta = hasDelta($field[0]);
+	$deltaObj = new stdClass();
+	$deltaObj->value = $prop->getFieldByName($field[0]);
+	$deltaObj->delta = $prop->getFieldByName($delta);
+	return $deltaObj;
+}
+
+/**
+ * @param propertyClass[] $subjCompArray
+ */
+function getMaxPrimaryImpCount($subjCompArray){
+	$maxCount = 0;
+	foreach($subjCompArray as $prop){
+		/* @var propertyClass $prop */
+		$currCount = count(ImpHelper::getPrimaryImprovements($prop->getImpDets()));
+		if($currCount > $maxCount){
+			$maxCount = $currCount;
+		}
+
+	}
+	return $maxCount;
+}
+
+/**
+ * Returns the maximum number of secondary improvements across all properties
+ * @param $subjcomparray
+ * @return int
+ */
+function getMaxSecondaryImprovement($subjCompArray){
+	$maxCount = 0;
+	foreach($subjCompArray as $prop){
+		/* @var propertyClass $prop */
+		$currCount = count(ImpHelper::getSecondaryImprovements($prop->getImpDets()));
+		if($currCount > $maxCount){
+			$maxCount = $currCount;
+		}
+
+	}
+	return $maxCount;
 }
 
 /**
