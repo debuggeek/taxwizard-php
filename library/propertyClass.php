@@ -259,12 +259,7 @@ class propertyClass{
 	}
 
 	function __toString(){
-		$class_vars = get_object_vars($this);
-		$retstring = "";
-		foreach ($class_vars as $name => $value) {
-			$retstring = $retstring . "[$name : $value],";
-		}
-		return $retstring;
+		return json_encode($this);
 	}
 
 	private function getUnitPrice()

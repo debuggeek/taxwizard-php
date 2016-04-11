@@ -59,6 +59,7 @@ function returnNoHits($propid){
 }
 
 /**
+ * @Deprecated
  * @param $subjcomparray
  * @param $isEquityComp
  */
@@ -100,9 +101,9 @@ function createGenericTable($subjcomparray, $isEquityComp){
 				{
 					$currval = $_SESSION[$relaventfields[$i-1][0]];
 				}
-				else
-					$currval = $data->getFieldByName($relaventfields[$i-1][0]);
-
+				else {
+					$currval = $data->getFieldByName($relaventfields[$i - 1][0]);
+				}
 				if($currval == NULL)
 				{
 					echo "\t\t<td class='unknown'>&nbsp</td>".PHP_EOL;
@@ -226,7 +227,6 @@ function outputSegAdj($subjcomparray){
 		echo "\t\t<td class='unknown'>&nbsp</td>" . PHP_EOL;
 	}
 }
-
 
 function dumpProperties($proparray,$isEquity){
 	global $fieldsofinterestprop,$isEquityComp;
@@ -501,6 +501,7 @@ function populateDeltaObj($prop, $field){
  */
 function getMaxPrimaryImpCount($subjCompArray){
 	$maxCount = 0;
+	error_log(json_encode($subjCompArray));
 	foreach($subjCompArray as $prop){
 		/* @var propertyClass $prop */
 		$currCount = count(ImpHelper::getPrimaryImprovements($prop->getImpDets()));
