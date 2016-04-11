@@ -1,0 +1,390 @@
+{
+  "isEquity": false,
+  "compCount": 1,
+  "rows": [
+    {
+      "description": "Property ID",
+      "col1": "105290",
+      "col2": "106033"
+    },
+    {
+      "description": "Property Owner",
+      "col1": "KOESTERS KURT H & LAURA",
+      "col2": "GUTIERREZ JORGE ALEJANDR"
+    },
+    {
+      "description": "Geo ID",
+      "col1": "0106160913",
+      "col2": "0107180410"
+    },
+    {
+      "description": "Situs",
+      "col1": "3127  EANES CIR  TX 78746",
+      "col2": "3511  PINNACLE RD  TX 78746"
+    },
+    {
+      "description": null,
+      "col1": null,
+      "col2": null
+    },
+    {
+      "description": "Neighborhood",
+      "col1": "M5200",
+      "col2": "M5200"
+    },
+    {
+      "description": null,
+      "col1": null,
+      "col2": null
+    },
+    {
+      "description": "Sale Date",
+      "col1": null,
+      "col2": "2\/18\/2014"
+    },
+    {
+      "description": "Market Value",
+      "col1": "720,623",
+      "col2": "628,505"
+    },
+    {
+      "description": "Market Price\/SQFT",
+      "col1": "245.61",
+      "col2": "221.38"
+    },
+    {
+      "description": "Sale Price",
+      "col1": null,
+      "col2": "599500"
+    },
+    {
+      "description": "Sale Price \/ SQFT",
+      "col1": "0",
+      "col2": "211"
+    },
+    {
+      "description": null,
+      "col1": null,
+      "col2": null
+    },
+    {
+      "description": "Land Value Adj",
+      "col1": {
+        "value": "242000",
+        "delta": "0"
+      },
+      "col2": {
+        "value": "200000",
+        "delta": "42,000"
+      }
+    },
+    {
+      "description": "Imp Count",
+      "col1": 2,
+      "col2": 1
+    },
+    {
+      "description": "Class Adj",
+      "col1": {
+        "value": "WW5",
+        "delta": "0"
+      },
+      "col2": {
+        "value": "WW5-",
+        "delta": "18,993"
+      }
+    },
+    {
+      "description": "% Good Adj",
+      "col1": {
+        "value": "75_",
+        "delta": "0"
+      },
+      "col2": {
+        "value": "80",
+        "delta": "-19,975"
+      }
+    },
+    {
+      "description": "Living Area",
+      "col1": "2934",
+      "col2": "2839"
+    },
+    {
+      "description": "Year Built",
+      "col1": null,
+      "col2": null
+    },
+    {
+      "description": "Segments & Adj",
+      "col1": {
+        "value": "1st Floor",
+        "subvalue": "1902",
+        "delta": null
+      },
+      "col2": {
+        "value": "1st Floor",
+        "subvalue": "2318",
+        "delta": -35676
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": "2nd Floor",
+        "subvalue": "1032",
+        "delta": null
+      },
+      "col2": {
+        "value": "2nd Floor",
+        "subvalue": "NONE",
+        "delta": -0
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": "GARAGE ATT 1ST F",
+        "subvalue": "556",
+        "delta": null
+      },
+      "col2": {
+        "value": "GARAGE ATT 1ST F",
+        "subvalue": "NONE",
+        "delta": 14039
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": "HVAC RESIDENTIAL",
+        "subvalue": "2934",
+        "delta": null
+      },
+      "col2": {
+        "value": "HVAC RESIDENTIAL",
+        "subvalue": "2839",
+        "delta": 219
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": "BATHROOM",
+        "subvalue": "2.5",
+        "delta": null
+      },
+      "col2": {
+        "value": "BATHROOM",
+        "subvalue": "2.2",
+        "delta": -0
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": "DECK UNCOVRED",
+        "subvalue": "102.7",
+        "delta": null
+      },
+      "col2": {
+        "value": "DECK UNCOVRED",
+        "subvalue": "1076",
+        "delta": -7835
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": "DECK COVERED",
+        "subvalue": "200",
+        "delta": null
+      },
+      "col2": {
+        "value": "DECK COVERED",
+        "subvalue": "NONE",
+        "delta": 2070
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": "FIREPLACE",
+        "subvalue": "1",
+        "delta": null
+      },
+      "col2": {
+        "value": "FIREPLACE",
+        "subvalue": "1",
+        "delta": -3450
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": "MASONRY TRIM SF",
+        "subvalue": "975",
+        "delta": null
+      },
+      "col2": {
+        "value": "MASONRY TRIM SF",
+        "subvalue": "723",
+        "delta": 1666
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": "POOL RES CONC",
+        "subvalue": "1",
+        "delta": null
+      },
+      "col2": {
+        "value": "POOL RES CONC",
+        "subvalue": "NONE",
+        "delta": 14375
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": "TERRACE UNCOVERD",
+        "subvalue": "24",
+        "delta": null
+      },
+      "col2": {
+        "value": "TERRACE UNCOVERD",
+        "subvalue": "NONE",
+        "delta": 138
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": "PORCH OPEN 1ST F",
+        "subvalue": "96",
+        "delta": null
+      },
+      "col2": {
+        "value": "PORCH OPEN 1ST F",
+        "subvalue": "36",
+        "delta": 876
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": null,
+        "subvalue": null,
+        "delta": null
+      },
+      "col2": {
+        "value": "Finished Basement",
+        "subvalue": "521",
+        "delta": -25378
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": null,
+        "subvalue": null,
+        "delta": null
+      },
+      "col2": {
+        "value": "GARAGE BELOW GRD",
+        "subvalue": "483",
+        "delta": -12640
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": null,
+        "subvalue": null,
+        "delta": null
+      },
+      "col2": {
+        "value": "CARPORT ATT 1ST",
+        "subvalue": "84",
+        "delta": -1099
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": null,
+        "subvalue": null,
+        "delta": null
+      },
+      "col2": {
+        "value": "STORAGE ATT",
+        "subvalue": "78",
+        "delta": -1670
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": null,
+        "subvalue": null,
+        "delta": null
+      },
+      "col2": {
+        "value": "TERRACE COVERED",
+        "subvalue": "48",
+        "delta": -386
+      }
+    },
+    {
+      "description": null,
+      "col1": null,
+      "col2": null
+    },
+    {
+      "description": "Net Adjustment",
+      "col1": "0",
+      "col2": "-13,733"
+    },
+    {
+      "description": null,
+      "col1": null,
+      "col2": null
+    },
+    {
+      "description": "Indicated Value",
+      "col1": "720,623",
+      "col2": "585,767"
+    },
+    {
+      "description": "Indicated Value \/ SQFT",
+      "col1": "0.00",
+      "col2": "206.33"
+    },
+    {
+      "description": null,
+      "col1": null,
+      "col2": null
+    },
+    {
+      "description": "Mean Value",
+      "col1": "0",
+      "col2": "0"
+    },
+    {
+      "description": "Mean Value \/ SQFT",
+      "col1": "0.00",
+      "col2": "0.00"
+    },
+    {
+      "description": "Median Value",
+      "col1": "0",
+      "col2": "0"
+    },
+    {
+      "description": "Median Value \/ SQFT",
+      "col1": "0.00",
+      "col2": "0.00"
+    }
+  ]
+}

@@ -1,136 +1,142 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
-<link rel="stylesheet" type="text/css" href="index.css">
-<title>Five Stone Property Tax TCAD Tools</title>
-<style type="text/css"></style>
+    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii"/>
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <title>Five Stone Property Tax TCAD Tools</title>
+    <style type="text/css"></style>
 </head>
 <body id="page1">
 <img src="resources/FS-Logo-PropertyTax-wTagline.png" width="615" height="141" title="" alt="Five Stone Property Tax">
 <br>
 <br>
 <ul id="tabs">
-<li id="tab1"><a href="index.html">Table Lookups</a></li>
-<li id="tab2"><a href="batch_complete.php">Batch Processing</a></li>
-<li id="tab3"><a href="beta.html">Beta Tools</a></li>
-<li id="tab4"><a href="admin.php">Admin Tools</a></li></ul>
+    <li id="tab1"><a href="index.html">Table Lookups</a></li>
+    <li id="tab2"><a href="batch_complete.php">Batch Processing</a></li>
+    <li id="tab3"><a href="beta.html">Beta Tools</a></li>
+    <li id="tab4"><a href="admin.php">Admin Tools</a></li>
+</ul>
 <ul>
-<script type="text/javascript">
+    <script type="text/javascript">
 
-var numrows=1;
+        var numrows = 1;
 
-function add_row() {
-    var end = document.getElementById("end");
-    var parentDiv = end.parentNode;
-    var div = document.createElement("div");
-    div.setAttribute("id", ++numrows);
-    parentDiv.insertBefore(div, end);
+        function add_row() {
+            var end = document.getElementById("end");
+            var parentDiv = end.parentNode;
+            var div = document.createElement("div");
+            div.setAttribute("id", ++numrows);
+            parentDiv.insertBefore(div, end);
 
-	div.innerHTML = "\nID:<input type\=\"text\" name\=\"c" + numrows
-				+ "\">	Sales Price:<input type\=\"text\" name\=\"c" + numrows
-				+ "sp\"> Sales Date:<input type\=\"text\" name\=\"c" + numrows
-				+ "sd\"><input type=\"button\" onclick=\"del_row(" + numrows
-				+ ")\" value=\"-\">\n";
-	}
+            div.innerHTML = "\nID:<input type\=\"text\" name\=\"c" + numrows
+                    + "\">	Sales Price:<input type\=\"text\" name\=\"c" + numrows
+                    + "sp\"> Sales Date:<input type\=\"text\" name\=\"c" + numrows
+                    + "sd\"><input type=\"button\" onclick=\"del_row(" + numrows
+                    + ")\" value=\"-\">\n";
+        }
 
-	function del_row(id) {
-		var child = document.getElementById(id)
-		var parentDiv = child.parentNode;
-		parentDiv.removeChild(child);
-		--numrows;
-	}
+        function del_row(id) {
+            var child = document.getElementById(id);
+            var parentDiv = child.parentNode;
+            parentDiv.removeChild(child);
+            --numrows;
+        }
 
 
-	function add_row_eq() {
-	    var end = document.getElementById("end2");
-	    var parentDiv = end.parentNode;
-	    var div = document.createElement("div");
-	    div.setAttribute("id", ++numrows);
-	    parentDiv.insertBefore(div, end);
+        function add_row_eq() {
+            var end = document.getElementById("end2");
+            var parentDiv = end.parentNode;
+            var div = document.createElement("div");
+            div.setAttribute("id", ++numrows);
+            parentDiv.insertBefore(div, end);
 
-		div.innerHTML = "\nID:<input type\=\"text\" name\=\"c" + numrows
-					+ "\"><input type=\"button\" onclick=\"del_row(" + numrows
-					+ ")\" value=\"-\">\n";
-		}
+            div.innerHTML = "\nID:<input type\=\"text\" name\=\"c" + numrows
+                    + "\"><input type=\"button\" onclick=\"del_row(" + numrows
+                    + ")\" value=\"-\">\n";
+        }
 
-		function del_row(id) {
-			var child = document.getElementById(id)
-			var parentDiv = child.parentNode;
-			parentDiv.removeChild(child);
-			--numrows;
-		}
+        function del_row(id) {
+            var child = document.getElementById(id);
+            var parentDiv = child.parentNode;
+            parentDiv.removeChild(child);
+            --numrows;
+        }
 
-function validateForm() {
-    var x = document.forms["form"]["sqftPct"].value;
-    if (x==null || x=="") {
-        alert("Square footage must be filled out");
-        return false;
-    }
-    var val = parseFloat(x);
-    if(val > 1 || val < .01){
-        alert("Square footage should be between .01 and 1.00");
-        return false;
-    }
-}
-</script>
-<p><strong>Prospects</strong></p>
-<script>
-	try{
-		for(var lastpass_iter=0; lastpass_iter < document.forms.length; lastpass_iter++){ 
-			var lastpass_f = document.forms[lastpass_iter]; 
-			if(typeof(lastpass_f.lpsubmitorig2)=="undefined"){
-				lastpass_f.lpsubmitorig2 = lastpass_f.submit; 
-				lastpass_f.submit = function(){ 
-										var form=this;
-										var customEvent = document.createEvent("Event");
-										customEvent.initEvent("lpCustomEvent", true, true);
-										var d = document.getElementById("hiddenlpsubmitdiv");
-										for(var i = 0; i < document.forms.length; i++){
-											if(document.forms[i]==form){ d.innerText=i; 
-										}
-									} 
-				d.dispatchEvent(customEvent); 
-				form.lpsubmitorig2(); 
-				}
-			}
-		}
-	}catch(e){}
-</script>
-<!-- when the form is submitted, the server response will appear in this iframe -->
-<a href="library/prospects_list.php">Show Prospect List</a>
-<br>
-<p><strong>Enter a PropertyID to find best comps and generate the generate report</strong>  (Note: This operation can take some time)</p>
-<form name="form" action="massreport.php" method="get" target="_blank" onsubmit="return validateForm()">
-<input type="checkbox" name="trimindicated"> Only return properties with lower comparison values<br>
-<input type="checkbox" name="includemls"> Include MLS data.     Years back to include:<input type="text" name="multiyear" value="1" size="1"><br>
-<input type="checkbox" name="multihood"> Include related neighborhoods<br>
-<input type="checkbox" name="includevu"> Include forclosures (VU)<br>
-   <input type="checkbox" name="netadjust"> Filter based on net adjustment value of
-    <input type="text" name="netAdjustAmt" value="30000" size="7" title="Will include negative to postive range of provided value"><br>
-    <input type="checkbox" name="rangeEnabled"> Range of subclasses to include (amount above and below subject):<input type="text" name="range" value="2" size="2"><br>
-    <input type="checkbox" name="pctGoodRangeEnabled"> % Good Adjustment Range (amount above and below subject):<input type="text" name="pctGoodRange" value="10" size="3">%<br>
-Number Results: <input type="text" name="display" value="10" size="3">
-<input type="radio" name="style" value="equity"> Equity <input type="radio" name="style" value="sales" checked> Sales <br>
-Percent of square footage to consider (.01-1.00):<input type="text" name="sqftPct" value=".75" size="3"/><br>
-<input type="text" name="propid"><input type="submit" name="S&G" value="Search and Generate"></form>
-<br>
-<strong>Sales Table Generation</strong>
-<form action="properties3.php" method="get" target="_blank">
-<div id="subj">Subject:<br>
-<input type="text" name="s" id="s"></div>
-Comps:<input type="button" onclick="add_row()" value="+">
-<div id="comps">ID:<input type="text" name="c1" id="c1">
-Sales Price (No commas):<input type="text" name="c1sp">
-Sales Date:<input type="text" name="c1sd"> </div>
-<div id="end"></div><input type="submit" name="Submit" value="Build Sales Table"></form><br>
-    <strong>Equity Table Generation</strong>
-<form action="properties2.php" method="get" target="_blank">
-<div id="subj">Subject:<br>
-<input type="text" name="s" id="s"></div>
-Comps:<input type="button" onclick="add_row_eq()" value="+">
-<div id="comps">ID:<input type="text" name="c1" id="c1"></div>
-<div id="end2"></div><input type="submit" name="Submit" value="Build Equity Table"></form></ul>
-<div style="display: none" id="hiddenlpsubmitdiv"></div>
+        function validateForm() {
+            var x = document.forms["form"]["sqftPct"].value;
+            if (x == null || x == "") {
+                alert("Square footage must be filled out");
+                return false;
+            }
+            var val = parseFloat(x);
+            if (val > 1 || val < .01) {
+                alert("Square footage should be between .01 and 1.00");
+                return false;
+            }
+        }
+    </script>
+    <p><strong>Prospects</strong></p>
+    <script>
+        try {
+            for (var lastpass_iter = 0; lastpass_iter < document.forms.length; lastpass_iter++) {
+                var lastpass_f = document.forms[lastpass_iter];
+                if (typeof(lastpass_f.lpsubmitorig2) == "undefined") {
+                    lastpass_f.lpsubmitorig2 = lastpass_f.submit;
+                    lastpass_f.submit = function () {
+                        var form = this;
+                        var customEvent = document.createEvent("Event");
+                        customEvent.initEvent("lpCustomEvent", true, true);
+                        var d = document.getElementById("hiddenlpsubmitdiv");
+                        for (var i = 0; i < document.forms.length; i++) {
+                            if (document.forms[i] == form) {
+                                d.innerText = i;
+                            }
+                        }
+                        d.dispatchEvent(customEvent);
+                        form.lpsubmitorig2();
+                    }
+                }
+            }
+        } catch (e) {
+        }
+    </script>
+    <!-- when the form is submitted, the server response will appear in this iframe -->
+    <a href="library/prospects_list.php">Show Prospect List</a>
+    <br>
+    <p><strong>Enter a PropertyID to find best comps and generate the generate report</strong> (Note: This operation can
+        take some time)</p>
+    <form name="form" action="massreport.php" method="get" target="_blank" onsubmit="return validateForm()">
+        <input type="checkbox" name="trimindicated"> Only return properties with lower comparison values<br>
+        <input type="checkbox" name="includemls"> Include MLS data. Years back to include:<input type="text"
+                                                                                                 name="multiyear"
+                                                                                                 value="1" size="1"><br>
+        <input type="checkbox" name="multihood"> Include related neighborhoods<br>
+        <input type="checkbox" name="includevu"> Include forclosures (VU)<br>
+        <input type="checkbox" name="netadjust"> Filter based on net adjustment value of
+        <input type="text" name="netAdjustAmt" value="30000" size="7"
+               title="Will include negative to postive range of provided value"><br>
+        <input type="checkbox" name="rangeEnabled"> Range of subclasses to include (amount above and below
+        subject):<input type="text" name="range" value="2" size="2"><br>
+        <input type="checkbox" name="pctGoodRangeEnabled"> % Good Adjustment Range (amount above and below
+        subject):<input type="text" name="pctGoodRange" value="10" size="3">%<br>
+        Number Results: <input type="text" name="display" value="10" size="3">
+        <input type="radio" name="style" value="equity"> Equity <input type="radio" name="style" value="sales" checked>
+        Sales <br>
+        Percent of square footage to consider (.01-1.00):<input type="text" name="sqftPct" value=".75" size="3"/><br>
+        <input type="text" name="propid"><input type="submit" name="S&G" value="Search and Generate"></form>
+    <br>
+    <strong>Table Generation</strong>
+    <form action="properties3.php" method="get" target="_blank">
+        <div id="subj">Subject:<br>
+            <input type="text" name="s" id="s"></div>
+        Comps:<input type="button" onclick="add_row()" value="+">
+        <div id="comps">ID:<input type="text" name="c1" id="c1">
+            Sales Price (No commas):<input type="text" name="c1sp">
+            Sales Date:<input type="text" name="c1sd"></div>
+        <div id="end"></div>
+        <input type="submit" name="Submit" value="Build Sales Table">
+        <input type="submit" name="Submit" value="Build Equity Table">
+    </form>
+    </ul>
 </body>
 </html>

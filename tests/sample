@@ -1,0 +1,75 @@
+{"compCount":1,
+  "isEquity":false,
+"rows":[
+  {
+    "description": "Prop ID",
+    "col1": "105290",
+    "col2": "106033"
+  },
+  {
+    "description": "Property Owner",
+    "col1": "Smith John & Jane",
+    "col2": "Superlonglastname Frank & Susie"
+  },
+  {
+    "description": "GEO ID",
+    "col1": "0106160913",
+    "col2": "0107180410"
+  },
+  {
+    "description": null,
+    "col1": null,
+    "col2": null
+  },
+  {
+    "description": "Neighborhood",
+    "col1": "M5200",
+    "col2": "M5200"
+  },
+  {
+    "description": null,
+    "col1": null,
+    "col2": null
+  },
+  {
+    "description": "Land Value Adj",
+    "col1": "242,000",
+    "col2": {
+      "value": "200,000",
+      "subvalue": null,
+      "delta": "42,000"
+    }
+  },
+  {
+    "description": null,
+    "col1": null,
+    "col2": null
+  },
+  {
+    "description": "Segments & Adj",
+    "col1": {
+      "value": "1st Floor",
+      "subvalue": "1902",
+      "delta": null
+    },
+    "col2": {
+      "value": "1st Floor",
+      "subvalue": "2318",
+      "delta": "-35,676"
+    }
+  },
+  {
+    "description": null,
+    "col1": {
+      "value": "2nd Floor",
+      "subvalue": "1032",
+      "delta": null
+    },
+    "col2": {
+      "value": "2nd Floor",
+      "subvalue": "NONE",
+      "delta": "85,873"
+    }
+  }
+]
+}
