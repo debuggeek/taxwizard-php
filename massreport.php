@@ -82,26 +82,29 @@ if($debug) error_log(var_dump($queryContext));
 
 $property = getSubjProperty($queryContext->subjPropId);
 
-error_log("Finding best comps for ".$property->mPropID);
+error_log("Finding best comps for ".$property->getPropID());
 
 $subjcomparray = generateArray($property, $queryContext);
 
 if($subjcomparray == null || sizeof($subjcomparray) == 1){
-    returnNoHits($property->mPropID);
+    returnNoHits($property->getPropID());
     exit;
 }
 
-$_SESSION[$MEANVAL[0]] = getMeanVal($subjcomparray);
-$_SESSION[$MEANVALSQFT[0]] = getMeanValSqft($subjcomparray);
-$_SESSION[$MEDIANVAL[0]] = getMedianVal($subjcomparray);
-$_SESSION[$MEDIANVALSQFT[0]] = getMedianValSqft($subjcomparray);
+$fullTable = array();
+$fullTable["subjComps"] = $subjcomparray;
+
+$fullTable["meanVal"] = getMeanVal($subjcomparray);
+$fullTable["meanValSqft"] = getMeanValSqft($subjcomparray);
+$fullTable["medianVal"]= getMedianVal($subjcomparray);
+$fullTable["medianValSqft"] = getMedianValSqft($subjcomparray);
 
 if(isset($_GET["pdf"])){
     $prop_pdfs = generatePropMultiPDF($propid);
     $multiPDF = $prop_pdfs["mPDF"];
     echo($multiPDF->Output($propid.'.pdf','I'));
 } else {
-    createGenericTable($subjcomparray,$isEquityComp);
+    echo generateJsonRows($fullTable,$isEquityComp);
 }
 
 ?>

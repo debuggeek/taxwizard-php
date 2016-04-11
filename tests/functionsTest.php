@@ -5,7 +5,6 @@ include_once '../library/queryContext.php';
 
 class functionsTest extends PHPUnit_Framework_TestCase{
 
-
     public function test_getSubjProperty() {
         $propid = 105290;
 
@@ -22,7 +21,7 @@ class functionsTest extends PHPUnit_Framework_TestCase{
     }
 
     public function test_findBestComps() {
-        $propid = 708686;
+        $propid = 105290;
         $queryContext = new queryContext();
 
         print "Start Test";
@@ -36,7 +35,7 @@ class functionsTest extends PHPUnit_Framework_TestCase{
         $property = getSubjProperty($propid);
 
         $compsarray = findBestComps($property,$queryContext);
-        $this->assertEquals(10, sizeof($compsarray));
+        $this->assertGreaterThan(10, sizeof($compsarray));
     }
 
     public function test_2ImpIssue(){
