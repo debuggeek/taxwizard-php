@@ -25,6 +25,10 @@
             });
         });
 
+        function resubmit() {
+            window.alert("Coming Soon! Will rerun with unchecked properties");
+        };
+
         function addTitle(){
             var tableType = getUrlParameter("Submit");
             if(tableType && tableType.indexOf("Sales") >= 0){
@@ -34,7 +38,7 @@
             }
 
             $("#title").append("Comp " + tableType + " Grid - Five Stone - " + new Date($.now()));
-        }
+        };
 
         function getUrlParameter(param){
             var params = queryString.split('&');
@@ -44,7 +48,7 @@
                     return currParam[1];
                 }
             }
-        }
+        };
 
         function drawTable(data) {
             var totalCol = data.compCount + 2; // one for desc column and one for subject
@@ -52,17 +56,23 @@
             for (var i = 0; i < data.rows.length; i++) {
                 drawRow(data.rows[i], totalCol);
             }
-        }
+        };
 
         function drawHeader(comps){
             var row = $("<tr />")
             $("#subjCompTable").append(row); //this will append tr element to table... keep its reference for a while since we will add cells into it
-            row.append($("<th class='colhead'/>")); // cell 0,0 empty
-            row.append($("<th class='colhead'> Subject </th>"));
+            row.append($("<th><button id='recompute' onclick='resubmit()'>Rebuild Table</button></th>")); // cell 0,0 empty
+            row.append($("<th class='colhead'> Subject <div id='subject'/></th>"));
             for(var i=1; i <= comps; i++){ // Start count naturally
-                row.append($("<th class='comphead'> Comp #" + i + "</th>"));
+                var divString = 'comp'+i;
+                row.append($("<th class='colhead'> Comp #" + i + "<div id="+divString+"/></th>"));
             }
-        }
+            for (i = 1; i <= comps; i++) {
+                var radioBtn = $('<input type="checkbox" name="chkRemove"'+i+' />');
+                var divString = '#comp'+i;
+                radioBtn.appendTo(divString);
+            }
+        };
 
         function drawRow(rowData){
             var row = $("<tr />")
@@ -100,7 +110,7 @@
                     }
                 }
             });
-        }
+        };
 
     </script>
 </head>
