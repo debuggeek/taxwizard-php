@@ -9,10 +9,6 @@
     <script>
         var queryString = window.location.href.slice(window.location.href.indexOf('?') + 1);
 
-        $(window).load(function() {
-            $(".loader").fadeOut("slow");
-        });
-
         $(document).ready(function() {
             $.ajax({
                 url: getUrlParameter("target")+".php?" + queryString,  //'/tests/sample2',
@@ -21,17 +17,16 @@
                     // since we are using jQuery, you don't need to parse response
                     addTitle();
                     drawTable(data);
+                    $('.loader').fadeOut("slow");
                 }
             });
         });
 
-        function resubmit() {
-            window.alert("Coming Soon! Will rerun with unchecked properties");
-        };
-
         function addTitle(){
             var tableType = getUrlParameter("Submit");
             if(tableType && tableType.indexOf("Sales") >= 0){
+                tableType = "Sales";
+            } else if(getUrlParameter("style").indexOf("sales") >= 0) {
                 tableType = "Sales";
             } else {
                 tableType = "Equity";
@@ -52,6 +47,7 @@
 
         function drawTable(data) {
             var totalCol = data.compCount + 2; // one for desc column and one for subject
+            totalComps = data.CompCount;
             drawHeader(data.compCount);
             for (var i = 0; i < data.rows.length; i++) {
                 drawRow(data.rows[i], totalCol);
@@ -61,16 +57,10 @@
         function drawHeader(comps){
             var row = $("<tr />")
             $("#subjCompTable").append(row); //this will append tr element to table... keep its reference for a while since we will add cells into it
-            row.append($("<th><button id='recompute' onclick='resubmit()'>Rebuild Table</button></th>")); // cell 0,0 empty
+            row.append($("<th></th>")); // cell 0,0 empty
             row.append($("<th class='colhead'> Subject <div id='subject'/></th>"));
             for(var i=1; i <= comps; i++){ // Start count naturally
-                var divString = 'comp'+i;
-                row.append($("<th class='colhead'> Comp #" + i + "<div id="+divString+"/></th>"));
-            }
-            for (i = 1; i <= comps; i++) {
-                var radioBtn = $('<input type="checkbox" name="chkRemove"'+i+' />');
-                var divString = '#comp'+i;
-                radioBtn.appendTo(divString);
+                row.append($("<th class='colhead'> Comp #" + i + "</th>"));
             }
         };
 
@@ -81,7 +71,7 @@
             $.each(rowData, function(key, value) {
                 if(key === 'description'){
                     if(value) {
-                        rowClass = value.replace(/ /g,'');
+                        rowClass = value.replace(/ /g, '');
                         row.append($("<th>" + value + "</th>"));
                     } else {
                         row.append($("<td class='unknown'>&nbsp</td>"));
@@ -104,12 +94,35 @@
                     row.append($(cell));
                 } else {
                     if(value !== null) {
-                        row.append($("<td class='"+rowClass+"'>" + value + "</td>"));
+                        if( rowClass === 'PropertyID'){
+                            row.append($("<td class='" + rowClass + "'>" + value + "<button id='removeMe' onclick='removeMe("+value+")'/></td>"));
+                        } else {
+                            row.append($("<td class='" + rowClass + "'>" + value + "</td>"));
+                        }
                     } else {
                         row.append($("<td/>"));
                     }
                 }
             });
+        };
+
+        function removeMe(propId) {
+            var params = queryString.split('&');
+            var found = false;
+            var newQueryString = '';
+            for( var i =0; i < params.length; i++){
+                var currParam = params[i].split('=');
+                if(currParam[0] === 'exclude'){
+                    currParam[1] = currParam[1] + '_' + propId;
+                    found = true
+                }
+                newQueryString = newQueryString + currParam.join('=') + "&";
+            }
+            if(!found){
+                newQueryString = params.join("&") + '&exclude=' + propId;
+            }
+            var newUrl = "resultSubjComps.html?"+ newQueryString;
+            window.location.href = newUrl;
         };
 
     </script>

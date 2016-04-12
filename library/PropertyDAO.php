@@ -101,7 +101,11 @@ class PropertyDAO{
     private function getCoreProp($propId){
         $query = "SELECT 
                         p.geo_id as mGeoID,
-                        CONCAT_WS(' ', LTRIM(RTRIM(p.py_addr_line2)), LTRIM(RTRIM(p.py_addr_state)), LTRIM(RTRIM(p.py_addr_zip))) as mSitus,
+                        CONCAT_WS(' ', LTRIM(RTRIM(p.situs_street_prefx)), 
+                                      LTRIM(RTRIM(p.situs_street)), 
+                                      LTRIM(RTRIM(p.situs_street_suffix)),
+                                      LTRIM(RTRIM(p.situs_unit)),
+                                      LTRIM(RTRIM(p.situs_zip))) as mSitus,
                         LTRIM(RTRIM(p.hood_cd)) as mNeighborhood,
                         LTRIM(RTRIM(p.py_owner_name)) as mOwner,
                         p.market_value as mMarketVal,

@@ -73,6 +73,11 @@ if(isset($_GET['netadjust'])){
     }
 }
 
+if(isset($_GET['exclude'])){
+    $excludeStrList = trim($_GET['exclude']);
+    $queryContext->excludes = explode('_',$excludeStrList);
+}
+
 if($queryContext->subjPropId == ""){
 	echo "<p>Please enter a value</p>";
 	exit;
@@ -85,6 +90,21 @@ $property = getSubjProperty($queryContext->subjPropId);
 error_log("Finding best comps for ".$property->getPropID());
 
 $subjcomparray = generateArray($property, $queryContext);
+
+if(count($queryContext->excludes) > 0){
+    //Save off since it might go down
+    $startCount = count($subjcomparray);
+    for($i = 0 ; $i < $startCount; $i++){
+        /* @var propertyClass $property */
+        $property = $subjcomparray[$i];
+        if(in_array($property->getPropID(), $queryContext->excludes)){
+            error_log("Removing ".$property->getPropID()." from comp results due to being in excludes");
+            unset($subjcomparray[$i]);
+        }
+    }
+    //Re-index the array so we don't have gaps
+    $subjcomparray = array_values($subjcomparray);
+}
 
 if($subjcomparray == null || sizeof($subjcomparray) == 1){
     returnNoHits($property->getPropID());

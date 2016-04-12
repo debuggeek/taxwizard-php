@@ -16,6 +16,9 @@ class queryContext {
     public $percentGoodRangeEnabled = false;
     public $netAdjustEnabled = false;
     public $netAdjustAmount = 0;
+    
+    //Holds a list of propertyIds to exclude from consideration
+    public $excludes = array();
 
     //Treat like equity by default so we use market val and not sales price
     public $isEquityComp = true;
