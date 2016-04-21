@@ -25,6 +25,8 @@ $isEquityComp = true;
 
 $compInfo = array();
 
+$queryContext = new queryContext();
+
 //Parse Inputs
 $subjPropId = trim($_GET['s']);
 if(isset($_GET['Submit'])){
