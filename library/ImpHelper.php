@@ -101,7 +101,7 @@ class ImpHelper
 
     /**
      * Returns the improvement id used for the primary improvement
-     * @param ImprovementDetailClass() $propertyImps
+     * @param array ImprovementDetailClass $propertyImps
      * @return null|string
      */
     public static function getPrimaryImpId($propertyImps){

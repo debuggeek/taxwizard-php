@@ -56,59 +56,77 @@ function getMeanVal($subjcomp)
 	return number_format($result);
 }
 
-function getMeanValSqft($subjcomp)
-{
+/**
+ * @param array $subjcomp
+ * @return string
+ */
+function getMeanValSqft($subjcomp){
 	global $INDICATEDVALSQFT;
 	$result = 0;
-	$comps = count($subjcomp) -1;
-	for($i=1;$i <= $comps; $i++)
-		$result += $subjcomp[$i]->getFieldByName($INDICATEDVALSQFT[0]);
+	if(count($subjcomp) > 1){
+		$comps = count($subjcomp) -1;
+		for($i=1;$i <= $comps; $i++)
+			$result += $subjcomp[$i]->getFieldByName($INDICATEDVALSQFT[0]);
 
-	$result = $result / $comps;
+		$result = $result / $comps;
+	}
 	return number_format($result,2);
 }
 
-function getMedianVal($subjcomp)
-{
+/**
+ * @param array $subjcomp
+ * @return string
+ */
+function getMedianVal($subjcomp){
 	global $INDICATEDVAL;
 
-	$comparray = array();
+	$median = 0;
 
-	for($i=1;$i < count($subjcomp); $i++){
-		$next = str_replace(",","",$subjcomp[$i]->getFieldByName($INDICATEDVAL[0]));
-		$comparray[] = $next;
-	}
+	if(count($subjcomp) > 1) {
+		$comparray = array();
 
-	$num = count($comparray);
-	sort($comparray);
+		for ($i = 1; $i < count($subjcomp); $i++) {
+			$next = str_replace(",", "", $subjcomp[$i]->getFieldByName($INDICATEDVAL[0]));
+			$comparray[] = $next;
+		}
 
-	if ($num % 2) {
-		$median = $comparray[floor($num/2)];
-	} else {
-		$median = ($comparray[$num/2] + $comparray[$num/2 - 1]) / 2;
+		$num = count($comparray);
+		sort($comparray);
+
+		if ($num % 2) {
+			$median = $comparray[floor($num / 2)];
+		} else {
+			$median = ($comparray[$num / 2] + $comparray[$num / 2 - 1]) / 2;
+		}
 	}
 	return number_format($median);
 }
 
-function getMedianValSqft($subjcomp)
-{
+/**
+ * @param array $subjcomp
+ * @return string
+ */
+
+function getMedianValSqft($subjcomp){
 	global $INDICATEDVALSQFT;
 
-	$comparray = array();
+	$median = 0;
+	if(count($subjcomp) > 1) {
+		$comparray = array();
 
-	for($i=1;$i < count($subjcomp); $i++)
-	$comparray[] = $subjcomp[$i]->getFieldByName($INDICATEDVALSQFT[0]);
+		for ($i = 1; $i < count($subjcomp); $i++)
+			$comparray[] = $subjcomp[$i]->getFieldByName($INDICATEDVALSQFT[0]);
 
-	$num = count($comparray);
-	sort($comparray);
+		$num = count($comparray);
+		sort($comparray);
 
-	if ($num % 2) {
-		$median = $comparray[floor($num/2)];
-	} else {
-		$median = ($comparray[$num/2] + $comparray[$num/2 - 1]) / 2;
+		if ($num % 2) {
+			$median = $comparray[floor($num / 2)];
+		} else {
+			$median = ($comparray[$num / 2] + $comparray[$num / 2 - 1]) / 2;
+		}
 	}
 	return number_format($median,2);
-
 }
 
 /**
@@ -757,9 +775,9 @@ function calcDeltas($subj,$currprop)
 
 	$currprop->setImpDets(ImpHelper::compareImpDetails_AddDelta($subj->getImpDets(), $currprop->getImpDets()));
 
-	$currprop->$NETADJ[2]();
-	$currprop->$INDICATEDVAL[2]();
-	$currprop->$INDICATEDVALSQFT[2]();
+	$currprop->getNetAdj();
+	$currprop->getIndicatedVal();
+	$currprop->getIndicatedValSqft();
 }
 
 function getSubjProperty($propid){

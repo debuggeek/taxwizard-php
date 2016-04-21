@@ -75,34 +75,15 @@
             }
         }
     </script>
-    <p><strong>Prospects</strong></p>
-    <script>
-        try {
-            for (var lastpass_iter = 0; lastpass_iter < document.forms.length; lastpass_iter++) {
-                var lastpass_f = document.forms[lastpass_iter];
-                if (typeof(lastpass_f.lpsubmitorig2) == "undefined") {
-                    lastpass_f.lpsubmitorig2 = lastpass_f.submit;
-                    lastpass_f.submit = function () {
-                        var form = this;
-                        var customEvent = document.createEvent("Event");
-                        customEvent.initEvent("lpCustomEvent", true, true);
-                        var d = document.getElementById("hiddenlpsubmitdiv");
-                        for (var i = 0; i < document.forms.length; i++) {
-                            if (document.forms[i] == form) {
-                                d.innerText = i;
-                            }
-                        }
-                        d.dispatchEvent(customEvent);
-                        form.lpsubmitorig2();
-                    }
-                }
-            }
-        } catch (e) {
-        }
-    </script>
-    <!-- when the form is submitted, the server response will appear in this iframe -->
-    <a href="library/prospects_list.php">Show Prospect List</a>
-    <br>
+
+    <p><strong>Enter a PropID to search for</strong></p>
+    <form name="form" action="resultSubjComps.html" method="get" target="_blank">
+        <input type="text" name="propid" required>
+        <input type="hidden" name="target" value="search"/>
+        <input type="submit" name="Submit" value="Search"/>
+    </form>
+
+
     <p><strong>Enter a PropertyID to find best comps and generate the generate report</strong> (Note: This operation can
         take some time)</p>
     <form name="form" action="resultSubjComps.html" method="get" target="_blank" onsubmit="return validateForm()">
@@ -115,16 +96,19 @@
         <input type="checkbox" name="netadjust"> Filter based on net adjustment value of
         <input type="text" name="netAdjustAmt" value="30000" size="7"
                title="Will include negative to postive range of provided value"><br>
-        <input type="checkbox" name="rangeEnabled"> Range of subclasses to include (amount above and below
-        subject):<input type="text" name="range" value="2" size="2"><br>
+        <input type="checkbox" name="rangeEnabled">
+            Range of subclasses to include (amount above and below subject):
+        <input type="text" name="range" value="2" size="2">
+        <br>
         <input type="checkbox" name="pctGoodRangeEnabled"> % Good Adjustment Range (amount above and below
-        subject):<input type="text" name="pctGoodRange" value="10" size="3">%<br>
+        subject):
+        <input type="text" name="pctGoodRange" value="10" size="3">%<br>
         Number Results: <input type="text" name="display" value="10" size="3">
         <input type="radio" name="style" value="equity"> Equity <input type="radio" name="style" value="sales" checked>
         Sales <br>
         Percent of square footage to consider (.01-1.00):<input type="text" name="sqftPct" value=".75" size="3"/><br>
         <input type="hidden" name="target" value="massreport"/>
-        <input type="text" name="propid"><input type="submit"></form>
+        <input type="text" name="propid"><input type="submit" value=""></form>
     <br>
     <strong>Table Generation</strong>
     <form action="resultSubjComps.html" method="get" target="_blank">

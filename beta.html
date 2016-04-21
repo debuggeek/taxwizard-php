@@ -1,29 +1,55 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="index.css">
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
-<title>Five Stone Property Tax TCAD Tools</title>
+	<link rel="stylesheet" type="text/css" href="index.css">
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title>Five Stone Property Tax TCAD Tools</title>
 </head>
 <body id="page3">
 <img src="resources/FS-Logo-PropertyTax-wTagline.png" width="615" height="141" title="" alt="Five Stone Property Tax">
 <br>
 <br>
 <ul id="tabs">
-<li id="tab1"><a href="index.html">Table Lookups</a></li>
-<li id="tab2"><a href="batch_complete.php">Batch Processing</a></li>
-<li id="tab3"><a href="beta.html">Beta Tools</a></li>
-<li id="tab4"><a href="admin.php">Admin Tools</a></li></ul>
+	<li id="tab1"><a href="index.html">Table Lookups</a></li>
+	<li id="tab2"><a href="batch_complete.php">Batch Processing</a></li>
+	<li id="tab3"><a href="beta.html">Beta Tools</a></li>
+	<li id="tab4"><a href="admin.php">Admin Tools</a></li>
+</ul>
 Any greyed out buttons are still in final development, and not ready for beta yet
-<p><strong>Enter a PropID to search for</strong></p>
-<form name="form" action="search.php" method="get" target="_blank"><input type="text" name="q">
-<input type="submit" name="Submit" value="Search" disabled="">
-</form>
+<p><strong>Prospects</strong></p>
+<script>
+    try {
+        for (var lastpass_iter = 0; lastpass_iter < document.forms.length; lastpass_iter++) {
+            var lastpass_f = document.forms[lastpass_iter];
+            if (typeof(lastpass_f.lpsubmitorig2) == "undefined") {
+                lastpass_f.lpsubmitorig2 = lastpass_f.submit;
+                lastpass_f.submit = function () {
+                    var form = this;
+                    var customEvent = document.createEvent("Event");
+                    customEvent.initEvent("lpCustomEvent", true, true);
+                    var d = document.getElementById("hiddenlpsubmitdiv");
+                    for (var i = 0; i < document.forms.length; i++) {
+                        if (document.forms[i] == form) {
+                            d.innerText = i;
+                        }
+                    }
+                    d.dispatchEvent(customEvent);
+                    form.lpsubmitorig2();
+                }
+            }
+        }
+    } catch (e) {
+    }
+</script>
+<!-- when the form is submitted, the server response will appear in this iframe -->
+<a href="library/prospects_list.php">Show Prospect List</a>
+<br>
 
 <p><strong>Enter a PropertyID to find best comps</strong>  (Note: This operation can take some time)</p>
 <form name="form" action="bestcomps.php" method="get" target="_blank"><input type="text" name="propid"><br>
 	Number of Results desired:<br>
-<input type="text" name="display"><input type="submit" name="Submit" value="Search"></form>
+	<input type="text" name="display" required>
+    <input type="submit" name="Submit" value="Search" disabled></form>
 
 <br>
 

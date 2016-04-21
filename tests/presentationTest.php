@@ -28,7 +28,7 @@ class presentationTest extends PHPUnit_Framework_TestCase
         $subjcomparray = array();
         $subjcomparray[0] = $subjProperty;
 
-        $c = getPropertyWithFields($this->compId,$fieldsofinteresteq);
+        $c = getProperty($this->compId);
         $c->setSalePrice(599500);
         $c->mSaleDate = '2/18/2014';
         calcDeltas($subjProperty,$c);
@@ -95,12 +95,12 @@ class presentationTest extends PHPUnit_Framework_TestCase
         $subjcomparray = array();
         $subjcomparray[0] = $subjProperty;
 
-        $c = getPropertyWithFields($this->compId,$fieldsofinteresteq);
+        $c = getProperty($this->compId);
         calcDeltas($subjProperty,$c);
         $subjcomparray[] = $c;
 
         $result = json_encode(addSecondaryImprovements($subjcomparray));
-        $expected  = "[{\"description\":\"Secondary Imp\",\"col1\":{\"value\":4892,\"delta\":null},\"col2\":{\"value\":0,\"delta\":4892}}]";
+        $expected  = "[{\"description\":\"Secondary Imp\",\"col1\":{\"value\":2871,\"delta\":null},\"col2\":{\"value\":0,\"delta\":2871}}]";
 
         $this->assertEquals($expected, $result);
     }

@@ -6,7 +6,7 @@ include_once '../library/queryContext.php';
 class functionsTest extends PHPUnit_Framework_TestCase{
 
     public function test_getSubjProperty() {
-        $propid = 105290;
+        $propid = 224540;
 
         $property = getSubjProperty($propid);
         print $property;
@@ -16,7 +16,7 @@ class functionsTest extends PHPUnit_Framework_TestCase{
         $this->assertEquals('0225020714', $property->mGeoID);
         $this->assertEquals('Y3000', $property->mNeighborhood);
         //$this->assertEquals('180', $property->getNMIA());
-        $this->assertEquals(550227, $property->mMarketVal);
+        //$this->assertEquals(550227, $property->mMarketVal);
 
     }
 
@@ -88,10 +88,10 @@ class functionsTest extends PHPUnit_Framework_TestCase{
         $compProperty->mSaleDate = '2/18/2014';
         calcDeltas($subjProperty, $compProperty);
 
-        $this->assertEquals(720623, $subjProperty->mMarketVal);
-        $this->assertEquals(2934, $subjProperty->getLivingArea());
+        $this->assertEquals(713518, $subjProperty->mMarketVal);
+        $this->assertEquals(3166, $subjProperty->getLivingArea());
 
-        $this->assertEquals(628505, $compProperty->mMarketVal);
+        $this->assertEquals(764506, $compProperty->mMarketVal);
         $this->assertEquals(2839, $compProperty->getLivingArea());
 
         $this->assertEquals($compProperty->mNeighborhood, $subjProperty->mNeighborhood);

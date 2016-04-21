@@ -326,7 +326,7 @@ function emitHTMLFooter(){
  * @param $subjcomparray
  * @param $isEquityComp
  */
-function generateJsonRows($fullTable, $isEquityComp){
+function generateJsonRows($fullTable, $isEquityComp = true){
 	global $fieldsofinterest,$fieldsofinteresteq, $SEGMENTSADJ;
 	if($isEquityComp){
 		$relaventfields = $fieldsofinteresteq;
@@ -361,7 +361,7 @@ function generateJsonRows($fullTable, $isEquityComp){
 		} else {
 			// Dealing with segments and Adj as only case right now
 			$obj->rows = array_merge($obj->rows, addPrimaryImprovements($subjcomparray, $field));
-			//TODO Add secondary improvements
+			//Add secondary improvements
 			$obj->rows = array_merge($obj->rows, addSecondaryImprovements($subjcomparray));
 		}
 		
@@ -417,7 +417,9 @@ function addPrimaryImprovements($subjcomparray, $field){
 				$currCol = 'col' . ($j + 1);
 				$improvement = ImpHelper::getImprovObjByCode($currImpList, $currImpDetCode);
 				$currRow[$currCol] = populateSegObj($improvement);
-				$seenDetIds[] = $improvement->getImprvDetId();
+				if($improvement != null) {
+					$seenDetIds[] = $improvement->getImprvDetId();
+				}
 			}
 		} else {
 			//Now we just need to get the rest of the improvements on the comps

@@ -79,7 +79,7 @@ if(isset($_GET['exclude'])){
 }
 
 if($queryContext->subjPropId == ""){
-	echo "<p>Please enter a value</p>";
+	echo json_encode(array("error" => "Must provide subject property id", "propId"=>"0"));
 	exit;
 }
 
@@ -107,7 +107,9 @@ if(count($queryContext->excludes) > 0){
 }
 
 if($subjcomparray == null || sizeof($subjcomparray) == 1){
-    returnNoHits($property->getPropID());
+    //returnNoHits($property->getPropID());
+    //echo "{'error':'No comps found'}";
+    echo json_encode(array("error"=>"No comps found", "propId"=>$property->getPropID()), JSON_PRETTY_PRINT);
     exit;
 }
 

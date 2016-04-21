@@ -54,6 +54,11 @@ while(true){
     }
 }
 
+if(isset($_GET['exclude'])){
+    $excludeStrList = trim($_GET['exclude']);
+    $queryContext->excludes = explode('_',$excludeStrList);
+}
+
 if($subjPropId != "")
     $abort = false;
 
@@ -69,6 +74,10 @@ $subjcomparray = array();
 $subjcomparray[0] = $subjProperty;
 
 foreach($compInfo as $compIn){
+    if(in_array($compIn['id'], $queryContext->excludes)){
+        error_log("Removing ".$compIn['id']." from comp results due to being in excludes");
+        continue;
+    }
     $c = getProperty($compIn['id']);
     $c->setSalePrice($compIn['salePrice']);
     $c->mSaleDate = $compIn['saleDate'];

@@ -22,7 +22,7 @@ class PropertyDAO{
      * @param string $database
      * @param int $dbport
      */
-    public function PropertyDAO($host, $username, $password, $database, $dbport=3306){
+    public function __construct($host, $username, $password, $database, $dbport=3306){
         // Create connection
         $pdo = new PDO("mysql:host=".$host.";dbname=".$database, $username, $password);
 
@@ -74,7 +74,10 @@ class PropertyDAO{
     }
 
 
-
+    /**
+     * @param $propId
+     * @return array
+     */
     public function getImpDet($propId) {
         $query = "SELECT id.imprv_id, 
                           LTRIM(RTRIM(id.imprv_det_type_cd)) as imprv_det_type_cd, 

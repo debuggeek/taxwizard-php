@@ -4,6 +4,14 @@ body
     background-color:white;
     text-align:center;
 }
+@page {
+    size 11in 8.5in;
+    margin: 1cm;
+}
+
+p {
+    page-break-after: always
+}
 
 .loader {
     position: fixed;
@@ -30,6 +38,7 @@ table
     font-family:verdena;
     border:1px solid black;
     padding:2cm;
+    page-break-inside:auto;
 }
 td,th
 {
@@ -43,6 +52,19 @@ th
 {
     font-weight:bold;
     color:black;
+}
+
+tr
+{
+    page-break-inside:avoid;
+    font-size:10pt;
+}
+
+#removeMe{
+    border: none;
+    float: right;
+    padding: 9px;
+    background: url('resources/x.png');
 }
 
 .colhead
