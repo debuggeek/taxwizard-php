@@ -42,7 +42,7 @@
         function addTitle(){
             var tableType = getUrlParameter("Submit");
 
-            if(tableType) {
+            if(tableType != undefined) {
                 if (tableType === "Search"){
                     $("#title").append("Property details");
                     return;

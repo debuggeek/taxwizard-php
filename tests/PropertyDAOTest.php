@@ -41,4 +41,11 @@ class PropertyDAOTest extends PHPUnit_Framework_TestCase
         
         $this->assertEquals($oldProp, $newStyleProp);
     }
+
+    public function test_oddSecondary(){
+        $propDao = new PropertyDAO($this->HOST, $this->user, $this->pw, $this->db);
+        $newStyleProp = $propDao->getPropertyById(508783);
+
+        print json_encode($newStyleProp,JSON_PRETTY_PRINT);
+    }
 }

@@ -5,7 +5,7 @@ body
     text-align:center;
 }
 @page {
-    size 11in 8.5in;
+    size: 11in 8.5in;
     margin: 1cm;
 }
 

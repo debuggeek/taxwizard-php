@@ -63,6 +63,19 @@ INTO TABLE SPECIAL_PROPDATA
 FIELDS TERMINATED BY '|'
 LINES TERMINATED BY '\n';
 
+
+sed 's/^[[:digit:]]*|[[:digit:]]*|/&|/' Special_Sales.txt > Special_Sales.txt.fixed
+
+LOAD DATA LOCAL INFILE '/home1/cykoduck/TCAD_data/Special_Sales.txt.fixed'
+INTO TABLE SPECIAL_SALE_EX_CONF
+FIELDS TERMINATED BY '|'
+LINES TERMINATED BY '\n';
+
+/****
+2016 below txt was included but didn't have all the sales so had to use the Special_Sales.txt where we saw closer to 39k sales vs 5k in _Exclude_
+/*****
+
+
 LOAD DATA LOCAL INFILE '/home1/cykoduck/TCAD_data/Special_Sales_Exclude_Conf.txt'
 INTO TABLE SPECIAL_SALE_EX_CONF
 FIELDS TERMINATED BY '|'
@@ -89,10 +102,11 @@ LINES TERMINATED BY '\n';
 SALES MLS Merged:
 Check that the sale_date column is in the YYYY-MM-DD format and if not do this
 
-UPDATE `SPECIAL_SALE_EX_CONF`
+UPDATE TCAD_2016.SPECIAL_SALE_EX_CONF SET `sale_date` = str_to_date( `sale_date`, '%m/%d/%Y' );
 
-SET `sale_date` = str_to_date( `sale_date`, '%m/%d/%Y' );
+/***
 note: it should be a weird special quote next to the 1 around sale_date
+****/
 
 Now Merge that data in to the merged db
 
