@@ -157,7 +157,9 @@ class ImpHelper
         $secImps = self::getSecondaryImprovements($propertyImps);
         foreach($secImps as $secImp){
             /* @var ImprovementDetailClass $secImp */
-            $secImpsVal +=  $secImp->getImprvVal();
+            if($secImp->isDetUseUnitPrice() == 'T'){
+                $secImpsVal += $secImp->getImprvVal();
+            }
         }
         return $secImpsVal;
     }
