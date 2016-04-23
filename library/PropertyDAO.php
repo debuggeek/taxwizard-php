@@ -5,7 +5,7 @@ include_once "propertyClass.php";
 
 class PropertyDAO{
     /**
-     * @var mysqli
+     * @var pdo
      */
     protected $pdo;
 
@@ -25,11 +25,7 @@ class PropertyDAO{
     public function __construct($host, $username, $password, $database, $dbport=3306){
         // Create connection
         $pdo = new PDO("mysql:host=".$host.";dbname=".$database, $username, $password);
-
-        // Check connection
-        if (mysqli_connect_errno()) {
-            die("Connection failed: " . mysqli_connect_error());
-        }
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this->pdo = $pdo;
     }
 

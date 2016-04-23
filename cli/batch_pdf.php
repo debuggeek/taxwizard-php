@@ -12,7 +12,7 @@ $TRIMINDICATED=false;
 $MULTIHOOD=true;
 $INCLUDEVU=true;
 $PREVYEAR=1;
-$SQFTPERCENT = .5;
+$SQFTPERCENT = 5;
 
 $date = new DateTime();
 echo "\n".$date->format('Y-m-d H:i:s') . " >> Starting Batch Processing\n";

@@ -100,4 +100,13 @@ class functionsTest extends PHPUnit_Framework_TestCase{
         $this->assertEquals(18993, $compProperty->getClassAdjDelta());
         $this->assertEquals(-19975, $compProperty->mGoodAdjDelta);
     }
+
+    public function test_getHoodList(){
+        $subjId = 105290;
+        $queryContext = new queryContext();
+
+        $subjProp = getSubjProperty($subjId);
+        $hoodList = getHoodList($subjProp->mNeighborhood, $queryContext);
+        $this->assertEquals(400, count($hoodList));
+    }
 }

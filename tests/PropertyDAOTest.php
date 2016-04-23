@@ -14,7 +14,7 @@ class PropertyDAOTest extends PHPUnit_Framework_TestCase
     var $HOST = 'localhost';
     var $user = "root";
     var $pw = "root";
-    var $db = "TCAD_2015";
+    var $db = "TCAD_2016";
 
     public function test_getPropertyById(){
         $propDao = new PropertyDAO($this->HOST, $this->user, $this->pw, $this->db);

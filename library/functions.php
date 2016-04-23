@@ -1149,11 +1149,11 @@ function findBestComps(propertyClass $subjprop, queryContext $queryContext)
  * @param queryContext $queryContext
  * @return bool
  */
-function addToCompsArray(propertyClass $c,propertyClass $subjprop,queryContext $queryContext)
+function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext $queryContext)
 {
     global $LIVINGAREA;
     $compsseen = array();
-    $traceComps = false;
+    $traceComps = true;
 
     if ($c->getPropID() == $subjprop->getPropID()) {
         error_log("addToCompsArray: Skipping Comp prop id matched subject:" . $c->getPropID());
@@ -1161,8 +1161,11 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop,queryContext $
     }
 
     $subjsqft = $subjprop->getFieldByName($LIVINGAREA[0]);
-    $min = (1 - $queryContext->sqftPercent) * $subjsqft;
-    $max = (1 + $queryContext->sqftPercent) * $subjsqft;
+	//sqftPercent is stored as int so convert to percentage
+    $percentAllowed = $queryContext->sqftPercent *.01;
+    $min = $subjsqft - ($percentAllowed* $subjsqft);
+    $max = (1 + $percentAllowed) * $subjsqft;
+
     $sqft = $c->getFieldByName($LIVINGAREA[0]);
 
     if ($sqft < $min || $sqft > $max) {

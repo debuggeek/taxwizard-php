@@ -19,6 +19,8 @@
 <link rel="stylesheet" type="text/css" href="table.css">
 <?php
 include_once("library/functions.php");
+include_once("library/BatchDAO.php");
+
 $queryAll="SELECT * FROM BATCH_PROP";
 $resultAll=doSqlQuery($queryAll);
 $numAll=mysqli_num_rows($resultAll);
@@ -29,23 +31,8 @@ $result=doSqlQuery($query);
 $num=mysqli_num_rows($result);
 mysqli_free_result($result);
 
-$queueQuery = "SELECT * FROM BATCH_PROP_SETTINGS WHERE id=(SELECT max(id) FROM BATCH_PROP_SETTINGS)";
-$resultSettings = doSqlQuery($queueQuery);
-$row = mysqli_fetch_array($resultSettings);
-$TRIMINDICATED=$row['TrimIndicated'];
-$MULTIHOOD=$row['MultiHood'];
-$INCLUDEVU=$row['IncludeVU'];
-$PREVYEAR=$row['NumPrevYears'];
-$INCLUDEMLS=$row['IncludeMLS'];
-$SQFTPCT=$row['SqftRange'];
-$SUBCLASSRANGE=$row['ClassRange'];
-$SUBCLASSENABLED=$row['ClassRangeEnabled'];
-$PERCENTGOODRANGE=$row['PercentGood'];
-$PERCENTGOODENABLED=$row['PercentGoodEnabled'];
-$NET_ADJ_ENABLED=$row['NetAdjEnabled'];
-$NET_ADJ_AMOUNT=$row['NetAdj'];
-//REMEMBER adding something here means you also need to add to batch_pdf.php and updateBatchSettings.php
-mysqli_free_result($resultSettings);
+$batchDAO = new BatchDAO($servername, $username, $password, $database);
+$queryContext = $batchDAO->getBatchSettings();
 
 ?>
 <br>
@@ -57,22 +44,22 @@ Choose a file to upload: <input name="file" type="file" /><br />
 <br>
 <p><strong>Bulk Generation Settings</strong></p>
 <form action="updateBatchSettings.php" formtarget="_blank">
-    <input type="checkbox" name="trimindicated" id="trimindicated" value="yes" <?php echo ($TRIMINDICATED=='TRUE' ? 'checked' : '');?>>
+    <input type="checkbox" name="trimindicated" id="trimindicated"   <?php echo ($queryContext->trimIndicated =='TRUE' ? 'checked' : '');?>>
     Only return properties with lower comparison values<br>
-    <input type="checkbox" name="includemls" id="includemls" value="yes" <?php echo ($INCLUDEMLS=='TRUE' ? 'checked' : '');?>>
+    <input type="checkbox" name="includemls" id="includemls"   <?php echo ($queryContext->includeMls =='TRUE' ? 'checked' : '');?>>
     Include MLS data.<br>
-    <input type="checkbox" name="multihood" id="multihood" value="yes" <?php echo ($MULTIHOOD=='TRUE' ? 'checked' : '');?>>
+    <input type="checkbox" name="multihood" id="multihood"   <?php echo ($queryContext->multiHood =='TRUE' ? 'checked' : '');?>>
     Include related neighborhoods<br>
-    <input type="checkbox" name="includevu" id="includevu" value="yes" <?php echo ($INCLUDEVU=='TRUE' ? 'checked' : '');?>>
+    <input type="checkbox" name="includevu" id="includevu"   <?php echo ($queryContext->includeVu =='TRUE' ? 'checked' : '');?>>
     Include forclosures (VU)<br>
-    <input type="checkbox" name="subclassenabled" id="subclassenabled" value="yes" <?php echo ($SUBCLASSENABLED=='TRUE' ? 'checked' : '');?>>
-    Range of subclasses to include:<input type="text" name="range" size="1" value=<?php echo $SUBCLASSRANGE;?>><br>
-    <input type="checkbox" name="pctgoodenabled" id="pctgoodenabled" value="yes" <?php echo ($PERCENTGOODENABLED=='TRUE' ? 'checked' : '');?>>
-    % Good Adjustment Range (amount above and below subject):<input type="text" name="pctGoodRange"  size="3" value=<?php echo $PERCENTGOODRANGE;?>>%<br>
-    <input type="checkbox" name="netadjust" id="netadjust" value="yes " <?php echo($NET_ADJ_ENABLED=='TRUE' ? 'checked' : '');?>>
-    Filter based on net adjustment value of <input type="text" name="netadjustamount"  size="7" value=<?php echo$NET_ADJ_AMOUNT;?>><br>
-    Years back to include:<input type="text" name="multiyear" size="1" value=<?php echo $PREVYEAR;?>><br>
-    Percent of square footage to consider (.01-1.00):<input type="text" name="sqftPct" size="3" value=<?php echo $SQFTPCT;?>><br>
+    <input type="checkbox" name="rangeEnabled" id="rangeEnabled"   <?php echo ($queryContext->subClassRangeEnabled =='TRUE' ? 'checked' : '');?>>
+    Range of subclasses to include:<input type="text" name="range" size="1" value=<?php echo $queryContext->subClassRange;?>><br>
+    <input type="checkbox" name="pctGoodRangeEnabled" id="pctGoodRangeEnabled"   <?php echo ($queryContext->percentGoodRangeEnabled =='TRUE' ? 'checked' : '');?>>
+    % Good Adjustment Range (amount above and below subject):<input type="text" name="pctGoodRange"  size="3" value=<?php echo $queryContext->percentGoodRange;?>>%<br>
+    <input type="checkbox" name="netadjust" id="netadjust"   <?php echo($queryContext->netAdjustEnabled=='TRUE' ? 'checked' : '');?>>
+    Filter based on net adjustment value of <input type="text" name="netadjustamount"  size="7" value=<?php echo$queryContext->netAdjustAmount;?>><br>
+    Years back to include:<input type="text" name="multiyear" size="1" value=<?php echo $queryContext->prevYear;?>><br>
+    Percent of square footage to consider:<input type="text" name="sqftPct" size="3" value=<?php echo $queryContext->sqftPercent;?>>%<br>
     <br/>
     <input type="submit" value="Update Bulk Settings"/>
 </form>
