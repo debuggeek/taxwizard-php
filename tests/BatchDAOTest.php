@@ -48,4 +48,38 @@ class BatchDAOTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($queryContext, $newQueryContext);
     }
+
+    public function test_GetUpdateBatchJobs(){
+        $propId = 12345;
+        $batchDao = new BatchDAO($this->HOST, $this->user, $this->pw, $this->db);
+
+        //Cleanup in case
+        $batchDao->deleteBatchJob($propId);
+        $startJobs = $batchDao->getBatchJobs(false);
+
+        $this->assertNotFalse($batchDao->createBatchJob($propId));
+
+        /* @var BatchJob[] $jobs*/
+        $jobs = $batchDao->getBatchJobs(false);
+
+        $this->assertEquals(count($startJobs) + 1, count($jobs));
+        $this->assertEquals(false, $jobs[0]->batchStatus);
+
+        // Now get our test prop
+        $testJob = $batchDao->getBatchJob($propId);
+        $testJob->batchStatus = true;
+        $testJob->propMktVal = 987654321;
+        $testJob->propMedSale5 = 987654321;
+        $testJob->propMedSale10 = 987654321;
+        $testJob->propMedSale15 = 987654321;
+        $testJob->propMedEq11 = 987654321;
+        $testJob->pdfs = base64_encode("987654321");
+
+        $this->assertNotFalse($batchDao->updateBatchJob($testJob));
+
+        $retJob = $batchDao->getBatchJob($propId);
+        $this->assertEquals($testJob, $retJob);
+
+        $this->assertNotFalse( $batchDao->deleteBatchJob($propId));
+    }
 }

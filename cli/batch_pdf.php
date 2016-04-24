@@ -1,13 +1,15 @@
 <?php
 set_include_path(get_include_path() . PATH_SEPARATOR . "/home/cykoduck/public_html/debuggeek.com/fivestone/");
-include_once 'library/functions.php';
-include_once 'library/functions_pdf.php';
+
+include_once '../library/functions.php';
+include_once '../library/functions_pdf.php';
 
 $debug=false;
 /**
  * For each non completed row in the batch_prop table
  * calculate the comp pdf and save it back to the pdfs column blob
  */
+global $servername, $username, $password, $database;
 
 $date = new DateTime();
 echo "\n".$date->format('Y-m-d H:i:s') . " >> Starting Batch Processing\n";

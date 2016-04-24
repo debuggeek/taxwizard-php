@@ -7,6 +7,7 @@
  * Time: 9:55 PM
  */
 include_once "defines.php";
+include_once "BatchJob.php";
 
 class BatchDAO
 {
@@ -52,6 +53,93 @@ class BatchDAO
             }
         }
         return $result;
+    }
+
+    /**
+     * @param int $propId
+     * @return false if failed
+     */
+    public function createBatchJob($propId){
+        $stmt = $this->pdo->prepare("INSERT INTO BATCH_PROP SET prop = ?, completed = 'false';");
+        $stmt->bindValue(1, $propId, PDO::PARAM_INT);
+        
+        return $stmt->execute();
+    }
+
+    /**
+     * @param int $propId
+     * @return BatchJob
+     */
+    public function getBatchJob($propId){
+        $batchJob = new BatchJob();
+        $stmt = $this->pdo->prepare("SELECT prop, completed, pdfs, 
+                                            prop_mktval, Median_Sale5, Median_Sale10, 
+                                            Median_Sale15, Median_Eq11 FROM BATCH_PROP WHERE prop=?");
+        $stmt->bindValue(1, $propId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $stmt->bindColumn(1, $batchJob->propId, PDO::PARAM_INT);
+        $stmt->bindColumn(2, $batchJob->batchStatus, PDO::PARAM_BOOL);
+        $stmt->bindColumn(3, $batchJob->pdfs, PDO::PARAM_STR);
+        $stmt->bindColumn(4, $batchJob->propMktVal, PDO::PARAM_INT);
+        $stmt->bindColumn(5, $batchJob->propMedSale5, PDO::PARAM_INT);
+        $stmt->bindColumn(6, $batchJob->propMedSale10, PDO::PARAM_INT);
+        $stmt->bindColumn(7, $batchJob->propMedSale15, PDO::PARAM_INT);
+        $stmt->bindColumn(8, $batchJob->propMedEq11, PDO::PARAM_INT);
+
+        $stmt->fetch(PDO::FETCH_BOUND);
+
+        return $batchJob;
+    }
+    /**
+     * @param string $status
+     * @return array
+     */
+    public function getBatchJobs($status='false'){
+        $jobs = array();
+        $stmt = $this->pdo->prepare("SELECT prop FROM BATCH_PROP WHERE completed=?");
+        $stmt->bindValue(1, $this->strbool($status), PDO::PARAM_STR);
+        $stmt->execute();
+
+        /* @var BatchJob $job */
+        while($job = $stmt->fetchObject("BatchJob")){
+            $jobs[] = $job;
+        }
+        return $jobs;
+    }
+
+    /**
+     * @param BatchJob $batchJob
+     * @return bool
+     */
+    public function updateBatchJob($batchJob){
+        $stmt = $this->pdo->prepare("UPDATE BATCH_PROP 
+                                        SET completed = ?,
+                                            prop_mktval = ?,
+                                            Median_Sale5 = ?,
+                                            Median_Sale10 = ?,
+                                            Median_Sale15 = ?,
+                                            Median_Eq11 = ?,
+                                            pdfs = ?
+                                        WHERE 
+                                          prop = ?;");
+        $stmt->bindValue(1, $this->strbool($batchJob->batchStatus), PDO::PARAM_STR);
+        $stmt->bindValue(2, $batchJob->propMktVal, PDO::PARAM_INT);
+        $stmt->bindValue(3, $batchJob->propMedSale5, PDO::PARAM_INT);
+        $stmt->bindValue(4, $batchJob->propMedSale10, PDO::PARAM_INT);
+        $stmt->bindValue(5, $batchJob->propMedSale15, PDO::PARAM_INT);
+        $stmt->bindValue(6, $batchJob->propMedEq11, PDO::PARAM_INT);
+        $stmt->bindValue(7, $batchJob->pdfs, PDO::PARAM_STR);
+        $stmt->bindValue(8, $batchJob->propId, PDO::PARAM_INT);
+
+        return $stmt->execute();
+    }
+    
+    public function deleteBatchJob($propId){
+        $stmt = $this->pdo->prepare("DELETE FROM BATCH_PROP WHERE prop = ?;");
+        $stmt->bindValue(1, $propId, PDO::PARAM_INT);
+
+        return $stmt->execute();   
     }
 
     /**
@@ -124,7 +212,15 @@ class BatchDAO
 
     function strbool($value)
     {
-        return $value ? 'TRUE' : 'FALSE';
+        return $value ? 'true' : 'false';
+    }
+
+    function toBool($value)
+    {
+        if ($value == 'true'){
+            return true;
+        }
+        return false;
     }
 
     function bitBool($value)

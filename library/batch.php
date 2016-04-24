@@ -44,8 +44,8 @@ $COMPSTODISPLAY = 100;
 		$result["prop_owner"] = $property->mOwner;
 		$result["prop_addr"] = $property->mSitus;
 		
-		$property->mSubj = true;
-		$compsarray = findBestComps($property,$isEquityComp,.75,$trim);
+		$property->setisSubj(true);
+		$compsarray = findBestComps($property,$isEquityComp,75,$trim);
 		
 		if(sizeof($compsarray) == 0){
 			//error_log("No Hits for " . $propIdIn);
