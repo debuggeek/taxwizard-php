@@ -323,7 +323,7 @@ function emitHTMLFooter(){
 
 
 /**
- * @param $subjcomparray
+ * @param FullTable $fullTable
  * @param $isEquityComp
  */
 function generateJsonRows($fullTable, $isEquityComp = true){
@@ -333,7 +333,7 @@ function generateJsonRows($fullTable, $isEquityComp = true){
 	}else{
 		$relaventfields = $fieldsofinterest;
 	}
-	$subjcomparray = $fullTable["subjComps"];
+	$subjcomparray = $fullTable->getSubjCompArray();
 
 	$obj = new stdClass();
 	$obj->isEquity=$isEquityComp;
@@ -375,7 +375,8 @@ function generateJsonRows($fullTable, $isEquityComp = true){
 			$currCol = 'col' . ($i + 1);
 			if($currCol == 'col1') {
 				//Always only go in first col
-				$currRow[$currCol] = $fullTable[$field['KEY']];
+				$funcName = $field['KEY'];
+				$currRow[$currCol] = $fullTable->$funcName();
 			} else {
 				$currRow[$currCol] = null;
 			}

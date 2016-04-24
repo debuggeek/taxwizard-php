@@ -62,10 +62,10 @@ $INDICATEDVAL = array("Indicated Value","COMPCALCULATED","getIndicatedVal");
 $INDICATEDVALSQFT = array("Indicated Value / SQFT","COMPCALCULATED","getIndicatedValSqft");
 
 
-$MEANVAL = array("Mean Value","GLOBALCALCULATED","setMeanVal", "KEY" => "meanVal");
-$MEANVALSQFT = array("Mean Value / SQFT","GLOBALCALCULATED","setMeanValSqft", "KEY" => "meanValSqft");
-$MEDIANVAL = array("Median Value","GLOBALCALCULATED","setMedianVal", "KEY" => "medianVal");
-$MEDIANVALSQFT = array("Median Value / SQFT", "GLOBALCALCULATED","setMedianValSqft", "KEY" => "medianValSqft");
+$MEANVAL = array("Mean Value","GLOBALCALCULATED","setMeanVal", "KEY" => "getMeanVal");
+$MEANVALSQFT = array("Mean Value / SQFT","GLOBALCALCULATED","setMeanValSqft", "KEY" => "getMeanValSqft");
+$MEDIANVAL = array("Median Value","GLOBALCALCULATED","setMedianVal", "KEY" => "getMedianVal");
+$MEDIANVALSQFT = array("Median Value / SQFT", "GLOBALCALCULATED","setMedianValSqft", "KEY" => "getMedianValSqft");
 
 $AGENT = array("Agent","PROP","ca_agent_name");
 

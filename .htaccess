@@ -13,4 +13,4 @@ Options +FollowSymLinks
 #AuthType Basic
 
 #require valid-user
-#AuthUserFile "/home/cykoduck/.htpasswds/public_html/debuggeek.com/taxtiger/passwd"
+#AuthUserFile "passwd"

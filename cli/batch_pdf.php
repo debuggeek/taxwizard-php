@@ -1,5 +1,5 @@
 <?php
-set_include_path(get_include_path() . PATH_SEPARATOR . "/home/cykoduck/public_html/debuggeek.com/taxtiger/");
+set_include_path(get_include_path() . PATH_SEPARATOR . "/home/cykoduck/public_html/debuggeek.com/fivestone/");
 include_once 'library/functions.php';
 include_once 'library/functions_pdf.php';
 
@@ -8,55 +8,28 @@ $debug=false;
  * For each non completed row in the batch_prop table
  * calculate the comp pdf and save it back to the pdfs column blob
  */
-$TRIMINDICATED=false;
-$MULTIHOOD=true;
-$INCLUDEVU=true;
-$PREVYEAR=1;
-$SQFTPERCENT = 5;
 
 $date = new DateTime();
 echo "\n".$date->format('Y-m-d H:i:s') . " >> Starting Batch Processing\n";
 
-$queueQuery = "SELECT * FROM BATCH_PROP_SETTINGS WHERE id=(SELECT max(id) FROM BATCH_PROP_SETTINGS)";
-$result = doSqlQuery($queueQuery);
+$batchDAO = new BatchDAO($servername, $username, $password, $database);
+$queryContext = $batchDAO->getBatchSettings();
 
-if(mysqli_num_rows($result) == 0){
-    echo "\n Found no settings using defaults";
-}
-if(mysqli_num_rows($result) > 1){
-    echo "\n Found multiple settings using first";
-}
-if(mysqli_num_rows($result) > 0){
-    $row = mysqli_fetch_array($result);
-    $TRIMINDICATED= $row['TrimIndicated'] === "TRUE" ? true : false;
-    $MULTIHOOD=$row['MultiHood']=== "TRUE" ? true : false;
-    $INCLUDEVU=$row['IncludeVU']=== "TRUE" ? true : false;
-    $INCLUDEMLS=$row['IncludeMLS']=== "TRUE" ? true : false;
-    $PREVYEAR=$row['NumPrevYears'];
-    $SQFTPERCENT=$row['SqftRange'];
-    $SUBCLASSRANGE=$row['ClassRange'];
-    $PERCENTGOODRANGE=$row['PercentGood'];
-    $SUBCLASSENABLED=$row['ClassRangeEnabled'];
-    $PERCENTGOODENABLED=$row['PercentGoodEnabled'];
-    $NET_ADJ_ENABLED=$row['NetAdjEnabled'];
-    $NET_ADJ_AMOUNT=$row['NetAdj'];
-    //REMEMBER if you add here you have to put into functions_pdf too
-    $output = "Executing with settings: Trim=".strbool($TRIMINDICATED).
-                                        " Multihoods=".strbool($MULTIHOOD).
-                                        " VUs=".strbool($INCLUDEVU).
-                                        " mls=".strbool($INCLUDEMLS).
-                                        " years=".strval($PREVYEAR).
-                                        " sqftRange=".strval($SQFTPERCENT).
-                                        " subclassRange=".strval($SUBCLASSRANGE).
-                                        " subclassEnabled=".strbool($SUBCLASSENABLED).
-                                        " percentGoodRange=".strval($PERCENTGOODRANGE).
-                                        " percentGoodEnabled=".strbool($PERCENTGOODENABLED).
-                                        " netAdjEnabled=" . strbool($NET_ADJ_ENABLED).
-                                        " netAdjAmount=" . strval($NET_ADJ_AMOUNT);
-    error_log("batch_pdf: ". $output);
-    echo "\n".$output ."\n";
-}
-mysqli_free_result($result);
+//REMEMBER if you add here you have to put into functions_pdf too
+$output = "Executing with settings: Trim=".strbool($queryContext->trimIndicated).
+                                    " Multihoods=".strbool($queryContext->multiHood).
+                                    " VUs=".strbool($queryContext->includeVu).
+                                    " mls=".strbool($queryContext->includeMls).
+                                    " years=".strval($queryContext->prevYear).
+                                    " sqftRange=".strval($queryContext->sqftPercent).
+                                    " subclassRange=".strval($queryContext->subClassRange).
+                                    " subclassEnabled=".strbool($queryContext->subClassRangeEnabled).
+                                    " percentGoodRange=".strval($queryContext->percentGoodRange).
+                                    " percentGoodEnabled=".strbool($queryContext->percentGoodRangeEnabled).
+                                    " netAdjEnabled=" . strbool($queryContext->netAdjustEnabled).
+                                    " netAdjAmount=" . strval($queryContext->netAdjustAmount);
+error_log("batch_pdf: ". $output);
+echo "\n".$output ."\n";
 
 //Query to check if any work to do
 $queueQuery = "SELECT prop FROM BATCH_PROP WHERE completed='false'";
@@ -70,7 +43,8 @@ if(mysqli_num_rows($result) > 0){
 		$propid = $row['prop'];
 		$date = new DateTime();
 		echo $date->format('Y-m-d H:i:s') . " >> BatchPDF: Updating ".$propid;
-		$retArray = generatePropMultiPDF($propid);
+        $queryContext->subjPropId = $propid;
+		$retArray = generatePropMultiPDF($queryContext);
 		if($retArray != null){
 			//$multiPDF = new mPDF();
 			$multiPDF = $retArray["mPDF"];

@@ -6,7 +6,10 @@ class PDFTest extends PHPUnit_Framework_TestCase {
 
     public function test_genMassReportPDF()
     {
-        $prop_pdfs = generatePropMultiPDF(105290);
+        $queryContext = new queryContext();
+        $queryContext->subjPropId = 105290;
+        $prop_pdfs = generatePropMultiPDF($queryContext);
+        $this->assertNotEmpty($prop_pdfs);
     }
 }
  

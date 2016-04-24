@@ -48,23 +48,29 @@ $propArray = array();
 foreach($propstrarray as $propstr){
 	$currProp = getProperty($propstr);
 	if($propstr == $subj){
-		$currProp->mSubj = true;
+		$currProp->setisSubj(true);
 	}
 	else{
 		if($equity == false){
 			//Get Sales info
-			$currProp->mSaleDate = getSaleDate($currProp->mPropID);
-			$currProp->mSalePrice = getSalePrice($currProp->mPropID);
+			$currProp->mSaleDate = getSaleDate($currProp->getPropID());
+			$currProp->setSalePrice(getSalePrice($currProp->getPropID()));
 		}
 		calcDeltas($propArray[0],$currProp);
 	}
 	$propArray[] = $currProp;
 }
-$_SESSION[$MEANVAL[0]] = getMeanVal($propArray);
-$_SESSION[$MEANVALSQFT[0]] = getMeanValSqft($propArray);
-$_SESSION[$MEDIANVAL[0]] = getMedianVal($propArray);
-$_SESSION[$MEDIANVALSQFT[0]] = getMedianValSqft($propArray);
+$fullTable = array();
+$fullTable["subjComps"] = $propArray;
 
-$html = returnGenericTable($propArray,$equity);
-generatePDF($html);
+$fullTable["meanVal"] = getMeanVal($propArray);
+$fullTable["meanValSqft"] = getMeanValSqft($propArray);
+$fullTable["medianVal"]= getMedianVal($propArray);
+$fullTable["medianValSqft"] = getMedianValSqft($propArray);
+
+$jsonResult = generateJsonRows($fullTable);
+
+$v8 = new V8Js();
+echo $v8->executeString(file_get_contents('library/tableBuilder.js'));
+//generatePDF($html);
 ?>

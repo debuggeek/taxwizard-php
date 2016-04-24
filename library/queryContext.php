@@ -2,6 +2,9 @@
 
 class queryContext {
 
+    /*
+     * Following are all persisted in Batch Table
+     */
     public $trimIndicated = false;
     public $includeMls = false;
     public $multiHood = false;
@@ -15,7 +18,9 @@ class queryContext {
     public $netAdjustEnabled = false;
     public $netAdjustAmount = 0;
 
-    //Below settings aren't stored in database
+    /*
+     * Below settings aren't stored in database
+     */
     public $limit = null;
     public $compsToDisplay = 100;
     
@@ -26,6 +31,8 @@ class queryContext {
     public $isEquityComp = true;
 
     public $subjPropId = null;
+
+    public $compInfo = array();
 
     public function parseQueryString($getContext){
         //Parse Inputs
@@ -96,6 +103,32 @@ class queryContext {
             $this->excludes = explode('_',$excludeStrList);
         }
 
-  
+        if(isset($getContext['Submit'])){
+            if($getContext['Submit'] == 'Build Sales Table'){
+                $this->isEquityComp = false;
+            }
+        }
+
+        $compInt = 1;
+        while(true){
+            if(isset($_GET['c'.$compInt])){
+                $id = trim($_GET['c'.$compInt]);
+                if(isset($_GET['c'.$compInt.'sp'])){
+                    $saleprice = trim($_GET['c'.$compInt.'sp']);
+                } else {
+                    $saleprice = null;
+                }
+                if(isset($_GET['c'.$compInt.'sd'])){
+                    $saledate = trim($_GET['c'.$compInt.'sd']);
+                } else {
+                    $saledate = null;
+                }
+                $this->compInfo[] = array("id"=>$id,"salePrice"=>$saleprice,"saleDate"=>$saledate);
+                $compInt++;
+            } else {
+                break;
+            }
+        }
+        
     }
 }

@@ -1,0 +1,6 @@
+#This is here in case the directory is copied to the htdocs folder
+AuthName EnterPassword
+AuthType Basic
+
+require valid-user
+AuthUserFile "adminpasswd"

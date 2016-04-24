@@ -1,6 +1,7 @@
 {
   "require": {
     "mpdf/mpdf": "5.6.1",
-    "phpunit/phpunit": "5.3.0"
+    "phpunit/phpunit": "5.3.0",
+    "apache/log4php": "3.x-dev"
   }
 }
