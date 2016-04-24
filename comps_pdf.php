@@ -68,9 +68,5 @@ $fullTable["meanValSqft"] = getMeanValSqft($propArray);
 $fullTable["medianVal"]= getMedianVal($propArray);
 $fullTable["medianValSqft"] = getMedianValSqft($propArray);
 
-$jsonResult = generateJsonRows($fullTable);
-
-$v8 = new V8Js();
-echo $v8->executeString(file_get_contents('library/tableBuilder.js'));
-//generatePDF($html);
+echo generatePropMultiPDF($queryContext);
 ?>

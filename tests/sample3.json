@@ -1,71 +1,110 @@
 {
   "isEquity": false,
-  "compCount": 2,
+  "compCount": 5,
   "rows": [{
     "description": "Property ID",
     "col1": "105290",
     "col2": "105860",
-    "col3": "104825"
+    "col3": "104825",
+    "col4": "105956",
+    "col5": "104838",
+    "col6": "104718"
   }, {
     "description": "Property Owner",
     "col1": "KOESTERS KURT H & LAURA",
     "col2": "PIER N BEAM LLC",
-    "col3": "DAVIES WILLIAM & ERICA"
+    "col3": "DAVIES WILLIAM & ERICA",
+    "col4": "KERNAGHAN JAMES R",
+    "col5": "HORTON AMANDA L & BRIAN",
+    "col6": "SILVERSTEIN JASON D &"
   }, {
     "description": "Geo ID",
     "col1": "0106160913",
     "col2": "0107150326",
-    "col3": "0105170603"
+    "col3": "0105170603",
+    "col4": "0107180303",
+    "col5": "0105170616",
+    "col6": "0105160715"
   }, {
     "description": "Situs",
     "col1": " EANES CIR 78746",
     "col2": " DARTER LN 78746",
-    "col3": " WYCHWOOD DR 78746"
+    "col3": " WYCHWOOD DR 78746",
+    "col4": " PEREGRINE FALCON DR 78746",
+    "col5": " HEADWATER LN 78746",
+    "col6": " COPPER MOUNT CV 78746"
   }, {
     "description": null,
     "col1": null,
     "col2": null,
-    "col3": null
+    "col3": null,
+    "col4": null,
+    "col5": null,
+    "col6": null
   }, {
     "description": "Neighborhood",
     "col1": "M5200",
     "col2": "M5200",
-    "col3": "M5200"
+    "col3": "M5200",
+    "col4": "M5200",
+    "col5": "M5200",
+    "col6": "M5200"
   }, {
     "description": null,
     "col1": null,
     "col2": null,
-    "col3": null
+    "col3": null,
+    "col4": null,
+    "col5": null,
+    "col6": null
   }, {
     "description": "Sale Date",
     "col1": null,
     "col2": "2015-06-18",
-    "col3": "2015-05-18"
+    "col3": "2015-05-18",
+    "col4": "2015-08-26",
+    "col5": "2015-08-13",
+    "col6": "2015-10-01"
   }, {
     "description": "Market Value",
     "col1": "737,919",
     "col2": "590,132",
-    "col3": "587,864"
+    "col3": "587,864",
+    "col4": "696,830",
+    "col5": "808,219",
+    "col6": "767,018"
   }, {
     "description": "Market Price\/SQFT",
     "col1": "251.51",
     "col2": "187.40",
-    "col3": "217.81"
+    "col3": "217.81",
+    "col4": "244.24",
+    "col5": "292.83",
+    "col6": "285.67"
   }, {
     "description": "Sale Price",
     "col1": null,
     "col2": "521000",
-    "col3": "640000"
+    "col3": "640000",
+    "col4": "679000",
+    "col5": "780000",
+    "col6": "747000"
   }, {
     "description": "Sale Price \/ SQFT",
     "col1": "0",
     "col2": "165",
-    "col3": "237"
+    "col3": "237",
+    "col4": "238",
+    "col5": "283",
+    "col6": "278"
   }, {
     "description": null,
     "col1": null,
     "col2": null,
-    "col3": null
+    "col3": null,
+    "col4": null,
+    "col5": null,
+    "col6": null
   }, {
     "description": "Land Value Adj",
     "col1": {
@@ -79,12 +118,27 @@
     "col3": {
       "value": "350000",
       "delta": "35,000"
+    },
+    "col4": {
+      "value": "350000",
+      "delta": "35,000"
+    },
+    "col5": {
+      "value": "385000",
+      "delta": "0"
+    },
+    "col6": {
+      "value": "367500",
+      "delta": "17,500"
     }
   }, {
     "description": "Improvement Count",
     "col1": 2,
     "col2": 1,
-    "col3": 1
+    "col3": 1,
+    "col4": 1,
+    "col5": 1,
+    "col6": 1
   }, {
     "description": "Class Unit Price Adj",
     "col1": {
@@ -98,6 +152,18 @@
     "col3": {
       "value": "WW5-",
       "delta": "12,847"
+    },
+    "col4": {
+      "value": "WS5+",
+      "delta": "-30,384"
+    },
+    "col5": {
+      "value": "WV5+",
+      "delta": "-44,960"
+    },
+    "col6": {
+      "value": "WW5+",
+      "delta": "-38,127"
     }
   }, {
     "description": "% Good Adj",
@@ -112,17 +178,35 @@
     "col3": {
       "value": "75",
       "delta": "0"
+    },
+    "col4": {
+      "value": "75",
+      "delta": "0"
+    },
+    "col5": {
+      "value": "85",
+      "delta": "-39,500"
+    },
+    "col6": {
+      "value": "80",
+      "delta": "-18,975"
     }
   }, {
     "description": "Living Area",
     "col1": "2934",
     "col2": "3149",
-    "col3": "2699"
+    "col3": "2699",
+    "col4": "2853",
+    "col5": "2760",
+    "col6": "2685"
   }, {
     "description": "Year Built",
     "col1": "1980",
     "col2": "1980",
-    "col3": "1981"
+    "col3": "1981",
+    "col4": "1980",
+    "col5": "1981",
+    "col6": "1982"
   }, {
     "description": "Segments & Adj",
     "col1": {
@@ -139,6 +223,21 @@
       "value": "1st Floor",
       "subvalue": "1230",
       "delta": 58928
+    },
+    "col4": {
+      "value": "1st Floor",
+      "subvalue": "2127",
+      "delta": -23198
+    },
+    "col5": {
+      "value": "1st Floor",
+      "subvalue": "1572",
+      "delta": 35884
+    },
+    "col6": {
+      "value": "1st Floor",
+      "subvalue": "1374",
+      "delta": 56311
     }
   }, {
     "description": null,
@@ -156,6 +255,21 @@
       "value": "2nd Floor",
       "subvalue": "782",
       "delta": 19730
+    },
+    "col4": {
+      "value": "2nd Floor",
+      "subvalue": "726",
+      "delta": 28394
+    },
+    "col5": {
+      "value": "2nd Floor",
+      "subvalue": "1188",
+      "delta": -15268
+    },
+    "col6": {
+      "value": "2nd Floor",
+      "subvalue": "1311",
+      "delta": -26781
     }
   }, {
     "description": null,
@@ -173,6 +287,21 @@
       "value": "GARAGE ATT 1ST F",
       "subvalue": "472",
       "delta": 2923
+    },
+    "col4": {
+      "value": "GARAGE ATT 1ST F",
+      "subvalue": "220",
+      "delta": 7967
+    },
+    "col5": {
+      "value": "GARAGE ATT 1ST F",
+      "subvalue": "NONE",
+      "delta": 14039
+    },
+    "col6": {
+      "value": "GARAGE ATT 1ST F",
+      "subvalue": "594",
+      "delta": -2266
     }
   }, {
     "description": null,
@@ -190,6 +319,21 @@
       "value": "HVAC RESIDENTIAL",
       "subvalue": "2699",
       "delta": 541
+    },
+    "col4": {
+      "value": "HVAC RESIDENTIAL",
+      "subvalue": "2267",
+      "delta": 1534
+    },
+    "col5": {
+      "value": "HVAC RESIDENTIAL",
+      "subvalue": "2760",
+      "delta": 400
+    },
+    "col6": {
+      "value": "HVAC RESIDENTIAL",
+      "subvalue": "2685",
+      "delta": 573
     }
   }, {
     "description": null,
@@ -206,6 +350,21 @@
     "col3": {
       "value": "BATHROOM",
       "subvalue": "2.5",
+      "delta": -0
+    },
+    "col4": {
+      "value": "BATHROOM",
+      "subvalue": "4.5",
+      "delta": -0
+    },
+    "col5": {
+      "value": "BATHROOM",
+      "subvalue": "3",
+      "delta": -0
+    },
+    "col6": {
+      "value": "BATHROOM",
+      "subvalue": "3.5",
       "delta": -0
     }
   }, {
@@ -221,6 +380,21 @@
       "delta": 827
     },
     "col3": {
+      "value": "DECK UNCOVRED",
+      "subvalue": "NONE",
+      "delta": 827
+    },
+    "col4": {
+      "value": "DECK UNCOVRED",
+      "subvalue": "NONE",
+      "delta": 827
+    },
+    "col5": {
+      "value": "DECK UNCOVRED",
+      "subvalue": "NONE",
+      "delta": 827
+    },
+    "col6": {
       "value": "DECK UNCOVRED",
       "subvalue": "NONE",
       "delta": 827
@@ -241,6 +415,21 @@
       "value": "DECK COVERED",
       "subvalue": "108",
       "delta": 952
+    },
+    "col4": {
+      "value": "DECK COVERED",
+      "subvalue": "NONE",
+      "delta": 2070
+    },
+    "col5": {
+      "value": "DECK COVERED",
+      "subvalue": "NONE",
+      "delta": 2070
+    },
+    "col6": {
+      "value": "DECK COVERED",
+      "subvalue": "NONE",
+      "delta": 2070
     }
   }, {
     "description": null,
@@ -255,6 +444,21 @@
       "delta": -3450
     },
     "col3": {
+      "value": "FIREPLACE",
+      "subvalue": "1",
+      "delta": -3450
+    },
+    "col4": {
+      "value": "FIREPLACE",
+      "subvalue": "1",
+      "delta": -3450
+    },
+    "col5": {
+      "value": "FIREPLACE",
+      "subvalue": "1",
+      "delta": -3450
+    },
+    "col6": {
       "value": "FIREPLACE",
       "subvalue": "1",
       "delta": -3450
@@ -275,6 +479,21 @@
       "value": "MASONRY TRIM SF",
       "subvalue": "550",
       "delta": 2809
+    },
+    "col4": {
+      "value": "MASONRY TRIM SF",
+      "subvalue": "550",
+      "delta": 2809
+    },
+    "col5": {
+      "value": "MASONRY TRIM SF",
+      "subvalue": "NONE",
+      "delta": 6445
+    },
+    "col6": {
+      "value": "MASONRY TRIM SF",
+      "subvalue": "560",
+      "delta": 2743
     }
   }, {
     "description": null,
@@ -292,6 +511,21 @@
       "value": "POOL RES CONC",
       "subvalue": "1",
       "delta": 2875
+    },
+    "col4": {
+      "value": "POOL RES CONC",
+      "subvalue": "NONE",
+      "delta": 14375
+    },
+    "col5": {
+      "value": "POOL RES CONC",
+      "subvalue": "NONE",
+      "delta": 14375
+    },
+    "col6": {
+      "value": "POOL RES CONC",
+      "subvalue": "1",
+      "delta": -2875
     }
   }, {
     "description": null,
@@ -309,6 +543,21 @@
       "value": "TERRACE UNCOVERD",
       "subvalue": "NONE",
       "delta": 138
+    },
+    "col4": {
+      "value": "TERRACE UNCOVERD",
+      "subvalue": "375",
+      "delta": -2450
+    },
+    "col5": {
+      "value": "TERRACE UNCOVERD",
+      "subvalue": "144",
+      "delta": -856
+    },
+    "col6": {
+      "value": "TERRACE UNCOVERD",
+      "subvalue": "96",
+      "delta": -524
     }
   }, {
     "description": null,
@@ -326,6 +575,21 @@
       "value": "PORCH OPEN 1ST F",
       "subvalue": "NONE",
       "delta": 1347
+    },
+    "col4": {
+      "value": "PORCH OPEN 1ST F",
+      "subvalue": "44",
+      "delta": 676
+    },
+    "col5": {
+      "value": "PORCH OPEN 1ST F",
+      "subvalue": "264",
+      "delta": -2679
+    },
+    "col6": {
+      "value": "PORCH OPEN 1ST F",
+      "subvalue": "114",
+      "delta": -392
     }
   }, {
     "description": null,
@@ -343,6 +607,17 @@
       "value": "SPA CONCRETE",
       "subvalue": "1",
       "delta": -4025
+    },
+    "col4": null,
+    "col5": {
+      "value": "PORCH OPEN 2ND F",
+      "subvalue": "264",
+      "delta": -4026
+    },
+    "col6": {
+      "value": "PORCH OPEN 1ST F",
+      "subvalue": "300",
+      "delta": -4575
     }
   }, {
     "description": null,
@@ -360,6 +635,17 @@
       "value": "1st Floor",
       "subvalue": "687",
       "delta": -71001
+    },
+    "col4": null,
+    "col5": {
+      "value": "GARAGE DET 1ST F",
+      "subvalue": "528",
+      "delta": -17582
+    },
+    "col6": {
+      "value": "PORCH OPEN 2ND F",
+      "subvalue": "300",
+      "delta": -4575
     }
   }, {
     "description": null,
@@ -377,6 +663,17 @@
       "value": "DECK COVERED",
       "subvalue": "20",
       "delta": -207
+    },
+    "col4": null,
+    "col5": {
+      "value": "TERRACE UNCOVERD",
+      "subvalue": "208",
+      "delta": -1435
+    },
+    "col6": {
+      "value": "FENCE IRON LF",
+      "subvalue": "80",
+      "delta": -2116
     }
   }, {
     "description": null,
@@ -394,7 +691,14 @@
       "value": "DECK COVERED",
       "subvalue": "25",
       "delta": -259
-    }
+    },
+    "col4": null,
+    "col5": {
+      "value": "SPORT COURT",
+      "subvalue": "1269",
+      "delta": -6865
+    },
+    "col6": null
   }, {
     "description": null,
     "col1": {
@@ -407,7 +711,10 @@
       "subvalue": "132",
       "delta": -3454
     },
-    "col3": null
+    "col3": null,
+    "col4": null,
+    "col5": null,
+    "col6": null
   }, {
     "description": null,
     "col1": {
@@ -420,7 +727,10 @@
       "subvalue": "1",
       "delta": -12500
     },
-    "col3": null
+    "col3": null,
+    "col4": null,
+    "col5": null,
+    "col6": null
   }, {
     "description": null,
     "col1": {
@@ -433,7 +743,10 @@
       "subvalue": "168",
       "delta": -12676
     },
-    "col3": null
+    "col3": null,
+    "col4": null,
+    "col5": null,
+    "col6": null
   }, {
     "description": "Secondary Imp",
     "col1": {
@@ -447,56 +760,98 @@
     "col3": {
       "value": 0,
       "delta": 2871
+    },
+    "col4": {
+      "value": 0,
+      "delta": 2871
+    },
+    "col5": {
+      "value": 0,
+      "delta": 2871
+    },
+    "col6": {
+      "value": 0,
+      "delta": 2871
     }
   }, {
     "description": null,
     "col1": null,
     "col2": null,
-    "col3": null
+    "col3": null,
+    "col4": null,
+    "col5": null,
+    "col6": null
   }, {
     "description": "Net Adjustment",
     "col1": "0",
     "col2": "37,461",
-    "col3": "62,846"
+    "col3": "62,846",
+    "col4": "37,041",
+    "col5": "-59,710",
+    "col6": "-21,761"
   }, {
     "description": null,
     "col1": null,
     "col2": null,
-    "col3": null
+    "col3": null,
+    "col4": null,
+    "col5": null,
+    "col6": null
   }, {
     "description": "Indicated Value",
     "col1": "737,919",
     "col2": "558,461",
-    "col3": "702,846"
+    "col3": "702,846",
+    "col4": "716,041",
+    "col5": "720,290",
+    "col6": "725,239"
   }, {
     "description": "Indicated Value \/ SQFT",
     "col1": "0.00",
     "col2": "177.35",
-    "col3": "260.41"
+    "col3": "260.41",
+    "col4": "250.98",
+    "col5": "260.97",
+    "col6": "270.11"
   }, {
     "description": null,
     "col1": null,
     "col2": null,
-    "col3": null
+    "col3": null,
+    "col4": null,
+    "col5": null,
+    "col6": null
   }, {
     "description": "Mean Value",
-    "col1": "630,654",
+    "col1": "684,575",
     "col2": null,
-    "col3": null
+    "col3": null,
+    "col4": null,
+    "col5": null,
+    "col6": null
   }, {
     "description": "Mean Value \/ SQFT",
-    "col1": "218.88",
+    "col1": "243.96",
     "col2": null,
-    "col3": null
+    "col3": null,
+    "col4": null,
+    "col5": null,
+    "col6": null
   }, {
     "description": "Median Value",
-    "col1": "630,654",
+    "col1": "716,041",
     "col2": null,
-    "col3": null
+    "col3": null,
+    "col4": null,
+    "col5": null,
+    "col6": null
   }, {
     "description": "Median Value \/ SQFT",
-    "col1": "218.88",
+    "col1": "260.41",
     "col2": null,
-    "col3": null
+    "col3": null,
+    "col4": null,
+    "col5": null,
+    "col6": null
   }]
 }

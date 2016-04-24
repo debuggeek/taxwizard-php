@@ -8,29 +8,35 @@
         $.getScript("library/tableBuilder.js");
 
         $(document).ready(function() {
-            $.ajax({
-                url: getUrlParameter("target")+".php?" + queryString,  //'/tests/sample2',
-                dataType: 'json',
-                error: function(){
-                    $('.loader').fadeOut("fast");
-                    if(!getUrlParameter("target")){
-                        $("#title").append("<H2>Bad Request, target must be specified</H2>");
-                    } else {
-                        timeout();
-                    }
-                },
-                success: function (data, textStatus, jqXHR) {
-                    // since we are using jQuery, you don't need to parse response
-                    if(data.error){
-                        errorPage(data);
-                    } else {
-                        addTitle();
-                        drawTable(data);
-                    }
-                    $('.loader').fadeOut("slow");
-                },
-                timeout: 30000 // sets timeout to 10 seconds
-            });
+            if(getUrlParameter('pdf')) {
+                $('.loader').fadeOut("fast");
+                var newUrl = getUrlParameter("target") + ".php?" + queryString;
+                window.location.href = newUrl;
+            } else {
+                $.ajax({
+                    url: getUrlParameter("target") + ".php?" + queryString,  //'/tests/sample2',
+                    dataType: 'json',
+                    error: function () {
+                        $('.loader').fadeOut("fast");
+                        if (!getUrlParameter("target")) {
+                            $("#title").append("<H2>Bad Request, target must be specified</H2>");
+                        } else {
+                            timeout();
+                        }
+                    },
+                    success: function (data, textStatus, jqXHR) {
+                        // since we are using jQuery, you don't need to parse response
+                        if (data.error) {
+                            errorPage(data);
+                        } else {
+                            addTitle();
+                            drawTable(data);
+                        }
+                        $('.loader').fadeOut("slow");
+                    },
+                    timeout: 30000 // sets timeout to 10 seconds
+                });
+            }
         });
 
 

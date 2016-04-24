@@ -101,6 +101,7 @@ class PropertyDAO{
         $query = "SELECT 
                         p.geo_id as mGeoID,
                         CONCAT_WS(' ', LTRIM(RTRIM(p.situs_street_prefx)), 
+                                      LTRIM(RTRIM(p.situs_num)),
                                       LTRIM(RTRIM(p.situs_street)), 
                                       LTRIM(RTRIM(p.situs_street_suffix)),
                                       LTRIM(RTRIM(p.situs_unit)),

@@ -94,9 +94,9 @@ LINES TERMINATED BY '\n';
 MLS:
 CSV with : prop_id, sale_price, sale_date, address
 
-LOAD DATA LOCAL INFILE ‘~/mls.csv'
+LOAD DATA LOCAL INFILE '/home1/cykoduck/TCAD_data/2016/mls.csv'
 INTO TABLE MLS_SALES
-FIELDS TERMINATED BY ‘,'
+FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n';
 
 SALES MLS Merged:
@@ -118,10 +118,6 @@ If you have to fix the dates:
 
 UPDATE `table`
 SET `column` = str_to_date( `column`, ‘%m/%d/%Y' );
-
-
-
-
 
 MLS might be ok and not need date change
 

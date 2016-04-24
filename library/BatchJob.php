@@ -8,18 +8,12 @@
  */
 class BatchJob
 {
-    /**
-     * @var int
-     */
     public $propId;
     
     public $batchStatus;
     
     public $pdfs;
 
-    /**
-     * @var int
-     */
     public $propMktVal;
 
     /**
@@ -41,4 +35,13 @@ class BatchJob
      * @var int
      */
     public $propMedEq11;
+    
+    
+    function parseArray($array){
+        $this->propMktVal = $array['prop_mktvl'];
+        $this->propMedSale5 = $array['medSale5'];
+        $this->propMedSale10 = $array['medSale10'];
+        $this->propMedSale15 = $array['medSale15'];   
+        $this->pdfs = $array['base64'];
+    }
 }

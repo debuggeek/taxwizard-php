@@ -1,5 +1,7 @@
 <?php
 
+include_once "HTMLTable.php";
+
 function iterateProps($proparray){
 	echo "<pre>";
 	echo "PropID     Market Value     SQFT     Value/Sqft     Savings     Agent<br>".PHP_EOL;
@@ -388,6 +390,19 @@ function generateJsonRows($fullTable, $isEquityComp = true){
 }
 
 /**
+ * For a given array of properties in JSON format return an HTML table
+ * @param FullTable $fullTable
+ * @param Boolean - True if type = equity
+ * @return HTML string of table
+ */
+function returnJsonBasedHTMLTable($fullTable, $isEquityComp){
+	$jsonData = generateJsonRows($fullTable, $isEquityComp);
+	$htmlTable = new HTMLTable();
+	$htmlTable->parseJson($jsonData);
+	return $htmlTable->toHTML();
+}
+
+/**
  * @param propertyClass() $subjcomparray
  * @param $field
  * @return array()
@@ -625,4 +640,7 @@ function returnGenericTable($subjcomparray,$isEquityComp){
 	
 	return $returnHTML;
 }
+
+
+
 ?>

@@ -1,6 +1,6 @@
 <?php
 include_once 'defines.php';
-include_once "MPDF56/mpdf.php";
+include_once "../MPDF56/mpdf.php";
 include_once 'presentation.php';
 include_once 'functions.php';
 include_once 'FullTable.php';
@@ -16,7 +16,6 @@ function strbool($value)
  * @return Array with mPDF,medSale10,medSale5,medEq11,prop_mktvl
  */
 function generatePropMultiPDF($queryContext){
-	global $MEANVAL,$MEANVALSQFT,$MEDIANVAL,$MEDIANVALSQFT;
 	$_SESSION = array();
 	$retArray = array();
 	
@@ -24,7 +23,7 @@ function generatePropMultiPDF($queryContext){
 	$mpdf->SetDisplayMode('fullpage');
 	$mpdf->list_indent_first_level = 0;	// 1 or 0 - whether to indent the first level of a list
 	// LOAD a stylesheet
-	$stylesheet = file_get_contents('default_pdf.css', FILE_USE_INCLUDE_PATH);
+	$stylesheet = file_get_contents('../default_pdf.css');
 	$mpdf->WriteHTML($stylesheet,1);	// The parameter 1 tells that this is css/style only and no body/html/text
 
 	$fullTable = new FullTable();
@@ -39,7 +38,7 @@ function generatePropMultiPDF($queryContext){
 		$html15 = "No Sales Comps for ".$queryContext->subjPropId;
 	else{
 		$retArray["medSale15"] = $fullTable->getMedianVal();
-		$html15 = returnGenericTable($fullTable,false);
+		$html15 = returnJsonBasedHTMLTable($fullTable, false);
 	}
 	$mpdf->WriteHTML($html15,2);
 
@@ -49,7 +48,7 @@ function generatePropMultiPDF($queryContext){
         //Take the first 10 comps of the 15 + the subj
 		$fullTable10 = $fullTable->trimTo(11);
 		$retArray["medSale10"] = $fullTable10->getMedianVal();
-		$html10 = returnGenericTable($fullTable10,false);
+		$html10 = returnJsonBasedHTMLTable($fullTable10,false);
 		$mpdf->WriteHTML($html10,2);
 	}
 	else{
@@ -58,13 +57,12 @@ function generatePropMultiPDF($queryContext){
 		$retArray["medSale15"] = null;
 	}
 	
-	
 	//Generate Sales 5
 	$fullTable5 = null;
 	if ($fullTable->getNumComp() >= 6){
 		$fullTable5 = $fullTable10->trimTo(6);
 		$retArray["medSale5"] = $fullTable5->getMedianVal();
-		$htmlEq = returnGenericTable($fullTable5,false);
+		$htmlEq = returnJsonBasedHTMLTable($fullTable5,false);
 		$mpdf->AddPage();
 		$mpdf->WriteHTML($htmlEq);
 	}
@@ -80,7 +78,7 @@ function generatePropMultiPDF($queryContext){
 	$fullTableEq = new FullTable();
 	$fullTableEq->generateTableData($queryContext);
 	$retArray["medEq11"] = $fullTableEq->getMedianVal();
-	$htmlEq = returnGenericTable($fullTableEq,true);
+	$htmlEq = returnJsonBasedHTMLTable($fullTableEq,true);
 	$mpdf->AddPage();
 	$mpdf->WriteHTML($htmlEq);
 	$retArray["mPDF"] = $mpdf;

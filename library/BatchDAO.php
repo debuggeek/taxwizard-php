@@ -93,16 +93,15 @@ class BatchDAO
     }
     /**
      * @param string $status
-     * @return array
+     * @return int[]
      */
-    public function getBatchJobs($status='false'){
+    public function getBatchJobs($status=false){
         $jobs = array();
         $stmt = $this->pdo->prepare("SELECT prop FROM BATCH_PROP WHERE completed=?");
         $stmt->bindValue(1, $this->strbool($status), PDO::PARAM_STR);
         $stmt->execute();
-
-        /* @var BatchJob $job */
-        while($job = $stmt->fetchObject("BatchJob")){
+        
+        while($job = $stmt->fetchColumn()){
             $jobs[] = $job;
         }
         return $jobs;
@@ -123,14 +122,15 @@ class BatchDAO
                                             pdfs = ?
                                         WHERE 
                                           prop = ?;");
-        $stmt->bindValue(1, $this->strbool($batchJob->batchStatus), PDO::PARAM_STR);
-        $stmt->bindValue(2, $batchJob->propMktVal, PDO::PARAM_INT);
-        $stmt->bindValue(3, $batchJob->propMedSale5, PDO::PARAM_INT);
-        $stmt->bindValue(4, $batchJob->propMedSale10, PDO::PARAM_INT);
-        $stmt->bindValue(5, $batchJob->propMedSale15, PDO::PARAM_INT);
-        $stmt->bindValue(6, $batchJob->propMedEq11, PDO::PARAM_INT);
-        $stmt->bindValue(7, $batchJob->pdfs, PDO::PARAM_STR);
-        $stmt->bindValue(8, $batchJob->propId, PDO::PARAM_INT);
+        $boolStr = $this->strbool($batchJob->batchStatus);
+        $stmt->bindParam(1, $boolStr, PDO::PARAM_STR);
+        $stmt->bindParam(2, $batchJob->propMktVal, PDO::PARAM_INT);
+        $stmt->bindParam(3, $batchJob->propMedSale5, PDO::PARAM_INT);
+        $stmt->bindParam(4, $batchJob->propMedSale10, PDO::PARAM_INT);
+        $stmt->bindParam(5, $batchJob->propMedSale15, PDO::PARAM_INT);
+        $stmt->bindParam(6, $batchJob->propMedEq11, PDO::PARAM_INT);
+        $stmt->bindParam(7, $batchJob->pdfs, PDO::PARAM_LOB);
+        $stmt->bindParam(8, $batchJob->propId, PDO::PARAM_INT);
 
         return $stmt->execute();
     }
@@ -212,7 +212,7 @@ class BatchDAO
 
     function strbool($value)
     {
-        return $value ? 'true' : 'false';
+        return $value == true ? 'true' : 'false';
     }
 
     function toBool($value)

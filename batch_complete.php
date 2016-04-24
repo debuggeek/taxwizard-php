@@ -21,17 +21,14 @@
 include_once("library/functions.php");
 include_once("library/BatchDAO.php");
 
-$queryAll="SELECT * FROM BATCH_PROP";
-$resultAll=doSqlQuery($queryAll);
-$numAll=mysqli_num_rows($resultAll);
-mysqli_free_result($resultAll);
-
-$query="SELECT * FROM BATCH_PROP WHERE completed='true'";
-$result=doSqlQuery($query);
-$num=mysqli_num_rows($result);
-mysqli_free_result($result);
+global $servername, $username, $password, $database;
 
 $batchDAO = new BatchDAO($servername, $username, $password, $database);
+
+$numPending = count($batchDAO->getBatchJobs(false));
+$numComplete = count($batchDAO->getBatchJobs(true));
+$numAll = $numComplete + $numPending;
+
 $queryContext = $batchDAO->getBatchSettings();
 
 ?>
@@ -63,9 +60,9 @@ Choose a file to upload: <input name="file" type="file" /><br />
     <br/>
     <input type="submit" value="Update Bulk Settings"/>
 </form>
-<h2><?php echo $numAll?> properties in batch queue</h2>
-<h2><?php echo $num?> completed batch properties</h2>
-<h2><?php echo $numAll - $num?> remaining to process</h2>
+<h2><?php echo $numAll?> properties submitted for batch processing</h2>
+<h2><?php echo $numComplete?> completed batch properties</h2>
+<h2><?php echo $numPending?> remaining to process</h2>
 <p>
 <a href='download_pdf.php?subj=ALL'>Download All Completed PDF Reports</a>
 <br>

@@ -4,6 +4,11 @@ body
 background-color:cream;
 text-align:center;
 }
+
+p {
+	page-break-after: always
+}
+
 h1
 {
 font-size:36pt;
@@ -19,13 +24,13 @@ border-collapse:collapse;
 font-family:verdena;
 border:1px solid black;
 padding:2cm;
-page-break-inside:avoid;
 }
 td,th
 {
 border:1px solid black;
 color:blue;
 text-align:left;
+	white-space: nowrap;
 }
 
 th
@@ -33,16 +38,37 @@ th
 font-weight:bold;
 color:black;
 }
-.LandValueAdj,.ClassAdj,.\%GoodAdj,\%GoodAdjustment,.L\/ASizeAdj,.MktLevelerDetailAdj,.Segments\&Adj
+
+.colhead
 {
-color:blue;
-float:left;
+	white-space: nowrap;
 }
 
-.LandValAdjDelta,.ClassAdjDelta,.GoodAdjDelta,.LASizeAdjDelta,.MktLevelerDetailAdjDelta,.NetAdjustment,.IndicatedValue,.IndicatedValue\/SQFT,
-	.MeanValue,.MeanValue\/SQFT,.MedianValue,.MedianValue\/SQFT,.SegAdjDelta
+.value
 {
-color:red;
-float:right;
-text-align:right;
+	color:blue;
+	float:left;
+	white-space: nowrap;
+}
+
+.subvalue
+{
+	color: grey;
+	float: left;
+	white-space: nowrap;
+	padding-left: 5px;
+}
+
+.delta
+{
+	color:red;
+	float: right;
+	text-align:right;
+	padding-left: 5px;
+	white-space: nowrap;
+}
+
+.SalePrice,.SalePrice\/Sqft
+{
+	text-align:right;
 }

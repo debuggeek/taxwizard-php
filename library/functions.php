@@ -1002,7 +1002,7 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
 {
     global $LIVINGAREA;
     $compsseen = array();
-    $traceComps = true;
+    $traceComps = false;
 
     if ($c->getPropID() == $subjprop->getPropID()) {
         error_log("addToCompsArray: Skipping Comp prop id matched subject:" . $c->getPropID());
