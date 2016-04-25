@@ -110,7 +110,6 @@ class PropertyDAO{
                         LTRIM(RTRIM(p.py_owner_name)) as mOwner,
                         p.market_value as mMarketVal,
                         sp.liv_area as mLivingArea,
-                        SUM(p.land_hstd_val + p.land_non_hstd_val) as mLandValAdj,
                         CONCAT_WS('',si.det_class_code,si.det_subclass) as mClassAdj,
                         si.det_base_deprec_perc as mGoodAdj,
                         i.yr_built as mYearBuilt
@@ -131,7 +130,12 @@ class PropertyDAO{
                     WHERE
                     p.prop_id = ".$propId;
         $result = $this->pdo->query($query);
-//        $result->setFetchMode(PDO::FETCH_CLASS, 'propertyClass');
-        return $result->fetchObject("propertyClass");
+        /* @var propertyClass $propertyClass */
+        $propertyClass = $result->fetchObject("propertyClass");
+
+        $query = "SELECT SUM(p.land_hstd_val + p.land_non_hstd_val) FROM PROP p WHERE p.prop_id=".$propId;
+        $result = $this->pdo->query($query);
+        $propertyClass->setLandValAdj($result->fetchColumn());
+        return $propertyClass;
     }
 }
