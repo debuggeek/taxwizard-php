@@ -43,15 +43,17 @@ class HTMLTable
     private function generateTableHeader($compCount, $start=null, $end=null){
         $start = $start === null ? 1 : $start;
         $end = $end === null ? $compCount : $end;
-        $header = '<tr /><th/><th class=\'colhead\'> Subject <div id=\'subject\'/></th>'; // cell 0,0, empty
+        $header = '<tr><th></th><th class=\'colhead\'> Subject <div id=\'subject\'/></th>'; // cell 0,0, empty
+
         for($i = $start; $i <= $end; $i++){
             $header = $header . '<th class=\'colhead\'> Comp #' . $i . '</th>';
         }
+        $header= $header . '</tr>';
         return $header;
     }
 
     private function generateRow($jsonRowData){
-        $result = '<tr />';
+        $result = '<tr>';
         $rowClass = null;
         foreach ($jsonRowData as $key => $value){
             if($key == 'description'){
@@ -59,7 +61,7 @@ class HTMLTable
                     $rowClass = str_replace(' ','',$value);
                     $result = $result . '<th>' . $value . '</th>';
                 } else {
-                    $result = $result . '<td></td>';
+                    $result = $result . '<td class=\'desc\'></td>';
                 }
             } else if (is_array($value)){
                 //We have a multi value cell
@@ -86,10 +88,11 @@ class HTMLTable
                         $result = $result . '<td class=\'' . $rowClass . '\'>' . $value . '</td>';
                     }
                 } else {
-                    $result = $result . '<td/>';
+                    $result = $result . '<td class=\'filler\'><td/>';
                 }
             }
         }
+        $result = $result . '</tr>';
         return $result;
     }
 

@@ -1,5 +1,4 @@
 <?php
-set_include_path(get_include_path() . PATH_SEPARATOR . "/home1/cykoduck/public_html/debuggeek.com/fivestone/");
 
 include_once '../library/functions.php';
 include_once '../library/functions_pdf.php';

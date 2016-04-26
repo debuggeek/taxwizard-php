@@ -1,42 +1,51 @@
-@CHARSET "UTF-8";
+/*@CHARSET "UTF-8";*/
+
+/*.landscape {*/
+	/*page: a4landscape;*/
+/*}*/
+
+/*@page a4landscape {*/
+	/*sheet-size: A4-L;*/
+/*}*/
+
+
 body
 {
-background-color:cream;
-text-align:center;
+	text-align:center;
 }
 
 p {
-	page-break-after: always
+page-break-after: always
 }
 
 h1
 {
-font-size:36pt;
+	font-size:36pt;
 }
 h2
 {
-color:black;
-font-weight:bold;
+	color:black;
+	font-weight:bold;
 }
 table
 {
-border-collapse:collapse;
-font-family:verdena;
-border:1px solid black;
-padding:2cm;
+	border-collapse:collapse;
+	border:1px solid black;
+	/*padding:1cm;*/
+	page-break-inside: avoid;
 }
 td,th
 {
-border:1px solid black;
-color:blue;
-text-align:left;
+	border:1px solid black;
+	color:blue;
+	text-align:left;
 	white-space: nowrap;
 }
 
 th
 {
-font-weight:bold;
-color:black;
+	font-weight:bold;
+	color:black;
 }
 
 .colhead
@@ -55,8 +64,8 @@ color:black;
 {
 	color: grey;
 	float: left;
-	white-space: nowrap;
-	padding-left: 5px;
+	/*white-space: nowrap;*/
+	/*padding-left: 5px;*/
 }
 
 .delta
@@ -64,8 +73,8 @@ color:black;
 	color:red;
 	float: right;
 	text-align:right;
-	padding-left: 5px;
-	white-space: nowrap;
+	/*padding-left: 5px;*/
+	/*white-space: nowrap;*/
 }
 
 .SalePrice,.SalePrice\/Sqft

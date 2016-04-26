@@ -1,9 +1,9 @@
 <?php
 include_once 'defines.php';
-include_once "MPDF56/mpdf.php";
 include_once 'presentation.php';
 include_once 'functions.php';
 include_once 'FullTable.php';
+include_once '../MPDF56/mpdf.php';
 
 function strbool($value)
 {
@@ -18,10 +18,9 @@ function strbool($value)
 function generatePropMultiPDF($queryContext){
 	$_SESSION = array();
 	$retArray = array();
-	
-	$mpdf=new mPDF('c','A4-L',"","","1","1","1","1");
-	$mpdf->SetDisplayMode('fullpage');
-	$mpdf->list_indent_first_level = 0;	// 1 or 0 - whether to indent the first level of a list
+
+	$mpdf=new mPDF('c','A4-L');
+	$mpdf->SetMargins(1,1,1);
 	// LOAD a stylesheet
 	$stylesheet = file_get_contents('../default_pdf.css');
 	$mpdf->WriteHTML($stylesheet,1);	// The parameter 1 tells that this is css/style only and no body/html/text
