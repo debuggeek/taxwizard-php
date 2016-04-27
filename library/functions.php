@@ -258,7 +258,7 @@ function setSaleInfo(propertyClass $compid,$prevyear,$instance=0,$compTable = nu
 
 	$year = date("Y");
 
-	if($compTable == null)
+	if($compTable === null)
 		$compTable = $TABLE_SALES_MERGED;
 	
     $years = "sale_date LIKE '%".$year."%'";
@@ -289,7 +289,7 @@ function setSaleInfo(propertyClass $compid,$prevyear,$instance=0,$compTable = nu
     $rowNum = 0;
 	while($row = mysqli_fetch_array($result)){
         if($rowNum == $instance){
-            if($tmpsalePrice == null){
+            if($tmpsalePrice === null){
                 $tmpsalePrice = $row[$SALEPRICE[2]];
                 $tmpsaleDate = $row[$SALEDATE[2]];
                 $tmpsaleSource = $row[$SALESOURCE[2]];
@@ -595,7 +595,7 @@ function hasDelta($class){
 	global $landvaladjdelta,$classadjdelta,$goodadjdelta,$lasizeadjdelta,$mktlevelerdetailadjdelta,$segmentsadjdelta;
 	global $LANDVALUEADJ,$CLASSADJ,$GOODADJ,$LASIZEADJ,$MKTLEVELERDETAILADJ,$SEGMENTSADJ;
 	
-	if($class == NULL)
+	if($class === NULL)
 		return NULL;
 	
 	switch($class)
@@ -620,7 +620,7 @@ function hasDelta($class){
 function hasMultiRow($class){
 	global $SEGMENTSADJ, $segmentsadjMultiRow;
 
-	if($class == NULL)
+	if($class === NULL)
 		return NULL;
 
 	switch($class)
@@ -696,7 +696,7 @@ function lookupProperty($propid)
 				{
 					$postcalcfields[] = $field;
 				}
-				elseif($field == NULL)
+				elseif($field === NULL)
 				{
 					$currprop->setField($field[0],NULL);
 				}
@@ -1038,7 +1038,7 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
 
     $badClass = "XX"; //don't include this type as it's not a good property to use
     $classAdjArray = $c->getClassAdj();
-    if ($classAdjArray == null) {
+    if ($classAdjArray === null) {
         error_log("ERROR> addToCompsArray: Property has no class data: " . $c->getPropID());
         return false;
     }
@@ -1187,7 +1187,7 @@ function isFlaggableSaleType(propertyClass $propertyClass){
         return false;
 }
 
-function generateArray(propertyClass $property,queryContext $queryContext)
+function generateArrayOfBestComps(propertyClass $property, queryContext $queryContext)
 {
     $compsarray = findBestComps($property, $queryContext);
 

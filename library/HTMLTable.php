@@ -41,8 +41,8 @@ class HTMLTable
     }
 
     private function generateTableHeader($compCount, $start=null, $end=null){
-        $start = $start == null ? 1 : $start;
-        $end = $end == null ? $compCount : $end;
+        $start = $start === null ? 1 : $start;
+        $end = $end === null ? $compCount : $end;
         $header = '<tr /><th/><th class=\'colhead\'> Subject <div id=\'subject\'/></th>'; // cell 0,0, empty
         for($i = $start; $i <= $end; $i++){
             $header = $header . '<th class=\'colhead\'> Comp #' . $i . '</th>';

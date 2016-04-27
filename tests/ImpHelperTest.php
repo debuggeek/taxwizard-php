@@ -45,4 +45,25 @@ class ImpHelperTest extends PHPUnit_Framework_TestCase{
         $this->assertEquals(12, ImpHelper::getPrimaryImpCount($subjImpArray));
     }
 
+    /*
+     * I was seeing the comp get the -162836 taken as a 1st floor delta which is way to high
+     */
+    public function testCalcDeltaSegments(){
+        include_once '../library/functions.php';
+        include_once '../library/presentation.php';
+        include_once '../library/FullTable.php';
+
+        $subjId = 280345;
+        $compId = 279748;
+
+        $subjProp = getSubjProperty($subjId);
+        $compProp = getProperty($compId);
+
+        calcDeltas($subjProp, $compProp);
+        $fullTable = new FullTable();
+        $fullTable->setSubjCompArray(array($subjProp, $compProp));
+        $result = generateJsonRows($fullTable);
+
+        print $result;
+    }
 }

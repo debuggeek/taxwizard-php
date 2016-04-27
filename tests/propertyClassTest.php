@@ -29,4 +29,13 @@ class propertyClassTest extends PHPUnit_Framework_TestCase{
     public function test_toJson(){
         echo $this->property->toJson();
     }
+    
+    public function testIndicators(){
+        //Current indicators are:
+        //  "." after SalePrice if saleType is 'VQ'
+        //  "_" after SaleDate if from MLS
+        //  "_" after GoodAdj if >25 years old and GoodAdj > 75
+        
+        
+    }
 }

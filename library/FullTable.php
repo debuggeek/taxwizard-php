@@ -40,6 +40,14 @@ class FullTable
     }
 
     /**
+     * Should never need to set directly, added to aid in testing
+     * @param $array
+     */
+    public function setSubjCompArray($array){
+        $this->subjCompArray = $array;
+    }
+
+    /**
      * @return int
      */
     public function getMeanVal()
@@ -75,7 +83,7 @@ class FullTable
      * @return int
      */
     public function getNumComp(){
-        if($this->subjCompArray == null){
+        if($this->subjCompArray === null){
             return 0;
         }
         return count($this->subjCompArray)-1; // take away subject
@@ -87,18 +95,18 @@ class FullTable
      * @throws Exception
      */
     public function generateTableData($queryContext){
-        if($queryContext->subjPropId == null){
+        if($queryContext->subjPropId === null){
             error_log("Must provide subject property id to generate table data");
             throw new Exception("Must provide subject property id in queryContext to generate table data");
         }
         
         $this->subjectProp = getSubjProperty($queryContext->subjPropId);
 
-        if($queryContext->compInfo == null){
+        if(count($queryContext->compInfo) === 0){
             error_log("Finding best comps for ". $this->subjectProp ->getPropID());
 
             //no comps provided so we must find some
-            $this->subjCompArray  = generateArray( $this->subjectProp , $queryContext);
+            $this->subjCompArray  = generateArrayOfBestComps( $this->subjectProp , $queryContext);
             
             if(count($queryContext->excludes) > 0){
                 //Save off since it might go down
@@ -125,7 +133,7 @@ class FullTable
                     continue;
                 }
                 $c = getProperty($compIn['id']);
-                if($c == null){
+                if($c === null){
                     error_log("Unable to retrieve comp property=".$compIn['id']);
                 }
                 if(!$queryContext->isEquityComp) {
@@ -138,7 +146,7 @@ class FullTable
             $this->subjCompArray = $subjcomparray;
         }
 
-        if($this->subjCompArray == null || sizeof($this->subjCompArray) == 1){
+        if($this->subjCompArray === null || sizeof($this->subjCompArray) == 1){
             $this->subjCompArray = null;
             return;
         }

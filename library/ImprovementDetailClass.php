@@ -211,7 +211,7 @@ class ImprovementDetailClass{
      * @return string
      */
     public function getDisplay(){
-        $dispArea = ($this->getDetArea() == NULL) ? "(NONE)" : $this->getDetArea();
+        $dispArea = ($this->getDetArea() === NULL) ? "(NONE)" : $this->getDetArea();
         return $this->getImprvDetTypeDesc() . "  " . $dispArea;
     }
 

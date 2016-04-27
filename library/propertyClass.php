@@ -333,7 +333,7 @@ class propertyClass{
 		global $HIGHVALIMPMARCN,$allowablema;
 		$mafield = "Imprv_det_type_cd";
 		//sometimes we appear to look this up before the improvements...not sure why that's so, but this hack saves the day
-		if($data == null){
+		if($data === null){
 			$this->getImpCount();
 			$data = $this->mPrimeImpId;
 		}
@@ -441,24 +441,6 @@ class propertyClass{
 		return $this->mClassAdjDelta;
 	}
 
-	function getYearBuilt(){
-		global $TABLE_IMP_DET;
-
-		if($this->mYearBuilt != null)
-			return $this->mYearBuilt;
-
-		$query="SELECT yr_built FROM " . $TABLE_IMP_DET . " WHERE prop_id='$this->mPropID' AND imprv_id='$this->mPrimeImpId';";
-		$result=doSqlQuery($query);
-
-		if(!$result)
-			return "No Value Found!";
-
-		$num=mysqli_num_rows($result);
-		$row = mysqli_fetch_array($result);
-		$this->mYearBuilt = $row['yr_built'];
-		return $this->mYearBuilt;
-	}
-
 	function getGoodAdj(){
 		global $PROPID,$GOODADJ,$allowablema,$mafield;
 		$goodfield = $GOODADJ["FIELD"];
@@ -518,11 +500,11 @@ class propertyClass{
             $var2 = $this->mLandValAdj;
             $var3 = $this->getSegAdj();
 
-            if ($subj->mGoodAdj == null)
+            if ($subj->mGoodAdj === null)
                 $subj->mGoodAdj = $subj->getGoodAdj();
             $var4 = $subj->mGoodAdj;
 
-            if ($this->mGoodAdj == null)
+            if ($this->mGoodAdj === null)
                 $this->mGoodAdj = $this->getGoodAdj();
             $var5 = $this->mGoodAdj;
 
@@ -596,7 +578,7 @@ class propertyClass{
 		if($this->mLASizeAdjDelta != null)
 			return;
 		$var1 = $subjdetailadj->mLASizeAdj;
-		if($this->mLASizeAdj == null)
+		if($this->mLASizeAdj === null)
 			$this->mLASizeAdj = $this->getLASizeAdj();
 		$var2 = $this->mLASizeAdj;
 		$var3 = number_format($subjdetailadj->getHVImpMARCNPerSQFT(),2);
@@ -620,7 +602,7 @@ class propertyClass{
 
 	function getMktLevelerDetailAdj()
 	{
-		if($this->mMktLevelerDetailAdj == null)
+		if($this->mMktLevelerDetailAdj === null)
 		{
 			global $MKTLEVELERDETAILADJ,$TABLE_IMP_DET,$TABLE_SPEC_IMP,$allowablema,$mafield,$debugquery;
 			$propid = $this->mPropID;
@@ -689,7 +671,7 @@ class propertyClass{
 	function getHVImpMARCN()
 
 	{
-		if($this->mHighValImpMARCN == null)
+		if($this->mHighValImpMARCN === null)
 		{
 			$this->mHighValImpMARCN = $this->HighValFieldLookup('det_calc_val',$this->mPrimeImpId);
 		}
@@ -700,14 +682,14 @@ class propertyClass{
 		if($this->mLivingArea == 0){
 			return null;
 		}
-		if($this->mHVIMARCNareaPerSqft == null){
+		if($this->mHVIMARCNareaPerSqft === null){
 			if($this->mImprovCount == 1){
 				$this->mHVIMARCNareaPerSqft = $this->getHVImpMARCN()/$this->mLivingArea;
 			}
 			else{
-				if($this->mHVIMARCNarea == null){
+				if($this->mHVIMARCNarea === null){
 					$this->mHVIMARCNarea = $this->HighValFieldLookup('imprv_det_area',$this->mPrimeImpId);
-					if($this->mHVIMARCNarea == null){
+					if($this->mHVIMARCNarea === null){
 						error_log("ERROR> Unable to find improvements for ".$this->mPropID);
 						return null;
 					}
@@ -718,6 +700,24 @@ class propertyClass{
 		return $this->mHVIMARCNareaPerSqft;
 	}
 
+	function getYearBuilt(){
+		global $TABLE_IMP_DET;
+
+		if($this->mYearBuilt != null)
+			return $this->mYearBuilt;
+
+		$query="SELECT yr_built FROM " . $TABLE_IMP_DET . " WHERE prop_id='$this->mPropID' AND imprv_id='$this->mPrimeImpId';";
+		$result=doSqlQuery($query);
+
+		if(!$result)
+			return "No Value Found!";
+
+		$num=mysqli_num_rows($result);
+		$row = mysqli_fetch_array($result);
+		$this->mYearBuilt = $row['yr_built'];
+		return $this->mYearBuilt;
+	}
+
 	function lookupHVImpMARCN($data)
 	{
 		global $HIGHVALIMPMARCN,$allowablema;
@@ -725,7 +725,7 @@ class propertyClass{
 		$mafield = "Imprv_det_type_cd";
 
 		//sometimes we appear to look this up before the improvements...not sure why that's so, but this hack saves the day
-		if($data == null){
+		if($data === null){
 			$this->getImpCount();
 			$data = $this->mPrimeImpId;
 		}
@@ -764,25 +764,9 @@ class propertyClass{
 	}
 
 	function getImpCount(){
-//		global $TABLE_IMP_DET;
-		// The improvment count is determined by the number of unique
-		//	 imprv-id in the IMP_DET table
 
 		if($this->mImprovCount != null)
 			return $this->mImprovCount;
-
-//		$query="SELECT DISTINCT imprv_id FROM " . $TABLE_IMP_DET . " WHERE prop_id='$this->mPropID';";
-//
-//		$result=doSqlQuery($query);
-//
-//		if(!$result)
-//			return "No Value Found!";
-//
-//		$num=mysqli_num_rows($result);
-//		$row = mysqli_fetch_array($result);
-//		$this->mImprovCount = $num;
-//		$this->mPrimeImpId = $row['imprv_id'];
-//		return $num;
 
 		$this->mImprovCount = count(ImpHelper::getUniqueImpIds($this->getImpDets()));
 		$this->mPrimeImpId = ImpHelper::getPrimaryImpId($this->getImpDets());
@@ -853,7 +837,7 @@ class propertyClass{
 	}
 
 	function getIndicatedVal(){
-		if ($this->mIndVal == NULL){
+		if ($this->mIndVal === NULL){
 			global $isEquityComp;
 			if($this->mSubj == true){
 				return $this->mMarketVal;
@@ -948,13 +932,18 @@ class propertyClass{
 		return $this->mAgent;
 	}
 
+	/**
+	 * @deprecated
+	 * @param $fieldConst
+	 * @param $value
+	 */
 	function setField($fieldConst,$value){
 		global $PROPID,$GEOID,$SITUS,$NEIGHB,$OWNER,$NEIGHBMIA,$MARKETVALUE,$LIVINGAREA,$SALEDATE,$SALEPRICE,$SALESOURCE,
 			   $IMPROVEMENTCNT,$HIGHVALIMPMARCN,$COMPLETE,$LANDVALUEADJ,$CLASSADJ,$ACTUALYEARBUILT,
 			   $GOODADJ,$LASIZEADJ,$MKTLEVELERDETAILADJ,$SEGMENTSADJ;
 
 		//echo "setting field " .$fieldConst." to ".$value."<br>";
-		if($fieldConst == NULL)
+		if($fieldConst === NULL)
 			return;
 
 		if(is_string($value)){
@@ -1034,6 +1023,10 @@ class propertyClass{
 
 	}
 
+	/**
+	 * @param string $field
+	 * @return string|void
+	 */
 	function getFieldByName($field){
 		global $PROPID,$GEOID,$SITUS,$NEIGHB,$OWNER,$NEIGHBMIA,$MARKETVALUE,$MARKETPRICESQFT,
 			   $LIVINGAREA,$SALEDATE,$SALEPRICE,$SALEPRICESQFT,
@@ -1044,7 +1037,7 @@ class propertyClass{
 		global $landvaladjdelta,$classadjdelta,$goodadjdelta,$lasizeadjdelta,$mktlevelerdetailadjdelta,
 			   $segmentsadjdelta,$segmentsadjMultiRow;
 
-		if($field == NULL)
+		if($field === NULL)
 			return;
 
 		switch($field)

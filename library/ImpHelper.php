@@ -46,7 +46,7 @@ class ImpHelper
         //Walk all compImps and any without a delta are unique to the comp
         foreach (self::getPrimaryImprovements($compImps) as $compImp) {
             /* @var $compImp ImprovementDetailClass */
-            if($compImp->getAdjustmentDelta() == NULL){
+            if($compImp->getAdjustmentDelta() === NULL){
                 if(ImpHelper::isMainArea($subjImp->getImprvDetTypeCd())){
                     $result = $compImp->getDetArea() * $compImp->getDetUnitprice();
                     $compImp->setAdjustmentDelta(round($result));
@@ -187,7 +187,7 @@ class ImpHelper
      */
     private static function getDelta($subjImp, $compImp){
         if(ImpHelper::isMainArea($subjImp->getImprvDetTypeCd())){
-            if($compImp->getDetArea() == NULL || $compImp->getDetArea() == "NONE"){
+            if($compImp->getDetArea() === NULL || $compImp->getDetArea() == "NONE"){
                 //If the comp doesn't have the element then we use the subj unit price
                 $result = $subjImp->getDetArea() * $subjImp->getDetUnitprice();
             } else {

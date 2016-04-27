@@ -106,7 +106,7 @@ function createGenericTable($subjcomparray, $isEquityComp){
 				else {
 					$currval = $data->getFieldByName($relaventfields[$i - 1][0]);
 				}
-				if($currval == NULL)
+				if($currval === NULL)
 				{
 					echo "\t\t<td class='unknown'>&nbsp</td>".PHP_EOL;
 					continue;
@@ -250,7 +250,7 @@ function dumpProperties($proparray,$isEquity){
 			for($j=0; $j < count($fieldsofinterestprop); $j++)
 			{
 					$currval = $data->getFieldByName($fieldsofinterestprop[$j][0]);
-					if($currval == NULL)
+					if($currval === NULL)
 					{
 						echo "\t\t<td class='unknown'>&nbsp</td>".PHP_EOL;
 						continue;
@@ -600,7 +600,7 @@ function returnGenericTable($subjcomparray,$isEquityComp){
 				else
 					$currval = $data->getFieldByName($relaventfields[$i-1][0]);
 					
-				if($currval == NULL)
+				if($currval === NULL)
 				{
 					$returnHTML = $returnHTML .  "\t\t<td class='unknown'></td>".PHP_EOL;
 					continue;

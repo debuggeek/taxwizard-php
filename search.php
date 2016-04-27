@@ -1,4 +1,5 @@
 <?php
+include_once 'library/queryContext.php';
 include_once 'library/propertyClass.php';
 include_once 'library/functions.php';
 include_once 'library/presentation.php';
@@ -6,10 +7,7 @@ include_once 'library/presentation.php';
 $debug = false;
 
 $queryContext = new queryContext();
-
-if(isset($_GET['propid'])){
-    $queryContext->subjPropId = trim($_GET['propid']);
-}
+$queryContext->parseQueryString($_GET);
 
 if($queryContext->subjPropId == ""){
     echo json_encode(array("error" => "Must provide subject property id", "propId"=>null));
