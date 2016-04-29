@@ -1002,7 +1002,7 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
 {
     global $LIVINGAREA;
     $compsseen = array();
-    $traceComps = false;
+    $traceComps = true;
 
     if ($c->getPropID() == $subjprop->getPropID()) {
         error_log("addToCompsArray: Skipping Comp prop id matched subject:" . $c->getPropID());
@@ -1062,6 +1062,15 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
             return false;
         }
     }
+
+	if ($queryContext->limitToLessImps){
+		$varCompImpCount = count(ImpHelper::getUniqueImpIds($c->getImpDets()));
+		$varSubjImpCount = count(ImpHelper::getUniqueImpIds($subjprop->getImpDets()));
+		if($varCompImpCount > $varSubjImpCount){
+			if ($traceComps) error_log("addToCompsArray: ". $c->getPropID() . " failed due to more subjects them prop");
+			return false;
+		}
+	}
 
     calcDeltas($subjprop,$c);
 

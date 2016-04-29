@@ -109,4 +109,19 @@ class functionsTest extends PHPUnit_Framework_TestCase{
         $hoodList = getHoodList($subjProp->mNeighborhood, $queryContext);
         $this->assertEquals(400, count($hoodList));
     }
+
+    public function test_addToCompsArray_ImpLimit(){
+        $subjId = 100120;
+        $compId = 302891;
+        $compId2 = 464549;
+        $queryContext = new queryContext();
+        $queryContext->limitToLessImps = true;
+
+        $subjProperty = getSubjProperty($subjId);
+        $compProperty = getProperty($compId);
+        $compProperty2 = getProperty($compId2);
+
+        $this->assertFalse(addToCompsArray($compProperty, $subjProperty, $queryContext));
+        $this->assertTrue(addToCompsArray($compProperty2, $subjProperty, $queryContext));
+    }
 }

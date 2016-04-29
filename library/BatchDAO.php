@@ -159,7 +159,8 @@ class BatchDAO
                               PercentGood as percentGoodRange,
                               PercentGoodEnabled as percentGoodRangeEnabled,
                               NetAdj as netAdjustAmount,
-                              NetAdjEnabled as netAdjustEnabled
+                              NetAdjEnabled as netAdjustEnabled,
+                              ImpLimit as limitToLessImps
                           FROM BATCH_PROP_SETTINGS 
                           WHERE id=(SELECT max(id) FROM BATCH_PROP_SETTINGS)");
         $stmt->execute();
@@ -176,6 +177,7 @@ class BatchDAO
         $stmt->bindColumn(10, $queryContext->percentGoodRangeEnabled, PDO::PARAM_BOOL);
         $stmt->bindColumn(11, $queryContext->netAdjustAmount, PDO::PARAM_INT);
         $stmt->bindColumn(12, $queryContext->netAdjustEnabled, PDO::PARAM_BOOL);
+        $stmt->bindColumn(13, $queryContext->limitToLessImps, PDO::PARAM_BOOL);
 
         $stmt->fetch(PDO::FETCH_BOUND);
 
@@ -191,7 +193,7 @@ class BatchDAO
         $stmt = $this->pdo->prepare("INSERT INTO BATCH_PROP_SETTINGS 
                     SET TrimIndicated = ?, MultiHood = ?, IncludeVU = ?, IncludeMLS = ?, NumPrevYears = ?, 
                      SqftRange = ?, ClassRange = ?, ClassRangeEnabled = ?, PercentGood = ?, PercentGoodEnabled = ?,
-                     NetAdj = ?, NetAdjEnabled = ?");
+                     NetAdj = ?, NetAdjEnabled = ?, ImpLimit = ?");
 
         $stmt->bindValue(1, $queryContext->trimIndicated, PDO::PARAM_BOOL);
         $stmt->bindValue(2, $queryContext->multiHood, PDO::PARAM_BOOL);
@@ -205,6 +207,7 @@ class BatchDAO
         $stmt->bindValue(10, $queryContext->percentGoodRangeEnabled, PDO::PARAM_BOOL);
         $stmt->bindValue(11, $queryContext->netAdjustAmount, PDO::PARAM_INT);
         $stmt->bindValue(12, $queryContext->netAdjustEnabled, PDO::PARAM_BOOL);
+        $stmt->bindValue(13, $queryContext->limitToLessImps, PDO::PARAM_BOOL);
 
         $stmt->execute();
         return $stmt->errorInfo();

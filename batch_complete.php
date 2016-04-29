@@ -49,6 +49,8 @@ Choose a file to upload: <input name="file" type="file" /><br />
     Include related neighborhoods<br>
     <input type="checkbox" name="includevu" id="includevu"   <?php echo ($queryContext->includeVu =='TRUE' ? 'checked' : '');?>>
     Include forclosures (VU)<br>
+    <input type="checkbox" name="limitImps" <?php echo ($queryContext->limitToLessImps =='TRUE' ? 'checked' : '');?>>
+    Limit comps to properties with fewer Improvements<br>
     <input type="checkbox" name="rangeEnabled" id="rangeEnabled"   <?php echo ($queryContext->subClassRangeEnabled =='TRUE' ? 'checked' : '');?>>
     Range of subclasses to include:<input type="text" name="range" size="1" value=<?php echo $queryContext->subClassRange;?>><br>
     <input type="checkbox" name="pctGoodRangeEnabled" id="pctGoodRangeEnabled"   <?php echo ($queryContext->percentGoodRangeEnabled =='TRUE' ? 'checked' : '');?>>

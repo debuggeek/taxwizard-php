@@ -17,6 +17,7 @@ class queryContext {
     public $percentGoodRangeEnabled = false;
     public $netAdjustEnabled = false;
     public $netAdjustAmount = 0;
+    public $limitToLessImps = false;
 
     /*
      * Below settings aren't stored in database
@@ -106,6 +107,12 @@ class queryContext {
         if(isset($getContext['Submit'])){
             if($getContext['Submit'] == 'Build Sales Table'){
                 $this->isEquityComp = false;
+            }
+        }
+
+        if(isset($getContext['limitImps'])){
+            if(strcmp($getContext['limitImps'], 'on') == 0) {
+                $this->limitToLessImps = true;
             }
         }
 
