@@ -1,9 +1,10 @@
 <?php
+set_include_path(get_include_path() . PATH_SEPARATOR . "/home1/cykoduck/public_html/debuggeek.com/fivestone/"); 
 
-include_once '../library/functions.php';
-include_once '../library/functions_pdf.php';
-include_once '../library/BatchDAO.php';
-include_once '../library/BatchJob.php';
+include_once 'library/functions.php';
+include_once 'library/functions_pdf.php';
+include_once 'library/BatchDAO.php';
+include_once 'library/BatchJob.php';
 
 $debug=false;
 /**
@@ -14,7 +15,7 @@ global $servername, $username, $password, $database;
 
 $date = new DateTime();
 echo "\n".$date->format('Y-m-d H:i:s') . " >> Starting Batch Processing\n";
-
+echo "\n Current Working dir:".getcwd();
 $batchDAO = new BatchDAO($servername, $username, $password, $database);
 $queryContext = $batchDAO->getBatchSettings();
 
