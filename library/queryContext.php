@@ -18,6 +18,9 @@ class queryContext {
     public $netAdjustEnabled = false;
     public $netAdjustAmount = 0;
     public $limitToLessImps = false;
+    public $showTcadScores = true;
+    public $limitTcadScores = true;
+    public $limitTcadScoresAmount = 90;
 
     /*
      * Below settings aren't stored in database
@@ -113,6 +116,25 @@ class queryContext {
         if(isset($getContext['limitImps'])){
             if(strcmp($getContext['limitImps'], 'on') == 0) {
                 $this->limitToLessImps = true;
+            }
+        }
+
+        if(isset($getContext['showTcadScores'])){
+            if(strcmp($getContext['showTcadScores'], 'on') == 0) {
+                $this->showTcadScores = true;
+            } else {
+                $this->showTcadScores = false;
+            }
+        } else {
+            $this->showTcadScores = false;
+        }
+
+        if(isset($getContext['limitTcadScores'])){
+            if(strcmp($getContext['limitTcadScores'], 'on') ==0 ) {
+                $this->limitTcadScores = true;
+                $this->limitTcadScoresAmount = trim($getContext['$limitTcadScoresAmount']);
+            } else {
+                $this->limitTcadScores = false;
             }
         }
 

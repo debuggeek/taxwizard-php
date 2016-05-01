@@ -8,6 +8,7 @@
  */
 
 include_once "../library/PropertyDAO.php";
+require_once "../library/queryContext.php";
 
 class PropertyDAOTest extends PHPUnit_Framework_TestCase
 {
@@ -18,7 +19,7 @@ class PropertyDAOTest extends PHPUnit_Framework_TestCase
 
     public function test_getPropertyById(){
         $propDao = new PropertyDAO($this->HOST, $this->user, $this->pw, $this->db);
-        $property = $propDao->getPropertyById(224789);
+        $property = $propDao->getPropertyById(710420);
         var_dump($property);
         $this->assertNotEmpty($property);
     }
@@ -47,5 +48,16 @@ class PropertyDAOTest extends PHPUnit_Framework_TestCase
         $newStyleProp = $propDao->getPropertyById(508783);
 
         print json_encode($newStyleProp,JSON_PRETTY_PRINT);
+    }
+
+    public function testGetHoodProperties(){
+        $propDao = new PropertyDAO($this->HOST, $this->user, $this->pw, $this->db);
+        $queryContext = new queryContext();
+        $queryContext->multiHood = false;
+        $queryContext->isEquityComp = false;
+
+        $props = $propDao->getHoodProperties('M5200', $queryContext);
+
+        $this->assertCount(54, $props);
     }
 }

@@ -124,4 +124,17 @@ class functionsTest extends PHPUnit_Framework_TestCase{
         $this->assertFalse(addToCompsArray($compProperty, $subjProperty, $queryContext));
         $this->assertTrue(addToCompsArray($compProperty2, $subjProperty, $queryContext));
     }
+
+    public function testCalcDeltas(){
+        $subjId = 224540;
+        $compId = 224789;
+        $subjProperty = getSubjProperty($subjId);
+        $compProperty = getProperty($compId);
+
+        calcDeltas($subjProperty, $compProperty);
+
+        var_dump($compProperty->getTcadScore());
+        $this->assertNotEmpty($compProperty->getTcadScore());
+
+    }
 }

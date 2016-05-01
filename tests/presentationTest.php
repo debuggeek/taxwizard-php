@@ -104,4 +104,22 @@ class presentationTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $result);
     }
+
+    public function test_TCADScore(){
+        global $fieldsofinteresteq;
+
+        $subjProperty = getSubjProperty($this->subjId);
+
+        $subjcomparray = array();
+        $subjcomparray[0] = $subjProperty;
+
+        $c = getProperty($this->compId);
+        calcDeltas($subjProperty,$c);
+        $subjcomparray[] = $c;
+
+        $result = json_encode($subjcomparray);
+        $expected  = "[{\"description\":\"Secondary Imp\",\"col1\":{\"value\":2871,\"delta\":null},\"col2\":{\"value\":0,\"delta\":2871}}]";
+
+        $this->assertEquals($expected, $result);
+    }
 }

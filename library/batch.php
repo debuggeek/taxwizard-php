@@ -59,7 +59,7 @@ $COMPSTODISPLAY = 100;
 		}
 		
 		
-		usort($compsarray,"cmpProp");
+		usort($compsarray, "compareIndicatedVal");
 		
 		$comp_min = MIN($maxComps,count($compsarray));
 		$subjcomparray = array();

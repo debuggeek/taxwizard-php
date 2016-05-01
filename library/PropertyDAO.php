@@ -63,7 +63,7 @@ class PropertyDAO{
         $property->setImprovCount(count(ImpHelper::getUniqueImpIds($property->getImpDets())));
         $property->setPrimeImpId(ImpHelper::getPrimaryImpId($property->getImpDets()));
         $property->setSegAdj(ImpHelper::getSecondaryImprovementsValue($property->getImpDets()));
-        
+
         $property->mPercentComp = '100';
 
         return $property;
@@ -98,21 +98,28 @@ class PropertyDAO{
      * @return propertyClass
      */
     private function getCoreProp($propId){
-        $query = "SELECT 
+        $prop = new propertyClass();
+        $prop->setPropID($propId);
+
+        $stmt = $this->pdo->prepare("SELECT 
                         p.geo_id as mGeoID,
-                        CONCAT_WS(' ', LTRIM(RTRIM(p.situs_street_prefx)), 
-                                      LTRIM(RTRIM(p.situs_num)),
-                                      LTRIM(RTRIM(p.situs_street)), 
-                                      LTRIM(RTRIM(p.situs_street_suffix)),
-                                      LTRIM(RTRIM(p.situs_unit)),
-                                      LTRIM(RTRIM(p.situs_zip))) as mSitus,
+                        LTRIM(RTRIM(p.situs_street_prefx)) as situs_pre, 
+                        LTRIM(RTRIM(p.situs_num)) as situs_num,
+                        LTRIM(RTRIM(p.situs_street)) as situs_st, 
+                        LTRIM(RTRIM(p.situs_street_suffix)) as situs_suf,
+                        LTRIM(RTRIM(p.situs_unit)) as situs_unit,
+                        LTRIM(RTRIM(p.situs_zip)) as situs_zip,
                         LTRIM(RTRIM(p.hood_cd)) as mNeighborhood,
                         LTRIM(RTRIM(p.py_owner_name)) as mOwner,
                         p.market_value as mMarketVal,
                         sp.liv_area as mLivingArea,
-                        CONCAT_WS('',si.det_class_code,si.det_subclass) as mClassAdj,
+                        si.det_class_code as classCode,
+                        si.det_subclass as subClass,
                         si.det_base_deprec_perc as mGoodAdj,
-                        i.yr_built as mYearBuilt
+                        sp.yr_built as yrBuilt,
+                        sp.eff_yr_built as efYrBuilt,
+                        LTRIM(RTRIM(si.det_cond_code)) as cond,
+                        LTRIM(RTRIM(p.imprv_state_cd)) as stCode
                     FROM
                         PROP p
                     LEFT JOIN
@@ -128,14 +135,122 @@ class PropertyDAO{
 					ON 
 					   p.prop_id = i.prop_id AND si.det_id = i.imprv_det_id
                     WHERE
-                    p.prop_id = ".$propId;
-        $result = $this->pdo->query($query);
-        /* @var propertyClass $propertyClass */
-        $propertyClass = $result->fetchObject("propertyClass");
+                    p.prop_id = ?");
+        $stmt->bindValue(1, $propId, PDO::PARAM_INT);
+        $stmt->execute();
 
-        $query = "SELECT SUM(p.land_hstd_val + p.land_non_hstd_val) FROM PROP p WHERE p.prop_id=".$propId;
-        $result = $this->pdo->query($query);
-        $propertyClass->setLandValAdj($result->fetchColumn());
-        return $propertyClass;
+        $stmt->bindColumn('mGeoID', $prop->mGeoID, PDO::PARAM_STR);
+        $stmt->bindColumn('situs_pre', $prop->situs_prefix, PDO::PARAM_STR);
+        $stmt->bindColumn('situs_num', $prop->situs_number, PDO::PARAM_INT);
+        $stmt->bindColumn('situs_st', $prop->situs_street, PDO::PARAM_STR);
+        $stmt->bindColumn('situs_suf', $prop->situs_suffix, PDO::PARAM_STR);
+        $stmt->bindColumn('situs_unit', $prop->situs_unit, PDO::PARAM_STR);
+        $stmt->bindColumn('situs_zip', $prop->situs_zip, PDO::PARAM_INT);
+        $stmt->bindColumn('mNeighborhood', $prop->mNeighborhood, PDO::PARAM_STR);
+        $stmt->bindColumn('mOwner', $prop->mOwner, PDO::PARAM_STR);
+        $stmt->bindColumn('mMarketVal', $prop->mMarketVal, PDO::PARAM_INT);
+        $stmt->bindColumn('mLivingArea', $livingarea, PDO::PARAM_INT);
+        $stmt->bindColumn('classCode', $classcode, PDO::PARAM_STR);
+        $stmt->bindColumn('subClass', $subclass, PDO::PARAM_STR);
+        $stmt->bindColumn('mGoodAdj', $prop->mGoodAdj, PDO::PARAM_STR);
+        $stmt->bindColumn('yrBuilt', $prop->mYearBuilt, PDO::PARAM_INT);
+        $stmt->bindColumn('efYrBuilt', $prop->effectiveYearBuilt, PDO::PARAM_INT);
+        $stmt->bindColumn('cond', $cond, PDO::PARAM_STR);
+        $stmt->bindColumn('stCode', $prop->stateCode, PDO::PARAM_STR);
+
+
+        $stmt->fetch(PDO::FETCH_BOUND);
+        $prop->setLivingArea($livingarea);
+        $prop->setClassCode($classcode);
+        $prop->setSubClass($subclass);
+        $prop->setCondition($cond);
+
+        $stmt2 = $this->pdo->prepare("SELECT SUM(p.land_hstd_val + p.land_non_hstd_val) as totHstd
+                                        FROM PROP p WHERE p.prop_id = ?");
+        $stmt2->bindValue(1, $propId, PDO::PARAM_INT);
+        $stmt2->execute();
+
+        $stmt2->bindColumn('totHstd', $landVal, PDO::PARAM_STR);
+        $stmt2->fetch(PDO::FETCH_BOUND);
+
+        $prop->setLandValAdj($landVal);
+        return $prop;
+    }
+
+    /**
+     * @param string $hood
+     * @return propertyClass[]
+     */
+    public function getHoodProperties($hood,  queryContext $queryContext)
+    {
+        if($queryContext->isEquityComp){
+            return $this->getHoodPropsEq($hood, $queryContext->multiHood);
+        } else {
+            return $this->getHoodPropsSales($hood, $queryContext);
+        }
+    }
+
+    private function getHoodPropsEq($hood, $multihood){
+        if($multihood) {
+            $hoodToUse = substr($hood, 0, -2);
+            $hoodQuery =  " WHERE hood_cd LIKE :hood";
+        } else {
+            $hoodToUse = $hood;
+            $hoodQuery = " WHERE hood_cd = :hood";
+        }
+        $query = "SELECT prop_id FROM PROP" . $hoodQuery;
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute(array(':hood' => $hoodToUse));
+
+        $properties = array();
+        if ($stmt->execute()) {
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $properties[] = $this->getPropertyById($row['prop_id']);
+            }
+        }
+
+        return $properties;
+     }
+
+    protected function getHoodPropsSales($hood, $queryContext){
+        if($queryContext->multiHood) {
+            $hoodToUse = substr($hood, 0, -2);
+            $hoodQuery =  " WHERE hood_cd LIKE :hood";
+        } else {
+            $hoodToUse = $hood;
+            $hoodQuery = " WHERE hood_cd = :hood";
+        }
+        //Add on sale restrictions
+        $year = date("Y");
+        $years = " AND (s.sale_date LIKE '%".$year."%'";
+        for($i=1; $i <= $queryContext->prevYear; $i++){
+            $yearsBack = $year - $i ;
+            $years = $years . " OR s.sale_date LIKE '%".$yearsBack."%' ";
+        }
+        $years = $years . ") ";
+        $query="SELECT p.prop_id as prop_id, "
+            . "s.sale_price as sale_price, "
+            . "s.source as source, "
+            . "s.sale_date as sale_date"
+            . " FROM PROP as p, SALES_MLS_MERGED as s"
+            . $hoodQuery
+            . $years
+            . " AND s.sale_price>0 "
+            . " AND p.prop_id = s.prop_id;";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindValue(':hood', $hoodToUse);
+
+        $properties = array();
+        if ($stmt->execute()) {
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $currProp = $this->getPropertyById($row['prop_id']);
+                $currProp->setSalePrice($row['sale_price']);
+                $currProp->mSaleDate = $row['sale_date'];
+                $currProp->setSaleSource($row['source']);
+                $properties[] = $currProp;
+            }
+        }
+
+        return $properties;
     }
 }

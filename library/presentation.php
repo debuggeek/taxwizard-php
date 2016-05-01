@@ -329,12 +329,17 @@ function emitHTMLFooter(){
  * @param $isEquityComp
  */
 function generateJsonRows($fullTable, $isEquityComp = true){
-	global $fieldsofinterest,$fieldsofinteresteq, $SEGMENTSADJ;
+	global $fieldsofinterest,$fieldsofinteresteq, $SEGMENTSADJ, $TCADSCORE;
 	if($isEquityComp){
 		$relaventfields = $fieldsofinteresteq;
 	}else{
 		$relaventfields = $fieldsofinterest;
 	}
+	//Tack it on
+	if($fullTable->getShowTcadScores()){
+		$relaventfields[]  = $TCADSCORE;
+	}
+
 	$subjcomparray = $fullTable->getSubjCompArray();
 
 	$obj = new stdClass();

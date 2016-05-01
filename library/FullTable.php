@@ -23,6 +23,8 @@ class FullTable
 
     private $medianValSqft;
 
+    private $showTcadScores;
+
     /**
      * @return propertyClass
      */
@@ -90,6 +92,23 @@ class FullTable
     }
 
     /**
+     * @return bool
+     */
+    public function getShowTcadScores()
+    {
+        return $this->showTcadScores;
+    }
+
+    /**
+     * @param bool $showTcadScores
+     */
+    public function setShowTcadScores($showTcadScores)
+    {
+        $this->showTcadScores = $showTcadScores;
+    }
+
+
+    /**
      * @param  queryContext $queryContext
      * @param  array $compInfo
      * @throws Exception
@@ -103,7 +122,7 @@ class FullTable
         $this->subjectProp = getSubjProperty($queryContext->subjPropId);
 
         if(count($queryContext->compInfo) === 0){
-            error_log("Finding best comps for ". $this->subjectProp ->getPropID());
+            error_log("Finding best comps for ". $this->subjectProp->getPropID());
 
             //no comps provided so we must find some
             $this->subjCompArray  = generateArrayOfBestComps( $this->subjectProp , $queryContext);
@@ -150,6 +169,8 @@ class FullTable
             $this->subjCompArray = null;
             return;
         }
+
+        $this->setShowTcadScores($queryContext->showTcadScores);
 
         $this->meanVal = getMeanVal($this->subjCompArray);
         $this->meanValSqft = getMeanValSqft($this->subjCompArray);

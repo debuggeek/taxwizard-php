@@ -59,7 +59,7 @@ emitHTMLHeader2();
 
 echo "<BR>".count($compsarray)." Results found in the same Neighborhood between ".$min." and ".$max." SQFT<BR>".PHP_EOL;
 echo "<BR>Displaying Best ".$COMPSTODISPLAY."<BR>".PHP_EOL;
-usort($compsarray,"cmpProp");
+usort($compsarray, "compareIndicatedVal");
 		
 $comp_min = MIN($COMPSTODISPLAY,count($compsarray));
 
