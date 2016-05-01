@@ -27,9 +27,10 @@ function generatePropMultiPDF($queryContext){
 
 	$fullTable = new FullTable();
 	//Generate Sales 15
-	$queryContext->compsToDisplay = 15;
+	$queryContext->compsToDisplay = 1000;
 	$queryContext->isEquityComp = false;
 	$fullTable->generateTableData($queryContext);
+	$retArray['totalSalesComps'] = $fullTable->getNumComp();
 	$property = $fullTable->getSubjectProp();
 	$retArray["prop_mktvl"] = $property->mMarketVal;
 

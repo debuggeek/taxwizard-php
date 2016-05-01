@@ -699,11 +699,12 @@ function findBestComps(propertyClass $subjprop, queryContext $queryContext)
     if($debug) echo "<br/>walking ".count($comps)." potential comps<br/>";
 	foreach($comps as $comp)
 	{
+        /* @var propertyClass $comp */
         if(!$isEquityComp) {
             $compsCounts = array_count_values($compsSeen);
             if(array_key_exists($comp->getPropID(),$compsCounts)){
                 //index off of the sale entry based on previously seen
-                setSaleInfo($comp,$queryContext->prevYear,$compsCounts[$c->getPropID()]);
+                setSaleInfo($comp,$queryContext->prevYear,$compsCounts[$comp->getPropID()]);
             } else{
                 setSaleInfo($comp,$queryContext->prevYear,0);
             }

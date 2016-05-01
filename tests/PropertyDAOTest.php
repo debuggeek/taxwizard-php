@@ -60,4 +60,15 @@ class PropertyDAOTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(54, $props);
     }
+
+    public function testGetHoodProperties_Multi(){
+        $propDao = new PropertyDAO($this->HOST, $this->user, $this->pw, $this->db);
+        $queryContext = new queryContext();
+        $queryContext->multiHood = true;
+        $queryContext->isEquityComp = false;
+
+        $props = $propDao->getHoodProperties('K1000', $queryContext);
+
+        $this->assertCount(94, $props);
+    }
 }

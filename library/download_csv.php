@@ -1,6 +1,6 @@
 <?php
 include_once("functions.php");
-$query = "SELECT prop,prop_mktval,Median_Sale5,Median_Sale10,Median_Eq11 FROM BATCH_PROP WHERE completed='true'";
+$query = "SELECT prop,prop_mktval,Median_Sale5,Median_Sale10,Median_Eq11,TotalComps FROM BATCH_PROP WHERE completed='true'";
 
 error_reporting(0);
 

@@ -19,7 +19,7 @@ class queryContext {
     public $netAdjustAmount = 0;
     public $limitToLessImps = false;
     public $showTcadScores = true;
-    public $limitTcadScores = true;
+    public $limitTcadScores = false;
     public $limitTcadScoresAmount = 90;
 
     /*

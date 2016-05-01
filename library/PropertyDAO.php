@@ -75,7 +75,7 @@ class PropertyDAO{
      * @return array
      */
     public function getImpDet($propId) {
-        $query = "SELECT id.imprv_id, 
+        $stmt = $this->pdo->prepare("SELECT id.imprv_id, 
                           LTRIM(RTRIM(id.imprv_det_type_cd)) as imprv_det_type_cd, 
                           LTRIM(RTRIM(id.Imprv_det_type_desc)) as imprv_det_type_desc, 
                           si.det_area, si.det_unitprice, si.det_use_unit_price,
@@ -84,10 +84,12 @@ class PropertyDAO{
                   FROM SPECIAL_IMP si 
                   LEFT JOIN IMP_DET id  
                   ON si.imprv_id = id.imprv_id AND si.det_id = id.imprv_det_id
-                  WHERE si.prop_id=".$propId;
-        $result = $this->pdo->query($query);
+                  WHERE si.prop_id=:propId;");
+        $stmt->bindValue(":propId", $propId, PDO::PARAM_INT);
+        $stmt->execute();
+
         $impArray = Array();
-        while($impDet = $result->fetchObject("ImprovementDetailClass")){
+        while($impDet = $stmt->fetchObject("ImprovementDetailClass")){
             $impArray[] = $impDet;
         }
         return $impArray;
@@ -215,10 +217,10 @@ class PropertyDAO{
     protected function getHoodPropsSales($hood, $queryContext){
         if($queryContext->multiHood) {
             $hoodToUse = substr($hood, 0, -2);
-            $hoodQuery =  " WHERE hood_cd LIKE :hood";
+            $hoodQuery =  " WHERE hood_cd LIKE '%".$hoodToUse."%'";
         } else {
             $hoodToUse = $hood;
-            $hoodQuery = " WHERE hood_cd = :hood";
+            $hoodQuery = " WHERE hood_cd = '".$hoodToUse."' ";
         }
         //Add on sale restrictions
         $year = date("Y");
@@ -238,7 +240,6 @@ class PropertyDAO{
             . " AND s.sale_price>0 "
             . " AND p.prop_id = s.prop_id;";
         $stmt = $this->pdo->prepare($query);
-        $stmt->bindValue(':hood', $hoodToUse);
 
         $properties = array();
         if ($stmt->execute()) {
