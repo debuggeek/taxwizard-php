@@ -19,17 +19,16 @@
 <link rel="stylesheet" type="text/css" href="table.css">
 <?php
 include_once("library/functions.php");
-include_once("library/BatchDAO.php");
+include_once("services/BatchService.php");
 
-global $servername, $username, $password, $database;
+$batchService = new \DebugGeek\TaxWizard\Services\BatchService();
 
-$batchDAO = new BatchDAO($servername, $username, $password, $database);
+$numComplete = $batchService->getCompletedJobCount(); 
+$numPending = $batchService->getPendingJobCount();
 
-$numPending = count($batchDAO->getBatchJobs(false));
-$numComplete = count($batchDAO->getBatchJobs(true));
 $numAll = $numComplete + $numPending;
 
-$queryContext = $batchDAO->getBatchSettings();
+$queryContext = $batchService->getBatchSettings();
 
 ?>
 <br>
@@ -103,6 +102,7 @@ $rs_result = doSqlQuery($sql);
         <td>Median (Equity 11)</td>
         <td>Total Sales Comps Found</td>
         <td><form action="reset.php" method="get"><button type="submit" name="subj" value="ALL">Reset All</button></form></td>
+        <td><form action="remove.php" method="get"><button type="submit" name="propid" value="ALL">Remove All</button></form></td>
     </tr>
     <?php
     while ($row = mysqli_fetch_assoc($rs_result)) {
@@ -116,6 +116,7 @@ $rs_result = doSqlQuery($sql);
             <td><? echo $row["Median_Eq11"]; ?></td>
             <td><? echo $row["TotalComps"]; ?></td>
             <td><? echo "<a href='reset.php?subj=".$row["prop"]."'>recompute</a>"; ?></td>
+            <td><? echo "<a href='remove.php?propid=".$row["prop"]."'>remove</a>"; ?></td>
         </tr>
         <?php
     };

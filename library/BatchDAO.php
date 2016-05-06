@@ -144,6 +144,12 @@ class BatchDAO
         return $stmt->execute();   
     }
 
+    public function deleteAllBatchJobs(){
+        $stmt = $this->pdo->prepare("TRUNCATE BATCH_PROP;");
+
+        return $stmt->execute();
+    }
+
     /**
      * @return queryContext 
      */
