@@ -195,14 +195,14 @@ class PropertyDAO{
     private function getHoodPropsEq($hood, $multihood){
         if($multihood) {
             $hoodToUse = substr($hood, 0, -2);
-            $hoodQuery =  " WHERE hood_cd LIKE :hood";
+            $hoodQuery =  " WHERE hood_cd LIKE '%".$hoodToUse."%'";
         } else {
             $hoodToUse = $hood;
-            $hoodQuery = " WHERE hood_cd = :hood";
+            $hoodQuery = " WHERE hood_cd = '".$hoodToUse."' ";
         }
         $query = "SELECT prop_id FROM PROP" . $hoodQuery;
         $stmt = $this->pdo->prepare($query);
-        $stmt->execute(array(':hood' => $hoodToUse));
+        $stmt->execute();
 
         $properties = array();
         if ($stmt->execute()) {

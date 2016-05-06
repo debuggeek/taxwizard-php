@@ -45,7 +45,8 @@ class BatchJob
         $this->propMktVal = $array['prop_mktvl'];
         $this->propMedSale5 = $array['medSale5'];
         $this->propMedSale10 = $array['medSale10'];
-        $this->propMedSale15 = $array['medSale15'];   
+        $this->propMedSale15 = $array['medSale15'];
+        $this->propMedEq11 = $array['medEq11'];
         $this->pdfs = $array['base64'];
         $this->totalSalesComps = $array['totalSalesComps'];
     }

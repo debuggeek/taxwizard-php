@@ -16,7 +16,13 @@ class HTMLTable
 
     private $table;
 
-    function toHTML(){
+    function toHTML($isEquityComp){
+        if($isEquityComp){
+            $this->tableType = 'Equity';
+        } else {
+            $this->tableType = 'Sales';
+        }
+
         $resultHTML = $this->generateHeader();
         $resultHTML = $resultHTML . $this->generateHtmlTitle();
         $resultHTML = $resultHTML . $this->table;
@@ -110,7 +116,7 @@ class HTMLTable
     }
 
     private function generateHtmlTitle(){
-        return '<h2>Comp '. $this->tableType .'Grid - Five Stone - ' . date('l jS \of F Y h:i:s A') . '</h2>';
+        return '<h2>Comp '. $this->tableType .' Grid - Five Stone - ' . date('l jS \of F Y h:i:s A') . '</h2>';
     }
     
     private function generateHeader(){

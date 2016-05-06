@@ -65,4 +65,25 @@ class FullTableTest extends PHPUnit_Framework_TestCase
         print generateJsonRows($fullTable);
     }
 
+    public function test_GenerateFullTable_Equity(){
+        $queryContext = new queryContext();
+        $queryContext->subjPropId = 105290;
+        $queryContext->isEquityComp = true;
+        $queryContext->compsToDisplay=2;
+
+
+        $fullTable = new FullTable();
+        $fullTable->generateTableData($queryContext);
+
+
+        $this->assertNotEmpty($fullTable->getSubjCompArray());
+        $this->assertNotEmpty($fullTable->getMedianVal());
+        $this->assertNotEmpty($fullTable->getSubjectProp());
+        $this->assertNotEmpty($fullTable->getMeanVal());
+        $this->assertNotEmpty($fullTable->getMeanValSqft());
+        $this->assertNotEmpty($fullTable->getMedianValSqft());
+
+        print generateJsonRows($fullTable);
+    }
+
 }

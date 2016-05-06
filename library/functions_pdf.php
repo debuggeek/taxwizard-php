@@ -38,7 +38,7 @@ function generatePropMultiPDF($queryContext){
 		$html15 = "No Sales Comps for ".$queryContext->subjPropId;
 	else{
 		$retArray["medSale15"] = $fullTable->getMedianVal();
-		$html15 = returnJsonBasedHTMLTable($fullTable, false);
+		$html15 = returnJsonBasedHTMLTable($fullTable, $queryContext->isEquityComp);
 	}
 	$mpdf->WriteHTML($html15,2);
 
@@ -48,7 +48,7 @@ function generatePropMultiPDF($queryContext){
         //Take the first 10 comps of the 15 + the subj
 		$fullTable10 = $fullTable->trimTo(11);
 		$retArray["medSale10"] = $fullTable10->getMedianVal();
-		$html10 = returnJsonBasedHTMLTable($fullTable10,false);
+		$html10 = returnJsonBasedHTMLTable($fullTable10,$queryContext->isEquityComp);
 		$mpdf->WriteHTML($html10,2);
 	}
 	else{
@@ -62,7 +62,7 @@ function generatePropMultiPDF($queryContext){
 	if ($fullTable->getNumComp() >= 6){
 		$fullTable5 = $fullTable10->trimTo(6);
 		$retArray["medSale5"] = $fullTable5->getMedianVal();
-		$htmlEq = returnJsonBasedHTMLTable($fullTable5,false);
+		$htmlEq = returnJsonBasedHTMLTable($fullTable5,$queryContext->isEquityComp);
 		$mpdf->AddPage();
 		$mpdf->WriteHTML($htmlEq);
 	}
@@ -78,7 +78,7 @@ function generatePropMultiPDF($queryContext){
 	$fullTableEq = new FullTable();
 	$fullTableEq->generateTableData($queryContext);
 	$retArray["medEq11"] = $fullTableEq->getMedianVal();
-	$htmlEq = returnJsonBasedHTMLTable($fullTableEq,true);
+	$htmlEq = returnJsonBasedHTMLTable($fullTableEq,$queryContext->isEquityComp);
 	$mpdf->AddPage();
 	$mpdf->WriteHTML($htmlEq);
 	$retArray["mPDF"] = $mpdf;

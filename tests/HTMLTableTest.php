@@ -15,9 +15,9 @@ class HTMLTableTest extends PHPUnit_Framework_TestCase
     public function testToHTML_noParse(){
         $htmlTable = new HTMLTable();
 
-        $this->assertNotEmpty($htmlTable->toHTML());
+        $this->assertNotEmpty($htmlTable->toHTML(false));
 
-        print $htmlTable->toHTML();
+        print $htmlTable->toHTML(false);
     }
 
     public function testToHTML(){
@@ -25,9 +25,19 @@ class HTMLTableTest extends PHPUnit_Framework_TestCase
         $htmlTable = new HTMLTable();
         $htmlTable->parseJson($jsonData);
 
-        $this->assertNotEmpty($htmlTable->toHTML());
+        $this->assertNotEmpty($htmlTable->toHTML(false));
 
-        print $htmlTable->toHTML();
+        print $htmlTable->toHTML(false);
+    }
+
+    public function testToHTML_Equity(){
+        $jsonData = file_get_contents('resources/samples/fulltable_equity.json');
+        $htmlTable = new HTMLTable();
+        $htmlTable->parseJson($jsonData);
+
+        $this->assertNotEmpty($htmlTable->toHTML(true));
+
+        print $htmlTable->toHTML(true);
     }
 
 }

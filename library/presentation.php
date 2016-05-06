@@ -404,7 +404,7 @@ function returnJsonBasedHTMLTable($fullTable, $isEquityComp){
 	$jsonData = generateJsonRows($fullTable, $isEquityComp);
 	$htmlTable = new HTMLTable();
 	$htmlTable->parseJson($jsonData);
-	return $htmlTable->toHTML();
+	return $htmlTable->toHTML($isEquityComp);
 }
 
 /**

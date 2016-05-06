@@ -1,0 +1,480 @@
+{
+  "isEquity": true,
+  "compCount": 2,
+  "rows": [
+    {
+      "description": "Property ID",
+      "col1": 105290,
+      "col2": "106006",
+      "col3": "105286"
+    },
+    {
+      "description": "Property Owner",
+      "col1": "KOESTERS KURT H & LAURA",
+      "col2": "HAJJAR JOSEPH J",
+      "col3": "BERGEN ANNE & THOMAS"
+    },
+    {
+      "description": "Geo ID",
+      "col1": "0106160913",
+      "col2": "0107180353",
+      "col3": "0106160909"
+    },
+    {
+      "description": "Neighborhood",
+      "col1": "M5200",
+      "col2": "M5200",
+      "col3": "M5200"
+    },
+    {
+      "description": "Situs",
+      "col1": " 3127 EANES CIR  78746",
+      "col2": " 1715 BARN SWALLOW DR  78746",
+      "col3": " 3137 EANES CIR  78746"
+    },
+    {
+      "description": "Market Value",
+      "col1": "737,919",
+      "col2": "423,656",
+      "col3": "538,497"
+    },
+    {
+      "description": "Market Price\/SQFT",
+      "col1": "251.51",
+      "col2": "218.72",
+      "col3": "181.43"
+    },
+    {
+      "description": null,
+      "col1": null,
+      "col2": null,
+      "col3": null
+    },
+    {
+      "description": "Land Value Adj",
+      "col1": {
+        "value": 385000,
+        "delta": "0"
+      },
+      "col2": {
+        "value": 420000,
+        "delta": "-35,000"
+      },
+      "col3": {
+        "value": 385000,
+        "delta": "0"
+      }
+    },
+    {
+      "description": "Improvement Count",
+      "col1": 2,
+      "col2": 1,
+      "col3": 1
+    },
+    {
+      "description": "Class Unit Price Adj",
+      "col1": {
+        "value": "WW5",
+        "delta": "0"
+      },
+      "col2": {
+        "value": "WW5-",
+        "delta": "-1,976"
+      },
+      "col3": {
+        "value": "WW5-",
+        "delta": "25,584"
+      }
+    },
+    {
+      "description": "% Good Adj",
+      "col1": {
+        "value": "75_",
+        "delta": "0"
+      },
+      "col2": {
+        "value": "45",
+        "delta": "1,097"
+      },
+      "col3": {
+        "value": "75",
+        "delta": "0"
+      }
+    },
+    {
+      "description": "Living Area",
+      "col1": 2934,
+      "col2": 1937,
+      "col3": 2968
+    },
+    {
+      "description": "Year Built",
+      "col1": 1980,
+      "col2": 1980,
+      "col3": 1980
+    },
+    {
+      "description": "Segments & Adj",
+      "col1": {
+        "value": "1st Floor",
+        "subvalue": "1902",
+        "delta": null
+      },
+      "col2": {
+        "value": "1st Floor",
+        "subvalue": "985",
+        "delta": 85712
+      },
+      "col3": {
+        "value": "1st Floor",
+        "subvalue": "1648",
+        "delta": 21293
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": "2nd Floor",
+        "subvalue": "1032",
+        "delta": null
+      },
+      "col2": {
+        "value": "2nd Floor",
+        "subvalue": "952",
+        "delta": 6730
+      },
+      "col3": {
+        "value": "2nd Floor",
+        "subvalue": "668",
+        "delta": 27464
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": "GARAGE ATT 1ST F",
+        "subvalue": "556",
+        "delta": null
+      },
+      "col2": {
+        "value": "GARAGE ATT 1ST F",
+        "subvalue": "NONE",
+        "delta": 14039
+      },
+      "col3": {
+        "value": "GARAGE ATT 1ST F",
+        "subvalue": "546",
+        "delta": 1181
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": "HVAC RESIDENTIAL",
+        "subvalue": "2934",
+        "delta": null
+      },
+      "col2": {
+        "value": "HVAC RESIDENTIAL",
+        "subvalue": "1937",
+        "delta": 2293
+      },
+      "col3": {
+        "value": "HVAC RESIDENTIAL",
+        "subvalue": "2316",
+        "delta": 1421
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": "BATHROOM",
+        "subvalue": "2.5",
+        "delta": null
+      },
+      "col2": {
+        "value": "BATHROOM",
+        "subvalue": "2",
+        "delta": 0
+      },
+      "col3": {
+        "value": "BATHROOM",
+        "subvalue": "3",
+        "delta": 0
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": "DECK UNCOVRED",
+        "subvalue": "102.7",
+        "delta": null
+      },
+      "col2": {
+        "value": "DECK UNCOVRED",
+        "subvalue": "NONE",
+        "delta": 827
+      },
+      "col3": {
+        "value": "DECK UNCOVRED",
+        "subvalue": "290",
+        "delta": -1508
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": "DECK COVERED",
+        "subvalue": "200",
+        "delta": null
+      },
+      "col2": {
+        "value": "DECK COVERED",
+        "subvalue": "NONE",
+        "delta": 2070
+      },
+      "col3": {
+        "value": "DECK COVERED",
+        "subvalue": "NONE",
+        "delta": 2070
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": "FIREPLACE",
+        "subvalue": "1",
+        "delta": null
+      },
+      "col2": {
+        "value": "FIREPLACE",
+        "subvalue": "1",
+        "delta": 0
+      },
+      "col3": {
+        "value": "FIREPLACE",
+        "subvalue": "1",
+        "delta": 0
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": "MASONRY TRIM SF",
+        "subvalue": "975",
+        "delta": null
+      },
+      "col2": {
+        "value": "MASONRY TRIM SF",
+        "subvalue": "855",
+        "delta": 793
+      },
+      "col3": {
+        "value": "MASONRY TRIM SF",
+        "subvalue": "720",
+        "delta": 1686
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": "POOL RES CONC",
+        "subvalue": "1",
+        "delta": null
+      },
+      "col2": {
+        "value": "POOL RES CONC",
+        "subvalue": "NONE",
+        "delta": 14375
+      },
+      "col3": {
+        "value": "POOL RES CONC",
+        "subvalue": "NONE",
+        "delta": 14375
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": "TERRACE UNCOVERD",
+        "subvalue": "24",
+        "delta": null
+      },
+      "col2": {
+        "value": "TERRACE UNCOVERD",
+        "subvalue": "NONE",
+        "delta": 138
+      },
+      "col3": {
+        "value": "TERRACE UNCOVERD",
+        "subvalue": "NONE",
+        "delta": 138
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": "PORCH OPEN 1ST F",
+        "subvalue": "96",
+        "delta": null
+      },
+      "col2": {
+        "value": "PORCH OPEN 1ST F",
+        "subvalue": "319",
+        "delta": -2826
+      },
+      "col3": {
+        "value": "PORCH OPEN 1ST F",
+        "subvalue": "35",
+        "delta": 889
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": null,
+        "subvalue": null,
+        "delta": null
+      },
+      "col2": {
+        "value": "Unfinished Basement",
+        "subvalue": "788",
+        "delta": -36823
+      },
+      "col3": {
+        "value": "1st Floor",
+        "subvalue": "652",
+        "delta": -54657
+      }
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": null,
+        "subvalue": null,
+        "delta": null
+      },
+      "col2": {
+        "value": "PORCH OPEN 2ND F",
+        "subvalue": "340",
+        "delta": -4447
+      },
+      "col3": null
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": null,
+        "subvalue": null,
+        "delta": null
+      },
+      "col2": {
+        "value": "GARAGE ATT BASMT",
+        "subvalue": "504",
+        "delta": -10549
+      },
+      "col3": null
+    },
+    {
+      "description": null,
+      "col1": {
+        "value": null,
+        "subvalue": null,
+        "delta": null
+      },
+      "col2": {
+        "value": "STAIRWAY EXT",
+        "subvalue": "1",
+        "delta": -1903
+      },
+      "col3": null
+    },
+    {
+      "description": "Secondary Imp",
+      "col1": {
+        "value": "2871",
+        "delta": null
+      },
+      "col2": {
+        "value": 0,
+        "delta": 2871
+      },
+      "col3": {
+        "value": 0,
+        "delta": 2871
+      }
+    },
+    {
+      "description": null,
+      "col1": null,
+      "col2": null,
+      "col3": null
+    },
+    {
+      "description": "Net Adjustment",
+      "col1": "0",
+      "col2": "37,420",
+      "col3": "42,807"
+    },
+    {
+      "description": null,
+      "col1": null,
+      "col2": null,
+      "col3": null
+    },
+    {
+      "description": "Indicated Value",
+      "col1": "737,919",
+      "col2": "461,076",
+      "col3": "581,304"
+    },
+    {
+      "description": "Indicated Value \/ SQFT",
+      "col1": "0.00",
+      "col2": "238.04",
+      "col3": "195.86"
+    },
+    {
+      "description": null,
+      "col1": null,
+      "col2": null,
+      "col3": null
+    },
+    {
+      "description": "TCAD Score",
+      "col1": null,
+      "col2": 63.06,
+      "col3": 87.32
+    },
+    {
+      "description": "TCAD Score",
+      "col1": null,
+      "col2": 63.06,
+      "col3": 87.32
+    },
+    {
+      "description": "Mean Value",
+      "col1": "521,190",
+      "col2": null,
+      "col3": null
+    },
+    {
+      "description": "Mean Value \/ SQFT",
+      "col1": "216.95",
+      "col2": null,
+      "col3": null
+    },
+    {
+      "description": "Median Value",
+      "col1": "521,190",
+      "col2": null,
+      "col3": null
+    },
+    {
+      "description": "Median Value \/ SQFT",
+      "col1": "216.95",
+      "col2": null,
+      "col3": null
+    }
+  ]
+}

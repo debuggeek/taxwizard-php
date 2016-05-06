@@ -700,7 +700,7 @@ function findBestComps(propertyClass $subjprop, queryContext $queryContext)
 	foreach($comps as $comp)
 	{
         /* @var propertyClass $comp */
-        if(!$isEquityComp) {
+        if(!$queryContext->isEquityComp) {
             $compsCounts = array_count_values($compsSeen);
             if(array_key_exists($comp->getPropID(),$compsCounts)){
                 //index off of the sale entry based on previously seen
