@@ -191,10 +191,10 @@ class FullTable
         $newTable->subjectProp = $this->subjectProp;
         $newTable->subjCompArray = array_slice($this->subjCompArray, 0, $count);
 
-        $newTable->meanVal = getMeanVal($this->subjCompArray);
-        $newTable->meanValSqft = getMeanValSqft($this->subjCompArray);
-        $newTable->medianVal = getMedianVal($this->subjCompArray);
-        $newTable->medianValSqft = getMedianValSqft($this->subjCompArray);
+        $newTable->meanVal = getMeanVal($newTable->subjCompArray);
+        $newTable->meanValSqft = getMeanValSqft($newTable->subjCompArray);
+        $newTable->medianVal = getMedianVal($newTable->subjCompArray);
+        $newTable->medianValSqft = getMedianValSqft($newTable->subjCompArray);
         
         return $newTable;
     }
