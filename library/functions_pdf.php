@@ -60,7 +60,7 @@ function generatePropMultiPDF($queryContext){
 	//Generate Sales 5
 	$fullTable5 = null;
 	if ($fullTable->getNumComp() >= 6){
-		$fullTable5 = $fullTable10->trimTo(6);
+		$fullTable5 = $fullTable->trimTo(6);
 		$retArray["medSale5"] = $fullTable5->getMedianVal();
 		$htmlEq = returnJsonBasedHTMLTable($fullTable5,$queryContext->isEquityComp);
 		$mpdf->AddPage();
