@@ -733,7 +733,6 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
 {
     global $LIVINGAREA;
     $compsseen = array();
-    $traceComps = true;
 
     if ($c->getPropID() == $subjprop->getPropID()) {
         error_log("addToCompsArray: Skipping Comp prop id matched subject:" . $c->getPropID());
@@ -749,7 +748,7 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
     $sqft = $c->getFieldByName($LIVINGAREA[0]);
 
     if ($sqft < $min || $sqft > $max) {
-        if ($traceComps) error_log("addToCompsArray: " . $c->getPropID() . " removed as potential comp due to size min=" . $min . " max=" . $max . " size=" . $sqft);
+        if ($queryContext->traceComps) error_log("addToCompsArray: " . $c->getPropID() . " removed as potential comp due to size min=" . $min . " max=" . $max . " size=" . $sqft);
         return false;
     }
 
@@ -758,7 +757,7 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
     if (!$queryContext->isEquityComp && $queryContext->includeVu == false) {
         $badSaleTypes = "VU";
         if ($c->mSaleType == $badSaleTypes) {
-            if ($traceComps) error_log("addToCompsArray: Sale type was bad: " . $c->mSaleType);
+            if ($queryContext->traceComps) error_log("addToCompsArray: Sale type was bad: " . $c->mSaleType);
             return false;
         }
     }
@@ -774,20 +773,20 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
     }
     //Only review further if badClass string not found
     if ($c->getClassCode() === $badClass) {
-        if ($traceComps) error_log("addToCompsArray: Property has badclass " . $badClass);
+        if ($queryContext->traceComps) error_log("addToCompsArray: Property has badclass " . $badClass);
         return false;
     }
 
     if ($queryContext->subClassRangeEnabled) {
         if (!fallsInsideClassRange($subjprop->getSubClass(), $c->getSubClass(), $queryContext->subClassRange)) {
-            if ($traceComps) error_log("addToCompsArray: failed to fall inside class range ");
+            if ($queryContext->traceComps) error_log("addToCompsArray: failed to fall inside class range ");
             return false;
         }
     }
 
     if ($queryContext->percentGoodRangeEnabled) {
         if (!fallsWithinPercentGood($c, $subjprop, $queryContext->percentGoodRange)) {
-            if ($traceComps) error_log("addToCompsArray: failed to fall inside percent good range ");
+            if ($queryContext->traceComps) error_log("addToCompsArray: failed to fall inside percent good range ");
             return false;
         }
     }
@@ -796,7 +795,7 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
 		$varCompImpCount = count(ImpHelper::getUniqueImpIds($c->getImpDets()));
 		$varSubjImpCount = count(ImpHelper::getUniqueImpIds($subjprop->getImpDets()));
 		if($varCompImpCount > $varSubjImpCount){
-			if ($traceComps) error_log("addToCompsArray: ". $c->getPropID() . " failed due to more subjects them prop");
+			if ($queryContext->traceComps) error_log("addToCompsArray: ". $c->getPropID() . " failed due to more subjects them prop");
 			return false;
 		}
 	}
@@ -814,7 +813,7 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
     if($queryContext->limitTcadScores){
         $tcadScore = $c->getTcadScore();
         if($tcadScore->getScore() < $queryContext->limitTcadScoresAmount){
-            if($traceComps){
+            if($queryContext->traceComps){
                 error_log("addToCompsArray: comp ".$c->getPropID(). " tcad score ". $tcadScore->getScore()
                     . " falls below threshold ". $queryContext->limitTcadScoresAmount);
             }
@@ -824,11 +823,11 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
 
     if($queryContext->trimIndicated){
         if(compareIndicatedVal($subjprop,$c)==1){
-            if($traceComps) error_log("addToCompsArray: Found comp ".$c->getPropID());
+            if($queryContext->traceComps) error_log("addToCompsArray: Found comp ".$c->getPropID());
             return true;
         }
     } else {
-        if($traceComps) error_log("addToCompsArray: Found comp ".$c->getPropID());
+        if($queryContext->traceComps) error_log("addToCompsArray: Found comp ".$c->getPropID());
         return true;
     }
 

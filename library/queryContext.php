@@ -38,6 +38,8 @@ class queryContext {
 
     public $compInfo = array();
 
+    public $traceComps = false;
+
     public function parseQueryString($getContext){
         //Parse Inputs
         if(isset($getContext['multiyear'])){
@@ -117,6 +119,10 @@ class queryContext {
             if(strcmp($getContext['limitImps'], 'on') == 0) {
                 $this->limitToLessImps = true;
             }
+        }
+
+        if(isset($getContext['tracecomps'])){
+            $this->traceComps = true;
         }
 
         if(isset($getContext['showTcadScores'])){

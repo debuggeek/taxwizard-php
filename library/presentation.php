@@ -326,7 +326,8 @@ function emitHTMLFooter(){
 
 /**
  * @param FullTable $fullTable
- * @param $isEquityComp
+ * @param bool $isEquityComp
+ * @return string
  */
 function generateJsonRows($fullTable, $isEquityComp = true){
 	global $fieldsofinterest,$fieldsofinteresteq, $SEGMENTSADJ, $TCADSCORE;
@@ -342,6 +343,11 @@ function generateJsonRows($fullTable, $isEquityComp = true){
 
 	$subjcomparray = $fullTable->getSubjCompArray();
 
+    if($subjcomparray === null || count($subjcomparray) == 0){
+        error_log("Not generating json due to empty subjcompArray");
+        return '{}';
+    }
+    
 	$obj = new stdClass();
 	$obj->isEquity=$isEquityComp;
 	$obj->compCount = count($subjcomparray)-1;//Don't count the subj
@@ -524,14 +530,15 @@ function populateDeltaObj($prop, $field){
  */
 function getMaxPrimaryImpCount($subjCompArray){
 	$maxCount = 0;
-	error_log(json_encode($subjCompArray));
-	foreach($subjCompArray as $prop){
-		/* @var propertyClass $prop */
-		$currCount = count(ImpHelper::getPrimaryImprovements($prop->getImpDets()));
-		if($currCount > $maxCount){
-			$maxCount = $currCount;
-		}
+	if(count($subjCompArray) > 0) {
+		foreach ($subjCompArray as $prop) {
+			/* @var propertyClass $prop */
+			$currCount = count(ImpHelper::getPrimaryImprovements($prop->getImpDets()));
+			if ($currCount > $maxCount) {
+				$maxCount = $currCount;
+			}
 
+		}
 	}
 	return $maxCount;
 }

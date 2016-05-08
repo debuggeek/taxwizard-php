@@ -39,8 +39,12 @@ class HTMLTable
         $table = '<table>';
         $table = $table . $this->generateTableHeader($json['compCount']);
         $jsonRows = $json['rows'];
-        foreach($jsonRows as $row){
-            $table = $table . $this->generateRow($row);
+        if($jsonRows !== null){
+            foreach($jsonRows as $row){
+                $table = $table . $this->generateRow($row);
+            }
+        } else {
+            error_log("No JSON rows to parse");
         }
         $table = $table .'</table>';
         return $table;

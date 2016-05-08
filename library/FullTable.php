@@ -167,6 +167,7 @@ class FullTable
 
         if($this->subjCompArray === null || sizeof($this->subjCompArray) == 1){
             $this->subjCompArray = null;
+            error_log("No comps found for " . $this->subjectProp->getPropID());
             return;
         }
 
