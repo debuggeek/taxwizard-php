@@ -65,7 +65,7 @@ $queryContext = $batchService->getBatchSettings();
 <h2><?php echo $numComplete?> completed batch properties</h2>
 <h2><?php echo $numPending?> remaining to process</h2>
 <p>
-    <a href='download_pdf.php?subj=ALL'>Download All Completed PDF Reports</a>
+    <a href='download_pdf.php?subj=ALL'>Download All Completed PDF Reports into zip file</a>
     <br>
     <a href='library/download_csv.php?subj=ALL'>Download Simple Report CSV</a>
     <br>
