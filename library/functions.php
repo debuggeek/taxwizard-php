@@ -672,8 +672,7 @@ function getHoodList($hood, queryContext $queryContext){
  * @param queryContext queryContext
  * @return Array of comparable properties
  */
-function findBestComps(propertyClass $subjprop, queryContext $queryContext)
-{
+function findBestComps(propertyClass $subjprop, queryContext $queryContext){
 	global $NEIGHB,$LIVINGAREA,$PROPID,$debug,$isEquityComp;
     $compsarray = array();
 
@@ -691,36 +690,94 @@ function findBestComps(propertyClass $subjprop, queryContext $queryContext)
 
     if($debug) error_log("findBestComps Start Memory >> ". memory_get_usage() . "\n");
 	if($debug) echo "<br/>subj: " . var_dump($subjprop) . "<br/>";
+	/* @var array $comps */
 	$comps = getHoodList($subjprop->getFieldByName($NEIGHB[0]),$queryContext);
 
     //Track for duplicates
     $compsSeen = array();
 
-    if($debug) echo "<br/>walking ".count($comps)." potential comps<br/>";
+    if($debug) error_log("walking ".count($comps)." potential comps");
+	$runAsync = true;
 	foreach($comps as $comp)
 	{
-        /* @var propertyClass $comp */
-        if(!$queryContext->isEquityComp) {
-            $compsCounts = array_count_values($compsSeen);
-            if(array_key_exists($comp->getPropID(),$compsCounts)){
-                //index off of the sale entry based on previously seen
-                setSaleInfo($comp,$queryContext->prevYear,$compsCounts[$comp->getPropID()]);
-            } else{
-                setSaleInfo($comp,$queryContext->prevYear,0);
-            }
-        }
+//		if($runAsync){
+//			$asyncCompChecker = new AsyncCompChecker($subjprop, $comp, $queryContext, $compsSeen);
+//			$compsSeen[] = $asyncCompChecker->run();
+//		} else {
+			/* @var propertyClass $comp */
+			if (!$queryContext->isEquityComp) {
+				$compsCounts = array_count_values($compsSeen);
+				if (array_key_exists($comp->getPropID(), $compsCounts)) {
+					//index off of the sale entry based on previously seen
+					setSaleInfo($comp, $queryContext->prevYear, $compsCounts[$comp->getPropID()]);
+				} else {
+					setSaleInfo($comp, $queryContext->prevYear, 0);
+				}
+			}
 
-        if(addToCompsArray($comp,$subjprop,$queryContext)){
-            if($debug) error_log("findBestComps: Adding ".$comp->getPropID(). " as comp::".$comp);
-            $compsarray[] = $comp;
-        } else {
-            if($debug) error_log("findBestComps: Skipped adding ".$comp->getPropID()." as comp to ".$subjprop->getPropID());
-        }
-        $compsSeen[] = $comp->getPropID();
+			if (addToCompsArray($comp, $subjprop, $queryContext)) {
+				if ($debug) error_log("findBestComps: Adding " . $comp->getPropID() . " as comp::" . $comp);
+				$compsarray[] = $comp;
+			} else {
+				if ($debug) error_log("findBestComps: Skipped adding " . $comp->getPropID() . " as comp to " . $subjprop->getPropID());
+			}
+			$compsSeen[] = $comp->getPropID();
+//		}
 	}
+//	if($runAsync) {
+//		$asyncCompChecker->join();
+//	}
+
 	error_log("findBestComps: compsarray count= ".count($compsarray). " sizeof=".sizeof($compsarray));
 	return $compsarray;
 }
+
+//class AsyncCompChecker extends Thread {
+//	private $subj;
+//	private $comp;
+//	private $queryContext;
+//	private $compsSeen;
+//
+//	private $debug = false;
+//
+//	/**
+//	 * AsyncCompChecker constructor.
+//	 * @param propertyClass $subj
+//	 * @param propertyClass $comp
+//	 * @param queryContext $queryContext
+//	 * @param array $compsSeen
+//	 */
+//	public function __construct($subj, $comp, $queryContext, $compsSeen) {
+//		$this->subj = $subj;
+//		$this->comp = $comp;
+//		$this->queryContext = $queryContext;
+//		$this->compsSeen = $compsSeen;
+//	}
+//
+//	/**
+//	 * @return int
+//	 */
+//	public function run() {
+//		/* @var propertyClass $comp */
+//		if (!$this->queryContext->isEquityComp) {
+//			$compsCounts = array_count_values($this->compsSeen);
+//			if (array_key_exists($comp->getPropID(), $compsCounts)) {
+//				//index off of the sale entry based on previously seen
+//				setSaleInfo($comp, $this->queryContext->prevYear, $compsCounts[$comp->getPropID()]);
+//			} else {
+//				setSaleInfo($comp, $this->queryContext->prevYear, 0);
+//			}
+//		}
+//
+//		if (addToCompsArray($comp, $this->subj, $this->queryContext)) {
+//			if ($this->debug) error_log("findBestComps: Adding " . $comp->getPropID() . " as comp::" . $comp);
+//			$compsarray[] = $comp;
+//		} else {
+//			if ($this->debug) error_log("findBestComps: Skipped adding " . $comp->getPropID() . " as comp to " . $this->subj->getPropID());
+//		}
+//		return $comp->getPropID();
+//	}
+//}
 
 /**
  * Determines if the passed in comp should be compared against the subj property
