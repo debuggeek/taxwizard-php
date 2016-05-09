@@ -4,6 +4,13 @@
     "apache/log4php": "3.x-dev",
     "spipu/html2pdf": "4.6.x-dev",
     "mpdf/mpdf": "7.0.x-dev",
-    "anouar/fpdf": "1.0.2"
+    "anouar/fpdf": "1.0.2",
+    "phpauth/phpauth": "v1.1"
+  },
+  "autoload": {
+    "classmap": [
+      "services/",
+      "library"
+    ]
   }
 }

@@ -5,6 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/anouar/fpdf" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/apache/log4php" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/bjeavons/zxcvbn-php" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/inflector" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/instantiator" />
@@ -13,7 +14,9 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/mpdf/mpdf" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/myclabs/deep-copy" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/paragonie/random_compat" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phpauth/phpauth" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phpdocumentor/reflection-docblock" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phpmailer/phpmailer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phpspec/prophecy" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phpunit/php-code-coverage" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phpunit/php-file-iterator" />
@@ -44,6 +47,7 @@
         <CLASSES>
           <root url="file://$MODULE_DIR$/vendor/anouar/fpdf" />
           <root url="file://$MODULE_DIR$/vendor/apache/log4php" />
+          <root url="file://$MODULE_DIR$/vendor/bjeavons/zxcvbn-php" />
           <root url="file://$MODULE_DIR$/vendor/composer" />
           <root url="file://$MODULE_DIR$/vendor/doctrine/inflector" />
           <root url="file://$MODULE_DIR$/vendor/doctrine/instantiator" />
@@ -52,7 +56,9 @@
           <root url="file://$MODULE_DIR$/vendor/mpdf/mpdf" />
           <root url="file://$MODULE_DIR$/vendor/myclabs/deep-copy" />
           <root url="file://$MODULE_DIR$/vendor/paragonie/random_compat" />
+          <root url="file://$MODULE_DIR$/vendor/phpauth/phpauth" />
           <root url="file://$MODULE_DIR$/vendor/phpdocumentor/reflection-docblock" />
+          <root url="file://$MODULE_DIR$/vendor/phpmailer/phpmailer" />
           <root url="file://$MODULE_DIR$/vendor/phpspec/prophecy" />
           <root url="file://$MODULE_DIR$/vendor/phpunit/php-code-coverage" />
           <root url="file://$MODULE_DIR$/vendor/phpunit/php-file-iterator" />
@@ -79,6 +85,7 @@
         <SOURCES>
           <root url="file://$MODULE_DIR$/vendor/anouar/fpdf" />
           <root url="file://$MODULE_DIR$/vendor/apache/log4php" />
+          <root url="file://$MODULE_DIR$/vendor/bjeavons/zxcvbn-php" />
           <root url="file://$MODULE_DIR$/vendor/composer" />
           <root url="file://$MODULE_DIR$/vendor/doctrine/inflector" />
           <root url="file://$MODULE_DIR$/vendor/doctrine/instantiator" />
@@ -87,7 +94,9 @@
           <root url="file://$MODULE_DIR$/vendor/mpdf/mpdf" />
           <root url="file://$MODULE_DIR$/vendor/myclabs/deep-copy" />
           <root url="file://$MODULE_DIR$/vendor/paragonie/random_compat" />
+          <root url="file://$MODULE_DIR$/vendor/phpauth/phpauth" />
           <root url="file://$MODULE_DIR$/vendor/phpdocumentor/reflection-docblock" />
+          <root url="file://$MODULE_DIR$/vendor/phpmailer/phpmailer" />
           <root url="file://$MODULE_DIR$/vendor/phpspec/prophecy" />
           <root url="file://$MODULE_DIR$/vendor/phpunit/php-code-coverage" />
           <root url="file://$MODULE_DIR$/vendor/phpunit/php-file-iterator" />
