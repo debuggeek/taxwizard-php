@@ -56,7 +56,7 @@ foreach($propstrarray as $propstr){
 			$currProp->mSaleDate = getSaleDate($currProp->getPropID());
 			$currProp->setSalePrice(getSalePrice($currProp->getPropID()));
 		}
-		calcDeltas($propArray[0],$currProp);
+		calcDeltas($propArray[0],$currProp, $equity);
 	}
 	$propArray[] = $currProp;
 }

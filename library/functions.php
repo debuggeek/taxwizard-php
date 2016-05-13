@@ -796,7 +796,7 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
 		}
 	}
 
-    calcDeltas($subjprop,$c);
+    calcDeltas($subjprop,$c, $queryContext->isEquityComp);
 
     if ($queryContext->netAdjustEnabled){
         error_log("addToCompsArray: Filtering for net adjustment amount of " . $queryContext->netAdjustAmount);
