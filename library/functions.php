@@ -595,16 +595,12 @@ function lookupProperty($propid)
  */
 function calcDeltas($subj,$currprop, $isEquity)
 {
-	global $fieldsofinteresteq,$NETADJ,$INDICATEDVAL,$INDICATEDVALSQFT;
-	
-	foreach($fieldsofinteresteq as $field)
-	{
-		if(($delta = hasDelta($field[0])) != NULL)
-		{
-			$func = "set".$delta;
-		   	$currprop->$func($subj);
-		}
-	}
+    $currprop->setLandValAdjDelta($subj);
+    $currprop->setClassAdjDelta($subj);
+    $currprop->setGoodAdjDelta($subj, $isEquity);
+    $currprop->setLASizeAdjDelta($subj);
+    $currprop->setMktLevelerDetailAdjDelta($subj);
+    $currprop->setSegAdjDelta($subj);
 
 	$currprop->setImpDets(ImpHelper::compareImpDetails_AddDelta($subj->getImpDets(), $currprop->getImpDets()));
     $tcadScore = new \TaxWizard\TcadScore();

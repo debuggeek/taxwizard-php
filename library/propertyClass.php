@@ -248,13 +248,11 @@ class propertyClass
     /**
      * @param propertyClass $subjdetailadj
      */
-    function setGoodAdjDelta($subj)
+    function setGoodAdjDelta($subj, $isEquity)
     {
-        global $isEquityComp;
-
         $option = 2016;
 
-        if ($isEquityComp)
+        if ($isEquity)
             $var1 = $this->getMarketVal();
         else
             $var1 = $this->getSalePrice();
