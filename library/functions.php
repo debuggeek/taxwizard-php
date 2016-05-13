@@ -593,7 +593,7 @@ function lookupProperty($propid)
  * @param propertyClass $subj
  * @param propertyClass $currprop
  */
-function calcDeltas($subj,$currprop)
+function calcDeltas($subj,$currprop, $isEquity)
 {
 	global $fieldsofinteresteq,$NETADJ,$INDICATEDVAL,$INDICATEDVALSQFT;
 	
@@ -612,7 +612,7 @@ function calcDeltas($subj,$currprop)
     $currprop->setTcadScore($tcadScore);
 
 	$currprop->getNetAdj();
-	$currprop->getIndicatedVal();
+	$currprop->setIndicatedVal($currprop->calcIndicatedVal($isEquity));
 	$currprop->getIndicatedValSqft();
 }
 

@@ -927,19 +927,29 @@ class propertyClass
         $this->condition = $condition;
     }
 
-    function getIndicatedVal()
-    {
-        if ($this->mIndVal === NULL) {
-            global $isEquityComp;
-            if ($this->mSubj == true) {
-                return $this->mMarketVal;
-            }
-            if ($isEquityComp)
-                $var1 = $this->mMarketVal;
-            else
-                $var1 = $this->mSalePrice;
-            $this->mIndVal = $var1 + $this->getNetAdj();
+    /**
+     * @param bool $equityComp
+     * @return mixed
+     */
+    function calcIndicatedVal($equityComp){
+        if ($this->mSubj == true) {
+            return $this->mMarketVal;
         }
+        $var = null;
+        if ($equityComp) {
+            $var1 = $this->mMarketVal;
+        } else {
+            $var1 = $this->mSalePrice;
+        }
+        $result = $var1 + $this->getNetAdj();
+        return $result;
+    }
+
+    function setIndicatedVal($val){
+        $this->mIndVal = $val;
+    }
+
+    function getIndicatedVal(){
         return $this->mIndVal;
     }
 

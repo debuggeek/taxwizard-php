@@ -159,7 +159,7 @@ class FullTable
                     $c->setSalePrice($compIn['salePrice']);
                     $c->mSaleDate = $compIn['saleDate'];
                 }
-                calcDeltas($this->subjectProp,$c);
+                calcDeltas($this->subjectProp,$c, $queryContext->isEquityComp);
                 $subjcomparray[] = $c;
             }
             $this->subjCompArray = $subjcomparray;

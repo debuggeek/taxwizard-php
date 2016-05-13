@@ -112,6 +112,8 @@ class queryContext {
         if(isset($getContext['Submit'])){
             if($getContext['Submit'] == 'Build Sales Table'){
                 $this->isEquityComp = false;
+            } else if(strpos($getContext['Submit'], 'Equity') !== false){
+                $this->isEquityComp = true;
             }
         }
 
