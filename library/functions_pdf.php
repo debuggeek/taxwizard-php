@@ -37,8 +37,10 @@ function generatePropMultiPDF($queryContext){
 	if ($fullTable->getNumComp() == 0)
 		$html15 = "No Sales Comps for ".$queryContext->subjPropId;
 	else{
+        $fullTable = $fullTable->trimTo(16);
 		$retArray["medSale15"] = $fullTable->getMedianVal();
 		$html15 = returnJsonBasedHTMLTable($fullTable, $queryContext->isEquityComp);
+        error_log("Post Sales 15 JSON Mem Usage: " . memory_get_usage());
 	}
 	$mpdf->WriteHTML($html15,2);
 
@@ -71,7 +73,7 @@ function generatePropMultiPDF($queryContext){
 		$retArray["medSale5"] = $retArray["medSale10"];
 		$retArray["medSale10"] = null;
 	}
-
+	error_log("Post Sales PDF Mem Usage: " . memory_get_usage());
 	//Generate Equity 10
 	$queryContext->compsToDisplay = 11;
 	$queryContext->isEquityComp = true;
@@ -81,6 +83,7 @@ function generatePropMultiPDF($queryContext){
 	$htmlEq = returnJsonBasedHTMLTable($fullTableEq,$queryContext->isEquityComp);
 	$mpdf->AddPage();
 	$mpdf->WriteHTML($htmlEq);
+	error_log("Post Equity PDF Mem Usage: " . memory_get_usage());
 	$retArray["mPDF"] = $mpdf;
 	return $retArray;
 }

@@ -23,7 +23,15 @@ include_once("services/BatchService.php");
 
 $batchService = new \DebugGeek\TaxWizard\Services\BatchService();
 
-$numComplete = $batchService->getCompletedJobCount(); 
+if (!empty($_POST)) {
+    try {
+        $batchService->insertJob($_POST["insertProp"]);
+    } catch (PDOException $e){
+        error_log($e);
+    }
+}
+
+$numComplete = $batchService->getCompletedJobCount();
 $numPending = $batchService->getPendingJobCount();
 
 $numAll = $numComplete + $numPending;
@@ -36,6 +44,11 @@ $queryContext = $batchService->getBatchSettings();
     <form action="upload_file.php" enctype="multipart/form-data" formtarget="_blank" method="post">
         Choose a file to upload: <input name="file" type="file" /><br />
 <p><input type="submit" name="submit" value="Submit" /></p>
+</form>
+<form method="post">
+    Insert single property into batch:
+    <input name="insertProp" type="text">
+    <input type="submit"/>
 </form>
 <br>
 <p><strong>Bulk Generation Settings</strong></p>

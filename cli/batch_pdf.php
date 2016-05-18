@@ -19,10 +19,14 @@ global $servername, $username, $password, $database;
 /*
  * Parse commandline options
  */
-$options = getopt("m::");
+$options = getopt("m::e::");
 $mod = 1;
 if($options['m'] != false){
 	$mod = $options['m'];
+}
+if($options['e'] === false){
+    ini_set('error_reporting', E_ALL);
+    ini_set('display_errors', "stderr");
 }
 
 
@@ -32,10 +36,8 @@ echo "\n Current Working dir:".getcwd();
 $batchDAO = new BatchDAO($servername, $username, $password, $database);
 $queryContext = $batchDAO->getBatchSettings();
 
-//REMEMBER if you add here you have to put into functions_pdf too
-$output = "Executing with settings: ". var_dump($queryContext);
-error_log("batch_pdf: ". $output);
-echo "\n".$output ."\n";
+echo "\nExecuting with settings: ";
+var_dump($queryContext);
 
 //Query to check if any work to do
 $props = $batchDAO->getBatchJobs(false);
@@ -45,13 +47,14 @@ $uncompleted = 0;
 
 foreach ($props as $prop){
 	if(($prop % $mod) != 0){
-        echo "Skipping $prop due to mod";
+        echo "\n". $date->format('Y-m-d H:i:s') ." >> Skipping $prop due to mod $mod\n";
 		continue;
 	}
 	$job = new BatchJob();
 	$job->propId = $prop;
 	$date = new DateTime();
-	echo $date->format('Y-m-d H:i:s') . " >> BatchPDF: Updating ".$job->propId;
+	echo "\n" .$date->format('Y-m-d H:i:s') . " >> BatchPDF: Updating ".$job->propId;
+    error_log("Start Mem Usage: " . memory_get_usage());
 	$queryContext->subjPropId = $prop;
 	$retArray = generatePropMultiPDF($queryContext);
 	if($retArray != null) {
