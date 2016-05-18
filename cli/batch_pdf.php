@@ -16,8 +16,18 @@ $debug=false;
  */
 global $servername, $username, $password, $database;
 
+/*
+ * Parse commandline options
+ */
+$options = getopt("m::");
+$mod = 1;
+if($options['m'] != false){
+	$mod = $options['m'];
+}
+
+
 $date = new DateTime();
-echo "\n".$date->format('Y-m-d H:i:s') . " >> Starting Batch Processing\n";
+echo "\n".$date->format('Y-m-d H:i:s') . " >> Starting Batch Processing with mod $mod\n";
 echo "\n Current Working dir:".getcwd();
 $batchDAO = new BatchDAO($servername, $username, $password, $database);
 $queryContext = $batchDAO->getBatchSettings();
@@ -34,6 +44,10 @@ $completed = 0;
 $uncompleted = 0;
 
 foreach ($props as $prop){
+	if(($prop % $mod) != 0){
+		error_log("Skipping $prop due to mod");
+		continue;
+	}
 	$job = new BatchJob();
 	$job->propId = $prop;
 	$date = new DateTime();
