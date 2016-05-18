@@ -50,8 +50,11 @@ foreach ($props as $prop){
         echo "\n". $date->format('Y-m-d H:i:s') ." >> Skipping $prop due to mod $mod\n";
 		continue;
 	}
-	$job = new BatchJob();
-	$job->propId = $prop;
+	$job = $batchDAO->getBatchJob($prop);
+    if($job->batchStatus == true){
+        echo "\n". $date->format('Y-m-d H:i:s') ." >> Skipping $prop due to job already set to true\n";
+        continue;
+    }
 	$date = new DateTime();
 	echo "\n" .$date->format('Y-m-d H:i:s') . " >> BatchPDF: Updating ".$job->propId;
     error_log("Start Mem Usage: " . memory_get_usage());
