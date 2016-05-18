@@ -45,7 +45,7 @@ $uncompleted = 0;
 
 foreach ($props as $prop){
 	if(($prop % $mod) != 0){
-		error_log("Skipping $prop due to mod");
+        echo "Skipping $prop due to mod";
 		continue;
 	}
 	$job = new BatchJob();
