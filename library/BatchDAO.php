@@ -79,7 +79,7 @@ class BatchDAO
         $stmt->execute();
 
         $stmt->bindColumn(1, $batchJob->propId, PDO::PARAM_INT);
-        $stmt->bindColumn(2, $batchJob->batchStatus, PDO::PARAM_BOOL);
+        $stmt->bindColumn(2, $batchJob->batchStatus, PDO::PARAM_STR);
         $stmt->bindColumn(3, $batchJob->pdfs, PDO::PARAM_STR);
         $stmt->bindColumn(4, $batchJob->propMktVal, PDO::PARAM_INT);
         $stmt->bindColumn(5, $batchJob->propMedSale5, PDO::PARAM_INT);

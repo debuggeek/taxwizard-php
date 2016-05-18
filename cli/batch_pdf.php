@@ -51,7 +51,7 @@ foreach ($props as $prop){
 		continue;
 	}
 	$job = $batchDAO->getBatchJob($prop);
-    if($job->batchStatus == true){
+    if($job->batchStatus === 'true'){
         echo "\n". $date->format('Y-m-d H:i:s') ." >> Skipping $prop due to job already set to true\n";
         continue;
     }
