@@ -311,33 +311,10 @@ class propertyClass
 
     function getGoodAdj()
     {
-        global $PROPID, $GOODADJ, $allowablema, $mafield;
-        $goodfield = $GOODADJ["FIELD"];
-        $goodtable = $GOODADJ["TABLE"];
-        $propid = $this->getPropID();
-        $imprvidtable = "IMP_DET";
-
-        $subquery = "";
-        $i = 0;
-        while ($i < count($allowablema)) {
-            $subquery .= "$mafield = '$allowablema[$i]'";
-            if (++$i < count($allowablema))
-                $subquery .= " OR ";
+        if(empty($this->mGoodAdj)){
+            throw new Exception("mGoodAdj not set as expected");
         }
-        $query = "SELECT $goodfield FROM $goodtable,$imprvidtable
-			WHERE $imprvidtable.prop_id='$propid'
-			AND $goodtable.prop_id='$propid'
-			AND $imprvidtable.Imprv_det_id = $goodtable.det_id
-			AND ( " . $subquery . ")";
-
-        //echo "$query";
-        $result = doSqlQuery($query);
-
-        if (!$result)
-            return "No Value Found!";
-
-        $row = mysqli_fetch_array($result);
-        return $row[$goodfield];
+        return $this->mGoodAdj;
     }
 
     function getSegAdj()
