@@ -61,7 +61,7 @@ else{
 	      	$phpCmd = "/Applications/MAMP/bin/php/php5.4.34/bin/php ";
 	      else
 	      	$phpCmd = "php-cli ";
-	      $filename = "./cli/batch_pdf.php";
+	      $filename = "./cli/BatchPDF.php";
 	      $output = shell_exec("$phpCmd $filename >error_log 2>&1 &");
 	    }
 	  }
