@@ -35,11 +35,22 @@ namespace DebugGeek\TaxWizard\Services {
         }
 
         /**
+         * @param $status
+         * @param $start
+         * @param $limit
+         * @return \BatchJob[]
+         */
+        public function getPagedBatchJobs($status, $start, $limit)
+        {
+            return $this->batchDao->getPagedBatchJobs($status, $start, $limit);
+        }
+
+        /**
          * @return int
          */
         public function getCompletedJobCount()
         {
-            return count($this->batchDao->getBatchJobs(true));
+            return count($this->batchDao->getBatchJobsPropList(true));
         }
 
         /**
@@ -47,7 +58,7 @@ namespace DebugGeek\TaxWizard\Services {
          */
         public function getPendingJobCount()
         {
-            return count($this->batchDao->getBatchJobs(false));
+            return count($this->batchDao->getBatchJobsPropList(false));
         }
 
         /**

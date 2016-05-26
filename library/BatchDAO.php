@@ -74,7 +74,7 @@ class BatchDAO
         $batchJob = new BatchJob();
         $stmt = $this->pdo->prepare("SELECT prop, completed, pdfs, 
                                             prop_mktval, Median_Sale5, Median_Sale10, 
-                                            Median_Sale15, Median_Eq11 FROM BATCH_PROP WHERE prop=?");
+                                            Median_Sale15, Median_Eq11,TotalComps FROM BATCH_PROP WHERE prop=?");
         $stmt->bindValue(1, $propId, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -86,16 +86,38 @@ class BatchDAO
         $stmt->bindColumn(6, $batchJob->propMedSale10, PDO::PARAM_INT);
         $stmt->bindColumn(7, $batchJob->propMedSale15, PDO::PARAM_INT);
         $stmt->bindColumn(8, $batchJob->propMedEq11, PDO::PARAM_INT);
+        $stmt->bindColumn(9, $batchJob->totalSalesComps, PDO::PARAM_INT);
 
         $stmt->fetch(PDO::FETCH_BOUND);
 
         return $batchJob;
     }
+
+    /**
+     * @param $status
+     * @param $start
+     * @param int $limit
+     * @return \BatchJob[]
+     */
+    public function getPagedBatchJobs($status, $start, $limit = 20){
+        $stmt = $this->pdo->prepare("SELECT prop FROM BATCH_PROP WHERE completed=? ORDER BY prop ASC LIMIT ?, ?");
+        $stmt->bindValue(1, $this->strbool($status), PDO::PARAM_STR);
+        $stmt->bindValue(2, $start, PDO::PARAM_INT);
+        $stmt->bindValue(3, $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $jobs = array();
+        while($propId = $stmt->fetchColumn()){
+            $jobs[] = $this->getBatchJob($propId);
+        }
+        return $jobs;
+    }
+
     /**
      * @param string $status
      * @return int[]
      */
-    public function getBatchJobs($status=false){
+    public function getBatchJobsPropList($status=false){
         $jobs = array();
         $stmt = $this->pdo->prepare("SELECT prop FROM BATCH_PROP WHERE completed=?");
         $stmt->bindValue(1, $this->strbool($status), PDO::PARAM_STR);

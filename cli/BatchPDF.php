@@ -40,7 +40,7 @@ class BatchPDF{
         var_dump($queryContext);
     
         //Query to check if any work to do
-        $props = $batchDAO->getBatchJobs(false);
+        $props = $batchDAO->getBatchJobsPropList(false);
     
         $completed = 0;
         $uncompleted = 0;

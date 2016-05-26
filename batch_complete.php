@@ -89,22 +89,23 @@ $queryContext = $batchService->getBatchSettings();
 
 <br>
 <?php
-$sql = "SELECT COUNT(prop) FROM BATCH_PROP WHERE completed='true'";
-$rs_result = doSqlQuery($sql);
-$row = mysqli_fetch_row($rs_result);
-$total_records = $row[0];
-$total_pages = ceil($total_records / 20);
-
-echo "Page:";
-for ($i=1; $i<=$total_pages; $i++) {
-    echo "<a href='batch_complete.php?page=".$i."'>".$i."</a> ";
-};
-?>
-<?php
+$total_pages = ceil($numComplete / 20);
 if (isset($_GET["page"])) { $page  = $_GET["page"]; } else { $page=1; };
 $start_from = ($page-1) * 20;
-$sql = "SELECT * FROM BATCH_PROP WHERE completed='true' ORDER BY prop ASC LIMIT $start_from, 20";
-$rs_result = doSqlQuery($sql);
+
+echo "$total_pages Page(s):";
+if($page != 1){
+    echo "<a href='batch_complete.php?page=1'> << First </a>";
+    echo "<a href='batch_complete.php?page=". ($page-1)."'>  Prev  </a>";
+}
+for ($i=$page; $i<=min($page+9,$total_pages); $i++) {
+    echo "<a href='batch_complete.php?page=".$i."'>".$i."</a> ";
+};
+echo "<a href='batch_complete.php?page=". ($page + 1) ."'>  Next  </a>";
+echo "<a href='batch_complete.php?page=$total_pages'><nbsp>Last>></a>";
+?>
+<?php
+$batchJobs = $batchService->getPagedBatchJobs(true, $start_from, 20);
 ?>
 <table>
     <tr><td>PropID (click for pdf)</td>
@@ -118,18 +119,18 @@ $rs_result = doSqlQuery($sql);
         <td><form action="remove.php" method="get"><button type="submit" name="propid" value="ALL">Remove All</button></form></td>
     </tr>
     <?php
-    while ($row = mysqli_fetch_assoc($rs_result)) {
+    foreach ($batchJobs as $row) {
         ?>
         <tr>
-            <td><? echo "<a href='download_pdf.php?subj=".$row["prop"]."'>".$row["prop"]."</a>"; ?></td>
-            <td><? echo $row["prop_mktval"]; ?></td>
-            <td><? echo $row["Median_Sale5"]; ?></td>
-            <td><? echo $row["Median_Sale10"]; ?></td>
-            <td><? echo $row["Median_Sale15"]; ?></td>
-            <td><? echo $row["Median_Eq11"]; ?></td>
-            <td><? echo $row["TotalComps"]; ?></td>
-            <td><? echo "<a href='reset.php?subj=".$row["prop"]."'>recompute</a>"; ?></td>
-            <td><? echo "<a href='remove.php?propid=".$row["prop"]."'>remove</a>"; ?></td>
+            <td><? echo "<a href='download_pdf.php?subj=".$row->propId."'>".$row->propId."</a>"; ?></td>
+            <td><? echo $row->propMktVal; ?></td>
+            <td><? echo $row->propMedSale5; ?></td>
+            <td><? echo $row->propMedSale10; ?></td>
+            <td><? echo $row->propMedSale15; ?></td>
+            <td><? echo $row->propMedEq11; ?></td>
+            <td><? echo $row->totalSalesComps; ?></td>
+            <td><? echo "<a href='reset.php?subj=".$row->propId."'>recompute</a>"; ?></td>
+            <td><? echo "<a href='remove.php?propid=".$row->propId."'>remove</a>"; ?></td>
         </tr>
         <?php
     };

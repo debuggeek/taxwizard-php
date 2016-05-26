@@ -55,12 +55,12 @@ class BatchDAOTest extends PHPUnit_Framework_TestCase
 
         //Cleanup in case
         $batchDao->deleteBatchJob($propId);
-        $startJobs = $batchDao->getBatchJobs(false);
+        $startJobs = $batchDao->getBatchJobsPropList(false);
 
         $this->assertNotFalse($batchDao->createBatchJob($propId));
 
         /* @var BatchJob[] $jobs*/
-        $jobs = $batchDao->getBatchJobs(false);
+        $jobs = $batchDao->getBatchJobsPropList(false);
 
         $this->assertEquals(count($startJobs) + 1, count($jobs));
         $this->assertEquals(false, $jobs[0]->batchStatus);
@@ -82,4 +82,14 @@ class BatchDAOTest extends PHPUnit_Framework_TestCase
 
         $this->assertNotFalse( $batchDao->deleteBatchJob($propId));
     }
+
+    public function test_GetPagedBatchJobs(){
+        $batchDao = new BatchDAO($this->HOST, $this->user, $this->pw, $this->db);
+
+        $jobs = $batchDao->getPagedBatchJobs(true,0,5);
+        var_dump($jobs);
+        $this->assertEquals(5, sizeof($jobs));
+
+    }
+    
 }
