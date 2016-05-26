@@ -195,7 +195,7 @@ class PropertyDAO{
     private function getHoodPropsEq($hood, $multihood){
         if($multihood) {
             $hoodToUse = substr($hood, 0, -2);
-            $hoodQuery =  " WHERE hood_cd LIKE '%".$hoodToUse."%'";
+            $hoodQuery =  " WHERE hood_cd LIKE '".$hoodToUse."%'";
         } else {
             $hoodToUse = $hood;
             $hoodQuery = " WHERE hood_cd = '".$hoodToUse."' ";
@@ -217,7 +217,7 @@ class PropertyDAO{
     protected function getHoodPropsSales($hood, $queryContext){
         if($queryContext->multiHood) {
             $hoodToUse = substr($hood, 0, -2);
-            $hoodQuery =  " WHERE hood_cd LIKE '%".$hoodToUse."%'";
+            $hoodQuery =  " WHERE hood_cd LIKE '".$hoodToUse."%'";
         } else {
             $hoodToUse = $hood;
             $hoodQuery = " WHERE hood_cd = '".$hoodToUse."' ";
