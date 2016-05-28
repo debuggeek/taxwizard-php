@@ -27,3 +27,5 @@ cp -r $src/services $target/services
 mkdir $target/upload
 
 cp ~/accountinfo.php $target/library/
+
+cp -r $src/cli $target/cli:wq

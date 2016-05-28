@@ -2,6 +2,7 @@
 include_once("library/functions.php");
 
 $allowedExts = array("txt", "log", "csv");
+$maxEntries = 20000;
 if (!$_FILES)
 	echo("Must upload a file");
 else{
@@ -69,8 +70,8 @@ else{
 	else{
 	  echo "Invalid file<br>";
 	  echo $_FILES["file"]["type"];
-	  if ($_FILES["file"]["size"] > 20000)
-	  	echo "File to large: ". $_FILES["file"]["size"];
+	  if ($_FILES["file"]["size"] > $maxEntries)
+	  	echo "File exceeds maximum number of bytes". $maxEntries . ".  size:". $_FILES["file"]["size"];
 	  if (!in_array($extension, $allowedExts))
 	  	echo "Wrong file type. Must be txt, log, or csv";
 	}
