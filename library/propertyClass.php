@@ -497,20 +497,6 @@ class propertyClass
 
     function getYearBuilt()
     {
-        global $TABLE_IMP_DET;
-
-        if ($this->mYearBuilt != null)
-            return $this->mYearBuilt;
-
-        $query = "SELECT yr_built FROM " . $TABLE_IMP_DET . " WHERE prop_id='$this->propId' AND imprv_id='$this->mPrimeImpId';";
-        $result = doSqlQuery($query);
-
-        if (!$result)
-            return "No Value Found!";
-
-        $num = mysqli_num_rows($result);
-        $row = mysqli_fetch_array($result);
-        $this->mYearBuilt = $row['yr_built'];
         return $this->mYearBuilt;
     }
 

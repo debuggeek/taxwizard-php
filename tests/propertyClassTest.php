@@ -12,6 +12,7 @@ include_once "../library/functions.php";
 
 class propertyClassTest extends PHPUnit_Framework_TestCase{
 
+    /* @var propertyClass */
     public $property;
 
     protected function setUp()
@@ -36,6 +37,9 @@ class propertyClassTest extends PHPUnit_Framework_TestCase{
         //  "_" after SaleDate if from MLS
         //  "_" after GoodAdj if >25 years old and GoodAdj > 75
         
-        
+    }
+    
+    public function testProperties(){
+        $this->assertNotEmpty($this->property->getYearBuilt());
     }
 }
