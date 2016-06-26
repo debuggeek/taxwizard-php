@@ -3,11 +3,12 @@
  */
 
 function errorPage(data){
-    if(data.propId === null || data.propid == 0){
-        $("#title").append("<H2>" + data.error + "</H2>");
-    } else {
-        $("#title").append("<H2>No Comparable Hits found for " + data.propId + "</H2>");
-    }
+    $("#title").append("<H2>" + data.error + "</H2>");
+    // if(data.propId === null || data.propid == 0){
+    //     $("#title").append("<H2>" + data.error + "</H2>");
+    // } else {
+    //     $("#title").append("<H2>No Comparable Hits found for " + data.propId + "</H2>");
+    // }
 }
 
 function addTitle(){
@@ -27,7 +28,7 @@ function addTitle(){
         tableType = "Equity";
     }
 
-    $("#title").append("Comp " + tableType + " Grid - Five Stone - " + new Date($.now()));
+    $("#title").append("Comp "+ tableType + " Grid - Five Stone - " + new Date($.now()));
 };
 
 function drawTable(data) {

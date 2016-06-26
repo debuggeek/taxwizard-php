@@ -23,10 +23,15 @@ if($queryContext->subjPropId == null){
 }
 
 $fullTable = new FullTable();
-$fullTable->generateTableData($queryContext);
+try {
+    $fullTable->generateTableData($queryContext);
+} catch (Exception $e){
+    echo json_encode(array("error"=> $e->getMessage(), "propId"=> $queryContext->subjPropId), JSON_PRETTY_PRINT);
+    exit;
+}
 
 if($fullTable->getSubjCompArray() == null || sizeof($fullTable->getSubjCompArray()) == 1){
-    echo json_encode(array("error"=>"No comps found", "propId"=> $queryContext->subjPropId), JSON_PRETTY_PRINT);
+    echo json_encode(array("error"=>"No comps found for property ".$queryContext->subjPropId, "propId"=> $queryContext->subjPropId), JSON_PRETTY_PRINT);
     exit;
 }
 

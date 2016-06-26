@@ -161,7 +161,10 @@ class PropertyDAO{
         $stmt->bindColumn('stCode', $prop->stateCode, PDO::PARAM_STR);
 
 
-        $stmt->fetch(PDO::FETCH_BOUND);
+        $result = $stmt->fetch(PDO::FETCH_BOUND);
+        if($result === false){
+            throw new Exception("Unable to find property with propId=".$propId);
+        }
         $prop->setLivingArea($livingarea);
         $prop->setClassCode($classcode);
         $prop->setSubClass($subclass);

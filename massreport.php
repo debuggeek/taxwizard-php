@@ -23,7 +23,7 @@ $fullTable = new FullTable();
 $fullTable->generateTableData($queryContext);
 
 if($fullTable->getSubjCompArray() == null || sizeof($fullTable->getSubjCompArray()) == 1){
-    echo json_encode(array("error"=>"No comps found", "propId"=> $queryContext->subjPropId), JSON_PRETTY_PRINT);
+    echo json_encode(array("error"=>"No comps found for propId=".$queryContext->subjPropId, "propId"=> $queryContext->subjPropId), JSON_PRETTY_PRINT);
     exit;
 }
 
