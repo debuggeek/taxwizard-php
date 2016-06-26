@@ -62,6 +62,19 @@ class ImprovementDetailClass{
     protected $imprv_det_id;
 
     /**
+     * Value of AdjPerc column which contains adj percent for improvements
+     * i.e. : 'S00966: 0.00%; L2000: 125.00%'
+     * @var string
+     */
+    protected $adjPercRaw;
+
+    /**
+     * @var int
+     */
+    protected $detVal;
+    
+
+    /**
      * @return int
      */
     public function getImprvDetTypeCd()
@@ -124,8 +137,6 @@ class ImprovementDetailClass{
     {
         $this->imprv_val = $imprv_val;
     }
-    
-    
 
     /**
      * @return int
@@ -205,6 +216,67 @@ class ImprovementDetailClass{
     public function setImprvDetId($imprv_det_id)
     {
         $this->imprv_det_id = $imprv_det_id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAdjPercRaw()
+    {
+        return $this->adjPercRaw;
+    }
+
+    /**
+     * @param string $adjPercRaw
+     */
+    public function setAdjPercRaw($adjPercRaw)
+    {
+        $this->adjPercRaw = $adjPercRaw;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDetVal()
+    {
+        return $this->detVal;
+    }
+
+    /**
+     * @param int $detVal
+     */
+    public function setDetVal($detVal)
+    {
+        $this->detVal = $detVal;
+    }
+
+    /**
+     * Extracts the Adjustment Percentage for this improvement
+     * @return float
+     * @throws Exception
+     */
+    public function getAdjustedPerc(){
+        // Need to extract just the 125.00
+        // from 'S00966: 0.00%; L2000: 125.00%'
+        // if it is empty string though then there is nothing to adjust
+        if(empty($this->adjPercRaw)){
+            return 1;
+        }
+
+        $pieces = explode(";", $this->adjPercRaw);
+        if(sizeof($pieces) != 2){
+            error_log("Expected 2 halfs to the adjPercRaw for imprv_det_id=" . $this->imprv_det_id);
+            throw new Exception("Expected 2 halfs to the adjPercRaw");
+        }
+        $percString = explode(": ",$pieces[1]);
+        if(sizeof($percString) != 2){
+            error_log("Expected 2 halfs to the $percString for imprv_det_id=" . $this->imprv_det_id);
+            throw new Exception("Expected 2 halfs to the $percString");
+        }
+        $percString = substr($percString[1], 0, -1);
+        $perc = (float)$percString;
+        $perc = $perc * .01;
+        return $perc;
     }
 
     /**

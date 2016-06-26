@@ -76,6 +76,8 @@ class PropertyDAO{
      */
     public function getImpDet($propId) {
         $stmt = $this->pdo->prepare("SELECT id.imprv_id, 
+                          LTRIM(RTRIM(si.adjust_perc)) as adjPercRaw,
+                          si.det_val as detVal,
                           LTRIM(RTRIM(id.imprv_det_type_cd)) as imprv_det_type_cd, 
                           LTRIM(RTRIM(id.Imprv_det_type_desc)) as imprv_det_type_desc, 
                           si.det_area, si.det_unitprice, si.det_use_unit_price,

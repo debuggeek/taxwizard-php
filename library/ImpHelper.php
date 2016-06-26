@@ -10,9 +10,11 @@ include_once 'ImprovementDetailClass.php';
 
 class ImpHelper
 {
+    const useAdjPerc = true;
+
     /**
-     * Walks the primary improvments on subject and comps and finds deltas
-     * If the comp doesn't have the primary improvment then one is added as a placeholder for the delta
+     * Walks the primary improvements on subject and comps and finds deltas
+     * If the comp doesn't have the primary improvement then one is added as a placeholder for the delta
      * @param ImprovementDetailClass() $subjImps
      * @param ImprovementDetailClass() $compImps
      * @return ImprovementDetailClass()
@@ -51,8 +53,12 @@ class ImpHelper
                     $result = $compImp->getDetArea() * $compImp->getDetUnitprice();
                     $compImp->setAdjustmentDelta(round($result));
                 } else {
+                    if(self::useAdjPerc){
+                        $compValue = $compImp->getDetVal()  * $compImp->getAdjustedPerc();
+                    } else {
+                        $compValue = $compImp->getDetArea() * $compImp->getDetUnitprice();
+                    }
                     //negative because we get to count against subject
-                    $compValue = $compImp->getDetArea() * $compImp->getDetUnitprice();
                     $compImp->setAdjustmentDelta(round($compValue)  * -1);
                 }
             }
@@ -196,8 +202,14 @@ class ImpHelper
             }
             return round($result);
         } else {
-            $subjValue = $subjImp->getDetArea() * $subjImp->getDetUnitprice();
-            $compValue = $compImp->getDetArea() * $compImp->getDetUnitprice();
+            //The following was added based on email with TCAD and some of there secret magic they were doing
+            if(self::useAdjPerc){
+                $subjValue = $subjImp->getDetVal() * $subjImp->getAdjustedPerc();
+                $compValue = $compImp->getDetVal()  * $compImp->getAdjustedPerc();
+            } else {
+                $subjValue = $subjImp->getDetArea() * $subjImp->getDetUnitprice();
+                $compValue = $compImp->getDetArea() * $compImp->getDetUnitprice();
+            }
             return round($subjValue - $compValue);
         }
     }
