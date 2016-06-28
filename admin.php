@@ -34,7 +34,7 @@ Database:<?php echo $database ?>
 <a href="bestcomps.php?propid=141826&amp;display=100&amp;Submit=Search&amp;equity=false">Issue 14: Had Duplicate Comps</a><br>
 <a href="resultSubjComps.html?target=massreport&multiyear=1&limit=10&style=sales&propid=718039&S%26G=Search+and+Generate">Issue 11:Duplicate between MLS and Sales</a><br>
 <a href="resultSubjComps.html?target=massreport&includemls=off&multihood=off&limit=10&style=sales&propid=210850&S%26G=Search+and+Generate">Issue 8: Duplicate Comps</a><br>
-<a href="resultSubjComps.html?target=properties&propid=105290&c1=104522&c1sp=739000&c1sd=2%2F18%2F2014&Submit=Build+Sales+Table">Issue 23: Multi Improvements</a>
+<a href="resultSubjComps.html?target=properties&propid=105290&c1=104522&c1sp=739000&c1sd=2%2F18%2F2014&Submit=Build+Sales+Table">Issue 23: Multi Improvements</a><br>
 <a href="resultSubjComps.html?propid=187428&c1=189181&c1sp=&c1sd=&target=properties&Submit=Build+Equity+Table">Multiple Imps of same type causing reuse of matching PORCH</a>
 <br>
 <p><strong>Prospect information</strong>
