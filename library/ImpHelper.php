@@ -15,22 +15,26 @@ class ImpHelper
     /**
      * Walks the primary improvements on subject and comps and finds deltas
      * If the comp doesn't have the primary improvement then one is added as a placeholder for the delta
-     * @param ImprovementDetailClass() $subjImps
-     * @param ImprovementDetailClass() $compImps
-     * @return ImprovementDetailClass()
+     * @param ImprovementDetailClass[] $subjImps
+     * @param ImprovementDetailClass[] $compImps
+     * @return ImprovementDetailClass[]
      */
     public static function compareImpDetails_AddDelta($subjImps, $compImps){
 
         //Walk the primary improvements and if the comp has it then calculate delta
+        $compImpsUsed = array();
         foreach (self::getPrimaryImprovements($subjImps) as $subjImp){
             $found = false;
             /* @var $subjImp ImprovementDetailClass */
             foreach ($compImps as $compImp){
                 /* @var $compImp ImprovementDetailClass */
                 if($subjImp->getImprvDetTypeCd() == $compImp->getImprvDetTypeCd()){
-                    $found = true;
-                    $compImp->setAdjustmentDelta(self::getDelta($subjImp, $compImp));
-                    break;
+                    if(!in_array($compImp->getImprvDetId(), $compImpsUsed)){
+                        $found = true;
+                        $compImp->setAdjustmentDelta(self::getDelta($subjImp, $compImp));
+                        $compImpsUsed[] = $compImp->getImprvDetId();
+                        break;
+                    }
                 }
             }
             if(!$found) {
@@ -174,12 +178,17 @@ class ImpHelper
      * Finds the first improvement with a given code
      * @param $propertyImps
      * @param $impDetCode
+     * @param null $exclusions[] list of detail ids to skip
      * @return ImprovementDetailClass|null
      */
-    public static function getImprovObjByCode($propertyImps, $impDetCode){
+    public static function getImprovObjByCode($propertyImps, $impDetCode, $exclusions = null){
         foreach ($propertyImps as $improv) {
             /* @var $improv ImprovementDetailClass */
             if ($impDetCode == $improv->getImprvDetTypeCd()) {
+                if(in_array($improv->getImprvDetId(), $exclusions)){
+                    //The exclusions list said not to return this detail id
+                    continue;
+                }
                 return $improv;
             }
         }
