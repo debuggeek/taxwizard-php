@@ -442,9 +442,9 @@ function addPrimaryImprovements($subjcomparray, $field){
 			for ($j = 0; $j < count($ListofPropsImprv); $j++) {
 				$currImpList = $ListofPropsImprv[$j];
 				$currCol = 'col' . ($j + 1);
-				$improvement = ImpHelper::getImprovObjByCode($currImpList, $currImpDetCode);
+				$improvement = ImpHelper::getImprovObjByCode($currImpList, $currImpDetCode, $seenDetIds);
 				$currRow[$currCol] = populateSegObj($improvement);
-				if($improvement != null) {
+				if($improvement != null && $improvement->getImprvDetId() != null) {
 					$seenDetIds[] = $improvement->getImprvDetId();
 				}
 			}

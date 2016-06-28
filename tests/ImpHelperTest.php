@@ -59,7 +59,31 @@ class ImpHelperTest extends PHPUnit_Framework_TestCase{
         $subjProp = getSubjProperty($subjId);
         $compProp = getProperty($compId);
 
-        calcDeltas($subjProp, $compProp);
+        calcDeltas($subjProp, $compProp,true);
+        $fullTable = new FullTable();
+        $fullTable->setSubjCompArray(array($subjProp, $compProp));
+        $result = generateJsonRows($fullTable);
+
+        print $result;
+    }
+
+    /*
+     * I was seeing the PORCH in the subj and comp were reusing the same
+     * improvement detail data for multiple improvements of the same type
+     */
+    public function testcompareImpDetails_AddDelta_SubjWMultiImpsSameType(){
+        include_once '../library/functions.php';
+        include_once '../library/presentation.php';
+        include_once '../library/FullTable.php';
+
+        $subjId = 187428;
+        $compId = 189181;
+
+        $subjProp = getSubjProperty($subjId);
+        //var_dump($subjProp->getImpDets());
+        $compProp = getProperty($compId);
+
+        calcDeltas($subjProp, $compProp,true);
         $fullTable = new FullTable();
         $fullTable->setSubjCompArray(array($subjProp, $compProp));
         $result = generateJsonRows($fullTable);
