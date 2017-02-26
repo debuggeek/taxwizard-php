@@ -738,9 +738,14 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
 
     $subjsqft = $subjprop->getFieldByName($LIVINGAREA[0]);
 	//sqftPercent is stored as int so convert to percentage
-    $percentAllowed = $queryContext->sqftPercent *.01;
-    $min = $subjsqft - ($percentAllowed* $subjsqft);
-    $max = (1 + $percentAllowed) * $subjsqft;
+    if($queryContext->sqftPercent != null) {
+        $percentAllowed = $queryContext->sqftPercent * .01;
+        $min = $subjsqft - ($percentAllowed * $subjsqft);
+        $max = (1 + $percentAllowed) * $subjsqft;
+    } else {
+        $min = $queryContext->sqftRangeMin;
+        $max = $queryContext->sqftRangeMax;
+    }
 
     $sqft = $c->getFieldByName($LIVINGAREA[0]);
 
@@ -782,7 +787,7 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
     }
 
     if ($queryContext->percentGoodRangeEnabled) {
-        if (!fallsWithinPercentGood($c, $subjprop, $queryContext->percentGoodRange)) {
+        if (!fallsWithinPercentGood($c, $subjprop, $queryContext)) {
             if ($queryContext->traceComps) error_log("addToCompsArray: failed to fall inside percent good range ");
             return false;
         }
@@ -809,10 +814,25 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
 
     if($queryContext->limitTcadScores){
         $tcadScore = $c->getTcadScore();
-        if($tcadScore->getScore() < $queryContext->limitTcadScoresAmount){
+
+        if($queryContext->limitTcadScoresAmount != null){
+            $min = $queryContext->limitTcadScoresAmount;
+            $max = 100;
+        } else {
+            $min = $queryContext->tcadScoreLimitMin;
+            $max = $queryContext->tcadScoreLimitMax;
+        }
+        if($tcadScore->getScore() < $min){
             if($queryContext->traceComps){
                 error_log("addToCompsArray: comp ".$c->getPropID(). " tcad score ". $tcadScore->getScore()
-                    . " falls below threshold ". $queryContext->limitTcadScoresAmount);
+                    . " falls below threshold ". $min);
+            }
+            return false;
+        }
+        if($tcadScore->getScore() > $max){
+            if($queryContext->traceComps){
+                error_log("addToCompsArray: comp ".$c->getPropID(). " tcad score ". $tcadScore->getScore()
+                    . " falls above threshold ". $max);
             }
             return false;
         }
@@ -885,19 +905,26 @@ function fallsInsideClassRange($subjSubClass, $compSubClass, $range){
 	return true;
 }
 
-function fallsWithinPercentGood(propertyClass $comp, propertyClass $subjprop, $range){
+function fallsWithinPercentGood(propertyClass $comp, propertyClass $subjprop, queryContext $queryContext){
     global $debug;
     $subjPercentGood = intval($subjprop->getGoodAdj());
     $compPercentGood = intval($comp->getGoodAdj());
 
-    if($debug) error_log("fallsWithinPercentGood: subj ".$subjPercentGood." comp ". $compPercentGood . " range ". $range);
+    if($queryContext->percentGoodRange != null){
+        $min = $subjPercentGood - $queryContext->percentGoodRange;
+        $max = $subjPercentGood + $queryContext->percentGoodRange;
+    } else {
+        $min = $queryContext->percentGoodMin;
+        $max = $queryContext->percentGoodMax;
+    }
+    if($debug) error_log("fallsWithinPercentGood: subj ".$subjPercentGood." comp ". $compPercentGood . " range min ". $min . " max " . $max);
 
-    if($compPercentGood < $subjPercentGood - $range){
+    if($compPercentGood < $min){
         if($debug) error_log("fallsWithinPercentGood: Comp falls below range");
         return false;
     }
 
-    if($compPercentGood > $subjPercentGood + $range){
+    if($compPercentGood > $max){
         if($debug) error_log("fallsWithinPercentGood: Comp falls above range");
         return false;
     }

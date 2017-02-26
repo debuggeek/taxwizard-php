@@ -5,29 +5,48 @@ class queryContext {
     /*
      * Following are all persisted in Batch Table
      */
+
+    // The first grouping are all used in search filtering
     public $trimIndicated = false;
     public $includeMls = false;
     public $multiHood = false;
     public $includeVu = false;
     public $prevYear = 1;
-    public $sqftPercent = 75;
+
+    public $sqftPercent = null;
+    public $sqftRangeMin = null;
+    public $sqftRangeMax = null;
+
     public $subClassRange = 2;
     public $subClassRangeEnabled = false;
-    public $percentGoodRange = 10;
+
     public $percentGoodRangeEnabled = false;
+    public $percentGoodRange = 10;
+    public $percentGoodMin = null;
+    public $percentGoodMax = null;
+
     public $netAdjustEnabled = false;
     public $netAdjustAmount = 0;
     public $limitToLessImps = false;
-    public $showTcadScores = true;
+
     public $limitTcadScores = false;
-    public $limitTcadScoresAmount = 90;
+    public $limitTcadScoresAmount = null;
+    public $tcadScoreLimitMin = null;
+    public $tcadScoreLimitMax = null;
+
+    public $limitToOnlyCurrentYearLowered = false;
+    public $grossAdjFilterEnabled = false;
+    // Group used for display filtering
+    public $showTcadScores = true;
+    public $displayRatios = false;
+
 
     /*
      * Below settings aren't stored in database
      */
     public $limit = null;
     public $compsToDisplay = 100;
-    
+
     //Holds a list of propertyIds to exclude from consideration
     public $excludes = array();
 
@@ -80,7 +99,19 @@ class queryContext {
         }
 
         if(isset($getContext['sqftPct'])){
-            $this->sqftPercent = trim($getContext['sqftPct']);
+          $val =  trim($getContext['sqftPct']);
+          $valArray = explode(":", $val);
+          if(count($valArray) == 2){
+            $this->sqftRangeMin = $valArray[0];
+            $this->sqftRangeMax = $valArray[1];
+            $this->sqftPercent = null;
+          } else if(count($valArray) == 1) {
+            $this->sqftRangeMin = null;
+            $this->sqftRangeMax = null;
+            $this->sqftPercent = $valArray[0];
+          } else {
+            error_log("Unexpected query value for sqftPct");
+          }
         }
 
         if(isset($getContext['rangeEnabled'])){
@@ -93,7 +124,20 @@ class queryContext {
         if(isset($getContext['pctGoodRangeEnabled'])){
             if(strcmp($getContext['pctGoodRangeEnabled'], 'on') ==0 ) {
                 $this->percentGoodRangeEnabled = true;
-                $this->percentGoodRange = trim($getContext['pctGoodRange']);
+
+                $val =  trim($getContext['pctGoodRange']);
+                $valArray = explode(":", $val);
+                if(count($valArray) == 2){
+                    $this->percentGoodMin = $valArray[0];
+                    $this->percentGoodMax = $valArray[1];
+                    $this->percentGoodRange = null;
+                } else if(count($valArray) == 1) {
+                    $this->percentGoodMin = null;
+                    $this->percentGoodMax = null;
+                    $this->percentGoodRange = $valArray[0];
+                } else {
+                    error_log("Unexpected query value for pctGoodRange");
+                }
             }
         }
 
@@ -140,7 +184,20 @@ class queryContext {
         if(isset($getContext['limitTcadScores'])){
             if(strcmp($getContext['limitTcadScores'], 'on') ==0 ) {
                 $this->limitTcadScores = true;
-                $this->limitTcadScoresAmount = trim($getContext['$limitTcadScoresAmount']);
+
+                $val =  trim($getContext['limitTcadScoresAmount']);
+                $valArray = explode(":", $val);
+                if(count($valArray) == 2){
+                    $this->tcadScoreLimitMin = $valArray[0];
+                    $this->tcadScoreLimitMax = $valArray[1];
+                    $this->limitTcadScoresAmount = null;
+                } else if(count($valArray) == 1) {
+                    $this->tcadScoreLimitMin = null;
+                    $this->tcadScoreLimitMax = null;
+                    $this->limitTcadScoresAmount = $valArray[0];
+                } else {
+                    error_log("Unexpected query value for limitTcadScoresAmount");
+                }
             } else {
                 $this->limitTcadScores = false;
             }
@@ -166,6 +223,6 @@ class queryContext {
                 break;
             }
         }
-        
+
     }
 }

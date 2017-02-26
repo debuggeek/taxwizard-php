@@ -6,8 +6,8 @@ border-bottom: .5em solid #004376;
 margin: 0;
 padding: 0;
 }
-#tabs li { 
-display:inline; 
+#tabs li {
+display:inline;
 border-top: .1em solid #004376;
 border-left: .1em solid #004376;
 border-right: .1em solid #004376;
@@ -22,4 +22,21 @@ color: #000;
 padding: 0.25em 1em;
 background-color: #004376;
 color: #fff;
+}
+
+#contentBox {
+    margin:0px auto;
+    width:95%;
+}
+
+#column1{
+  float:left;
+  margin:0;
+  width:50%;
+}
+
+#column2{
+  float:left;
+  margin:0;
+  width:50%;
 }

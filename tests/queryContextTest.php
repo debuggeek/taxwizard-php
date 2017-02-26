@@ -73,4 +73,110 @@ class queryContextTest extends PHPUnit_Framework_TestCase
 
         var_dump($queryContext);
     }
+
+    public function testParseQueryString_sqft(){
+        $_GET = [
+          'sqftPct'=>'10'
+        ];
+
+        $queryContext = new queryContext();
+        $queryContext->parseQueryString($_GET);
+
+        $this->assertEquals(10, $queryContext->sqftPercent);
+        $this->assertEquals(null, $queryContext->sqftRangeMin);
+        $this->assertEquals(null, $queryContext->sqftRangeMax);
+        var_dump($queryContext);
+    }
+
+    public function testParseQueryString_sqftMinMax(){
+        $_GET = [
+            'sqftPct'=>'1000:3000'
+        ];
+
+        $queryContext = new queryContext();
+        $queryContext->parseQueryString($_GET);
+
+        $this->assertEquals(null, $queryContext->sqftPercent);
+        $this->assertEquals(1000, $queryContext->sqftRangeMin);
+        $this->assertEquals(3000, $queryContext->sqftRangeMax);
+        var_dump($queryContext);
+    }
+
+    public function testParseQueryString_tcad(){
+        $_GET = [
+            'limitTcadScores'=>'off'
+        ];
+        $queryContext = new queryContext();
+        $queryContext->parseQueryString($_GET);
+
+        $this->assertEquals(false, $queryContext->limitTcadScores);
+
+        $_GET2 = [
+            'limitTcadScores'=>'on',
+            'limitTcadScoresAmount'=>'50'
+        ];
+
+        $queryContext = new queryContext();
+        $queryContext->parseQueryString($_GET2);
+
+        $this->assertEquals(true, $queryContext->limitTcadScores);
+        $this->assertEquals(50, $queryContext->limitTcadScoresAmount);
+        $this->assertEquals(null, $queryContext->tcadScoreLimitMin);
+        $this->assertEquals(null, $queryContext->tcadScoreLimitMax);
+        var_dump($queryContext);
+    }
+
+    public function testParseQueryString_tcadMinMax(){
+        $_GET = [
+            'limitTcadScores'=>'on',
+            'limitTcadScoresAmount'=>'90:95'
+        ];
+
+        $queryContext = new queryContext();
+        $queryContext->parseQueryString($_GET);
+
+        $this->assertEquals(true, $queryContext->limitTcadScores);
+        $this->assertEquals(null, $queryContext->limitTcadScoresAmount);
+        $this->assertEquals(90, $queryContext->tcadScoreLimitMin);
+        $this->assertEquals(95, $queryContext->tcadScoreLimitMax);
+        var_dump($queryContext);
+    }
+
+    public function testParseQueryString_pctGood(){
+        $_GET = [
+            'pctGoodRangeEnabled'=>'off'
+        ];
+        $queryContext = new queryContext();
+        $queryContext->parseQueryString($_GET);
+
+        $this->assertEquals(false, $queryContext->percentGoodRangeEnabled);
+
+        $_GET2 = [
+            'pctGoodRangeEnabled'=>'on',
+            'pctGoodRange'=>'2'
+        ];
+
+        $queryContext = new queryContext();
+        $queryContext->parseQueryString($_GET2);
+
+        $this->assertEquals(true, $queryContext->percentGoodRangeEnabled);
+        $this->assertEquals(2, $queryContext->percentGoodRange);
+        $this->assertEquals(null, $queryContext->percentGoodMin);
+        $this->assertEquals(null, $queryContext->percentGoodMax);
+        var_dump($queryContext);
+
+        $_GET3 = [
+            'pctGoodRangeEnabled'=>'on',
+            'pctGoodRange'=>'2:3'
+        ];
+
+        $queryContext = new queryContext();
+        $queryContext->parseQueryString($_GET3);
+
+        $this->assertEquals(true, $queryContext->percentGoodRangeEnabled);
+        $this->assertEquals(null, $queryContext->percentGoodRange);
+        $this->assertEquals(2, $queryContext->percentGoodMin);
+        $this->assertEquals(3, $queryContext->percentGoodMax);
+        var_dump($queryContext);
+    }
 }

@@ -32,6 +32,7 @@ if(isset($_GET["pdf"])){
     $multiPDF = $prop_pdfs["mPDF"];
     echo($multiPDF->Output($queryContext->subjPropId.'.pdf','I'));
 } else {
+    header('Content-Type: application/json');
     echo generateJsonRows($fullTable,$isEquityComp);
 }
 

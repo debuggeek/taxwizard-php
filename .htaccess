@@ -1,4 +1,10 @@
 Options +FollowSymLinks
+
+<IfModule mod_headers.c>
+ SetEnvIf Origin "http(s)?://(www\.)?(fs-react.s3-website-us-west-2.amazonaws.com|localhost:8080|domain3.net)$" AccessControlAllowOrigin=$0$1
+ Header add Access-Control-Allow-Origin %{AccessControlAllowOrigin}e env=AccessControlAllowOrigin
+</ifModule>
+
 #RewriteEngine On
 #RewriteBase /
 

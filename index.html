@@ -76,7 +76,7 @@
         }
     </script>
 
-    <p><strong>Enter a PropID to search for</strong></p>
+    <h3>Enter a PropID to search for</h3>
     <form name="form" action="resultSubjComps.html" method="get" target="_blank">
         <input type="text" name="propid" required>
         <input type="hidden" name="target" value="search"/>
@@ -84,35 +84,49 @@
     </form>
 
 
-    <p><strong>Enter a PropertyID to find best comps and generate the generate report</strong> (Note: This operation can
+    <h3>Enter a PropertyID to find best comps and generate the generate report</h3> (Note: This operation can
         take some time)</p>
     <form name="form" action="resultSubjComps.html" method="get" target="_blank" onsubmit="return validateForm()">
-        <input type="checkbox" name="trimindicated"> Only return properties with lower comparison values<br>
-        <input type="checkbox" name="includemls"> Include MLS data. Years back to include:<input type="text"
-                                                                                                 name="multiyear"
-                                                                                                 value="1" size="1"><br>
-        <input type="checkbox" name="multihood"> Include related neighborhoods<br>
-        <input type="checkbox" name="includevu"> Include forclosures (VU)<br>
-        <input type="checkbox" name="limitImps"> Limit comps to properties with fewer Improvements<br>
-        <input type="checkbox" name="showTcadScores"> Show TCAD Scores<br>
-        <input type="checkbox" name="netadjust"> Filter based on net adjustment value of
-        <input type="text" name="netAdjustAmt" value="30000" size="7"
-               title="Will include negative to postive range of provided value"><br>
-        <input type="checkbox" name="rangeEnabled">
-            Range of subclasses to include (amount above and below subject):
-        <input type="text" name="range" value="3" size="2">
-        <br>
-        <input type="checkbox" name="pctGoodRangeEnabled"> % Good Adjustment Range (amount above and below
-        subject):<input type="text" name="pctGoodRange" value="20" size="3">%<br>
-        <input type="checkbox" name="$limitTcadScores"> TCAD Score threshold:<input type="text" name="$limitTcadScoresAmount" value="90" size="3">%<br>
-        Number Results: <input type="text" name="display" value="35" size="3">
-        <input type="radio" name="style" value="equity"> Equity <input type="radio" name="style" value="sales" checked>
-        Sales <br>
-        Percent of square footage difference to consider:<input type="text" name="sqftPct" value="10" size="3"/>%<br>
+      <!-- <div class="form2Col"> -->
+      <div id="contentBox">
+        <div id="column1">
+          <h4><label class="searchFilterTitle">Search Filters</label><br></h4>
+          <input type="checkbox" name="trimindicated" class="searchFilter"> Only return properties with lower comparison values<br>
+          <input type="checkbox" name="includemls" class="searchFilter"> Include MLS data. Years back to include:<input type="text"
+                                                                                                   name="multiyear"
+                                                                                                   value="1" size="1"><br>
+          <input type="checkbox" name="multihood" class="searchFilter"> Include related neighborhoods<br>
+          <input type="checkbox" name="includevu"class="searchFilter"> Include forclosures (VU)<br>
+          <input type="checkbox" name="limitImps" class="searchFilter"> Limit comps to properties with fewer Improvements<br>
+          <input type="checkbox" name="netadjust" class="searchFilter"> Filter based on net adjustment value of
+          <input type="text" name="netAdjustAmt" value="30000" size="7" class="searchFilter"
+                 title="Will include negative to postive range of provided value"><br>
+          <input type="checkbox" name="rangeEnabled" class="searchFilter">
+              Range of subclasses to include (amount above and below subject):
+          <input type="text" name="range" value="3" size="2" >
+          <br>
+          <input type="checkbox" name="pctGoodRangeEnabled" class="searchFilter"> % Good Adjustment Range (amount above and below
+          subject):<input type="text" name="pctGoodRange" value="20" size="3">%<br>
+          <input type="checkbox" name="$limitTcadScores" class="searchFilter"> TCAD Score threshold:<input type="text" name="$limitTcadScoresAmount" value="90" size="3">%<br>
+          Number Results: <input type="text" name="display" value="35" size="3">
+          <input type="radio" name="style" value="equity"> Equity <input type="radio" name="style" value="sales" checked>
+          Sales <br>
+          Percent of square footage difference to consider:<input type="text" name="sqftPct" value="10" size="3"/>%<br>
+      </div>
+      <div id="column2">
+        <h4><label class="reportFilterTitle">Report Filters</label><br></h4>
+        <input type="checkbox" name="showTcadScores" class=reportFilter> Show TCAD Scores<br>
         <input type="hidden" name="target" value="massreport"/>
-        <input type="text" name="propid"><input type="submit" name="Submit" value="Generate Report"></form>
-    <br>
-    <strong>Table Generation</strong>
+      <!-- </div> -->
+      </div>
+    </div>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+      <input type="text" name="propid">
+      <input type="submit" name="Submit" value="Generate Report">
+    </form>
+  </div>
+  <br>
+    <h3>Table Generation</h3>
     <form action="resultSubjComps.html" method="get" target="_blank">
         <div id="subj">Subject:<br>
             <input type="text" name="propid" id="propid"></div>
