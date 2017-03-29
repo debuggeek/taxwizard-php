@@ -96,15 +96,15 @@ function createGenericTable($subjcomparray, $isEquityComp){
 			else
 			{
 				if($j==0) {//Description column
-					echo "\t\t<th>".$relaventfields[$i-1][0]."</th>".PHP_EOL;
+					echo "\t\t<th>".$relaventfields[$i-1][1]."</th>".PHP_EOL;
 				}
 				//Check for the GlobalCAlculated fields in the subj column
-				if($j ==0 && strcmp($relaventfields[$i-1][1],'GLOBALCALCULATED') == 0)
+				if($j ==0 && strcmp($relaventfields[$i-1][2],'GLOBALCALCULATED') == 0)
 				{
-					$currval = $_SESSION[$relaventfields[$i-1][0]];
+					$currval = $_SESSION[$relaventfields[$i-1][1]];
 				}
 				else {
-					$currval = $data->getFieldByName($relaventfields[$i - 1][0]);
+					$currval = $data->getFieldByName($relaventfields[$i - 1]["NAME"]);
 				}
 				if($currval === NULL)
 				{
@@ -119,7 +119,7 @@ function createGenericTable($subjcomparray, $isEquityComp){
 //				}
 				else
 				{
-					$class = $relaventfields[$i-1][0];
+					$class = $relaventfields[$i-1]["NAME"];
 					$trimmedclass = str_replace(" ","",$class);
 
 					if(($multiRowField = hasMultiRow($class)) != NULL){
@@ -355,17 +355,17 @@ function generateJsonRows($fullTable, $isEquityComp = true){
 
 	$roundtwo = array();
 	foreach($relaventfields as $field){
-		if($field[1] == "GLOBALCALCULATED"){
+		if($field[2] == "GLOBALCALCULATED"){
 			$roundtwo[] = $field;
-		} else if($field[0] !== $SEGMENTSADJ[0]) {
+		} else if($field["NAME"] !== $SEGMENTSADJ["NAME"]) {
 			$currRow = array();
-			$currRow['description'] = $field[0];
+			$currRow['description'] = $field["STRING"];
 			for ($i = 0; $i < count($subjcomparray); $i++) {
 				/* @var propertyClass $prop */
 				$prop = $subjcomparray[$i];
 				$currCol = 'col' . ($i + 1);
-				if (!hasDelta($field[0])) {
-					$currRow[$currCol] = $prop->getFieldByName($field[0]);
+				if (!hasDelta($field["NAME"])) {
+					$currRow[$currCol] = $prop->getFieldByName($field["NAME"]);
 				} else {
 					$currRow[$currCol] = populateDeltaObj($prop, $field);
 				}
@@ -383,7 +383,7 @@ function generateJsonRows($fullTable, $isEquityComp = true){
 
 	foreach($roundtwo as $field){
 		$currRow = array();
-		$currRow['description'] = $field[0];
+		$currRow['description'] = $field["NAME"];
 		for ($i = 0; $i < count($subjcomparray); $i++) {
 			$currCol = 'col' . ($i + 1);
 			if($currCol == 'col1') {
@@ -518,9 +518,9 @@ function populateSegObj($improvement){
  * @return stdClass with value and delta populated
  */
 function populateDeltaObj($prop, $field){
-	$delta = hasDelta($field[0]);
+	$delta = hasDelta($field["NAME"]);
 	$deltaObj = new stdClass();
-	$deltaObj->value = $prop->getFieldByName($field[0]);
+	$deltaObj->value = $prop->getFieldByName($field["NAME"]);
 	$deltaObj->delta = $prop->getFieldByName($delta);
 	return $deltaObj;
 }

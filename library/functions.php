@@ -181,7 +181,7 @@ function getSaleDate($propid)
 	$year = date("Y");
 	$lastyear = $year -1;
 	
-	$query="SELECT $SALEDATE[2] FROM ". $TABLE_SALES_MERGED  . " WHERE prop_id=$propid AND (sale_date LIKE '%$year%' OR sale_date LIKE '%$lastyear%')";
+	$query="SELECT $SALEDATE[3] FROM ". $TABLE_SALES_MERGED  . " WHERE prop_id=$propid AND (sale_date LIKE '%$year%' OR sale_date LIKE '%$lastyear%')";
 
 	$result=doSqlQuery($query);
 	$num=mysqli_num_rows($result);
@@ -190,7 +190,7 @@ function getSaleDate($propid)
 	return "No Record Found";
 
 	$row = mysqli_fetch_array($result);
-	return $row[$SALEDATE[2]];
+	return $row[$SALEDATE[3]];
 }
 
 /**
@@ -206,7 +206,7 @@ function getSalePrice($propid)
 	$year = date("Y");
 	$lastyear = $year -1;
 
-	$query="SELECT $SALEPRICE[2] FROM ". $TABLE_SALES_MERGED . " WHERE prop_id=$propid AND (sale_date LIKE '%$year%' OR sale_date LIKE '%$lastyear%')";
+	$query="SELECT $SALEPRICE[3] FROM ". $TABLE_SALES_MERGED . " WHERE prop_id=$propid AND (sale_date LIKE '%$year%' OR sale_date LIKE '%$lastyear%')";
 
 	//echo $query;
 	$result=doSqlQuery($query);
@@ -221,7 +221,7 @@ function getSalePrice($propid)
 	}
 
 	$row = mysqli_fetch_array($result);
-	return $row[$SALEPRICE[2]];
+	return $row[$SALEPRICE[3]];
 }
 
 function setSaleInfo(propertyClass $compid,$prevyear,$instance=0,$compTable = null)
@@ -262,17 +262,17 @@ function setSaleInfo(propertyClass $compid,$prevyear,$instance=0,$compTable = nu
 	while($row = mysqli_fetch_array($result)){
         if($rowNum == $instance){
             if($tmpsalePrice === null){
-                $tmpsalePrice = $row[$SALEPRICE[2]];
-                $tmpsaleDate = $row[$SALEDATE[2]];
-                $tmpsaleSource = $row[$SALESOURCE[2]];
-                $tmpSaleType = $row[$SALETYPE[2]];
+                $tmpsalePrice = $row[$SALEPRICE["FIELD"]];
+                $tmpsaleDate = $row[$SALEDATE["FIELD"]];
+                $tmpsaleSource = $row[$SALESOURCE["FIELD"]];
+                $tmpSaleType = $row[$SALETYPE["FIELD"]];
             }
             else{
-                if($tmpsalePrice== 0 || ($row[$SALEPRICE[2]] > 0 && $row[$SALEPRICE[2]] < $tmpsalePrice)){
-                    $tmpsalePrice = $row[$SALEPRICE[2]];
-                    $tmpsaleDate = $row[$SALEDATE[2]];
-                    $tmpsaleSource = $row[$SALESOURCE[2]];
-                    $tmpSaleType = $row[$SALETYPE[2]];
+                if($tmpsalePrice== 0 || ($row[$SALEPRICE["FIELD"]] > 0 && $row[$SALEPRICE["FIELD"]] < $tmpsalePrice)){
+                    $tmpsalePrice = $row[$SALEPRICE["FIELD"]];
+                    $tmpsaleDate = $row[$SALEDATE["FIELD"]];
+                    $tmpsaleSource = $row[$SALESOURCE["FIELD"]];
+                    $tmpSaleType = $row[$SALETYPE["FIELD"]];
                 }
             }
         }
@@ -328,7 +328,7 @@ function getHVImpMARCNwImp($propid,$primeImpId)
 		$subquery .= " OR ";
 	}
 
-	$query = "SELECT $HIGHVALIMPMARCN[2] FROM IMP_DET, SPECIAL_IMP
+	$query = "SELECT $HIGHVALIMPMARCN[3] FROM IMP_DET, SPECIAL_IMP
 		WHERE IMP_DET.prop_id='$propid'
 		AND ( " . $subquery . ")
 		AND imprv_det_id = det_id
@@ -349,7 +349,7 @@ function getHVImpMARCNwImp($propid,$primeImpId)
 
 	while($row = mysqli_fetch_array($result))
 	{
-		$value += $row[$HIGHVALIMPMARCN[2]];
+		$value += $row[$HIGHVALIMPMARCN[3]];
 	}
 	return $value;
 
@@ -384,7 +384,7 @@ function getYearBuilt($propid)
 	$value=0;
 
 	$row = mysqli_fetch_array($result);
-	return $row[$ACTUALYEARBUILT[2]];
+	return $row[$ACTUALYEARBUILT[3]];
 }
 
 function getLandValAdjDelta($subj,$comp)
@@ -404,9 +404,9 @@ function getLandValAdjDelta($subj,$comp)
 function getLASizeAdjDelta($subj,$comp)
 {
 	global $LASIZEADJ,$HIGHVALIMPMARCNSQFT;
-	$var1 = $subj[$LASIZEADJ[2]];
-	$var2 = $comp[$LASIZEADJ[2]];
-	$var3 = $subj[$HIGHVALIMPMARCNSQFT[2]];
+	$var1 = $subj[$LASIZEADJ[3]];
+	$var2 = $comp[$LASIZEADJ[3]];
+	$var3 = $subj[$HIGHVALIMPMARCNSQFT[3]];
 	$constvar = .65;
 	error_log("getLASizeAdjDelta: (".$var1."-".$var2.")*".$var3."*.65");
 	return ($var1-$var2)*$var3*$constvar;
@@ -417,8 +417,8 @@ function getHVImpSqftDiff($subj,$comp)
 {
 	global $LASIZEADJ;
 
-	$var1 = $subj[$LASIZEADJ[2]];
-	$var2 = $comp[$LASIZEADJ[2]];
+	$var1 = $subj[$LASIZEADJ[3]];
+	$var2 = $comp[$LASIZEADJ[3]];
 
 	return ($var1-$var2);
 
@@ -433,17 +433,17 @@ function hasDelta($class){
 	
 	switch($class)
 	{
-		case($LANDVALUEADJ[0]):
+		case($LANDVALUEADJ["NAME"]):
 			return $landvaladjdelta;
-		case($CLASSADJ[0]):
+		case($CLASSADJ["NAME"]):
 			return $classadjdelta;
-		case($GOODADJ[0]):
+		case($GOODADJ["NAME"]):
 			return $goodadjdelta;
-		case($LASIZEADJ[0]):
+		case($LASIZEADJ["NAME"]):
 			return $lasizeadjdelta;
-		case($MKTLEVELERDETAILADJ[0]):
+		case($MKTLEVELERDETAILADJ["NAME"]):
 			return $mktlevelerdetailadjdelta;
-		case($SEGMENTSADJ[0]):
+		case($SEGMENTSADJ["NAME"]):
 			return $segmentsadjdelta;
 		default:
 			return false;
@@ -458,7 +458,7 @@ function hasMultiRow($class){
 
 	switch($class)
 	{
-		case($SEGMENTSADJ[0]):
+		case($SEGMENTSADJ["NAME"]):
 			return $segmentsadjMultiRow;
 		default:
 			return NULL;
@@ -503,7 +503,7 @@ function lookupProperty($propid)
 			}
 			foreach($fieldsofinteresteq as $field)
 			{
-				if($debug) echo "field is " . $field[0] . " " . $field[2] ."<br/>";
+				if($debug) echo "field is " . $field["NAME"] . " " . $field[2] ."<br/>";
 				// Situs is an array field example
 				if(is_array($field[2]))
 				{
@@ -517,13 +517,13 @@ function lookupProperty($propid)
 							$concatvar .= trim($row[$element]) . " ";
 						if($debug) echo "concatvar is " . $concatvar . "<br/>";
 					}
-					//$data[$dataindex][$field[0]] = $concatvar;
-					$currprop->setField($field[0],$concatvar);
+					//$data[$dataindex][$field["NAME"]] = $concatvar;
+					$currprop->setField($field["NAME"],$concatvar);
 				}
 				elseif((strncmp('-',$field[2],1) == 0))
 				{
-					//$data[$dataindex][$field[0]] = substr($field[2],1);
-					$currprop->setField($field[0],substr($field[2],1));
+					//$data[$dataindex][$field["NAME"]] = substr($field[2],1);
+					$currprop->setField($field["NAME"],substr($field[2],1));
 				}
 				elseif((strncmp("CALCULATED",$field[1],10) == 0))
 				{
@@ -531,36 +531,36 @@ function lookupProperty($propid)
 				}
 				elseif($field === NULL)
 				{
-					$currprop->setField($field[0],NULL);
+					$currprop->setField($field["NAME"],NULL);
 				}
-				elseif($field[1] == "TABLELOOKUP") // NEED ANOTHER TABLE LOOKUP
+				elseif($field[2] == "TABLELOOKUP") // NEED ANOTHER TABLE LOOKUP
 				{
-					$currprop->setField($field[0], tablelookup($currprop->getPropID(),$field[0]));
+					$currprop->setField($field["NAME"], tablelookup($currprop->getPropID(),$field["NAME"]));
 				}
-				elseif($field[1] == "GLOBALCALCULATED")
+				elseif($field[2] == "GLOBALCALCULATED")
 				{
 					//NOOP for now
 				}
-				elseif ($field[1] != 'PROP')
+				elseif ($field[2] != 'PROP')
 				{
-					//$data[$dataindex][$field[0]] 
-					$currprop->setField($field[0], 'TBD');
+					//$data[$dataindex][$field["NAME"]]
+					$currprop->setField($field["NAME"], 'TBD');
 				}
 				else
 				{//Must be dealing with a field in PROP table
-					if($field[0] == $LANDVALUEADJ[0])
+					if($field["NAME"] == $LANDVALUEADJ["NAME"])
 					{
 						if(($row[$field[2]] == 0) &&
 						   ($row[$LANDVALUEADJB[2]] != 0))
-						   $currprop->setField($field[0],$row[$LANDVALUEADJB[2]]);
+						   $currprop->setField($field["NAME"],$row[$LANDVALUEADJB[2]]);
 						else
-						   $currprop->setField($field[0],$row[$field[2]]);
+						   $currprop->setField($field["NAME"],$row[$field[2]]);
 					}
 					else
-						$currprop->setField($field[0],$row[$field[2]]);
+						$currprop->setField($field["NAME"],$row[$field[2]]);
 				}
 				if(strcmp($currprop->getPropID(),$_SESSION['subjsess']->getPropID()) != 0 && 
-				   ($delta = hasDelta($field[0])) != NULL)
+				   ($delta = hasDelta($field["NAME"])) != NULL)
 				   {
 				   	$func = "set".$delta;
 				   	$currprop->$func($_SESSION['subjsess']);
@@ -569,13 +569,13 @@ function lookupProperty($propid)
 			
 			foreach($postcalcfields as $field)
 			{
-				$currprop->setField($field[0],$currprop->$field[2]($_SESSION['subjsess']));
+				$currprop->setField($field["NAME"],$currprop->$field[2]($_SESSION['subjsess']));
 			}
 			//Time for subj/comp compared calculation
 			if($currprop != $_SESSION['subjsess']){
-				$currprop->$NETADJ[2]();
-				$currprop->$INDICATEDVAL[2]();
-				$currprop->$INDICATEDVALSQFT[2]();
+				$currprop->$NETADJ[3]();
+				$currprop->$INDICATEDVAL[3]();
+				$currprop->$INDICATEDVALSQFT[3]();
 			}
 		}
 		
@@ -627,10 +627,13 @@ function getSubjProperty($propid){
  */
 function getProperty($propid, $newMethod=true)
 {
+    $debug=false;
+
 	if($newMethod){
 		global $servername,$username,$password,$database,$dbport;
 		$propDao = new PropertyDAO($servername, $username, $password, $database);
         $currprop = $propDao->getPropertyById($propid);
+        if($debug) error_log("getProperty: currProp="+var_dump($currprop));
         $currprop->setisSubj(false);
 		return $currprop;
 	} else {
@@ -646,7 +649,7 @@ function getProperty($propid, $newMethod=true)
  * @return Ambigous <propertyClass[], multitype:propertyClass >
  */
 function getHoodList($hood, queryContext $queryContext){
-	global $TABLE_SALES_MERGED,$NEIGHB,$PROPID, $debugquery;
+	global $NEIGHB, $debugquery;
 
 	$year = date("Y");
 	$hoodSearch = $NEIGHB["HOOD"] ."='$hood'";
@@ -674,21 +677,24 @@ function findBestComps(propertyClass $subjprop, queryContext $queryContext)
 	global $NEIGHB,$LIVINGAREA,$PROPID,$debug,$isEquityComp;
     $compsarray = array();
 
+//    $debug=true;
+
 	//set global correctly, cuz prop_class uses this
 	$isEquityComp = $queryContext->isEquityComp;
 
+    if($debug) error_log("findBestComps Start Memory >> ". memory_get_usage() . "\n");
+    if($debug) error_log("findBestComps subj: " . var_dump($subjprop));
+
+    if($debug) error_log($subjprop->getFieldByName($LIVINGAREA["NAME"]));
 
     //Now that we have all comps we only want ones where the sqft / LA is within 25%
-    $subjsqft = $subjprop->getFieldByName($LIVINGAREA[0]);
+    $subjsqft = $subjprop->getFieldByName($LIVINGAREA["NAME"]);
     if($subjsqft == 0){
         error_log("findBestComps: subject sqft == 0 exiting");
         return $compsarray;
     }
 
-
-    if($debug) error_log("findBestComps Start Memory >> ". memory_get_usage() . "\n");
-	if($debug) echo "<br/>subj: " . var_dump($subjprop) . "<br/>";
-	$comps = getHoodList($subjprop->getFieldByName($NEIGHB[0]),$queryContext);
+	$comps = getHoodList($subjprop->getFieldByName($NEIGHB["NAME"]),$queryContext);
 
     //Track for duplicates
     $compsSeen = array();
@@ -736,7 +742,7 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
         return false;
     }
 
-    $subjsqft = $subjprop->getFieldByName($LIVINGAREA[0]);
+    $subjsqft = $subjprop->getFieldByName($LIVINGAREA["NAME"]);
 	//sqftPercent is stored as int so convert to percentage
     if($queryContext->sqftPercent != null) {
         $percentAllowed = $queryContext->sqftPercent * .01;
@@ -747,7 +753,7 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
         $max = $queryContext->sqftRangeMax;
     }
 
-    $sqft = $c->getFieldByName($LIVINGAREA[0]);
+    $sqft = $c->getFieldByName($LIVINGAREA["NAME"]);
 
     if ($sqft < $min || $sqft > $max) {
         if ($queryContext->traceComps) error_log("addToCompsArray: " . $c->getPropID() . " removed as potential comp due to size min=" . $min . " max=" . $max . " size=" . $sqft);

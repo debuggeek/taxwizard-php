@@ -614,7 +614,7 @@ class propertyClass
      */
     function setField($fieldConst, $value)
     {
-        global $PROPID, $GEOID, $SITUS, $NEIGHB, $OWNER, $NEIGHBMIA, $MARKETVALUE, $LIVINGAREA, $SALEDATE, $SALEPRICE, $SALESOURCE,
+        global $PROPID, $GEOID, $SITUS, $NEIGHB, $OWNER, $NEIGHBMIA, $MARKETVALUE, $LIVINGAREA, $SALEDATE, $SALEPRICE, $SALESOURCE, $SALETYPE,
                $IMPROVEMENTCNT, $HIGHVALIMPMARCN, $COMPLETE, $LANDVALUEADJ, $CLASSADJ, $ACTUALYEARBUILT,
                $GOODADJ, $LASIZEADJ, $MKTLEVELERDETAILADJ, $SEGMENTSADJ;
 
@@ -626,67 +626,70 @@ class propertyClass
             $value = trim($value);
         }
         switch ($fieldConst) {
-            case($PROPID[0]):
+            case($PROPID["NAME"]):
                 $this->propId = $value;
                 break;
-            case($GEOID[0]):
+            case($GEOID["NAME"]):
                 $this->mGeoID = $value;
                 break;
-            case($SITUS[0]):
+            case($SITUS["NAME"]):
                 $this->mSitus = $value;
                 break;
-            case($NEIGHB[0]):
+            case($NEIGHB["NAME"]):
                 $this->mNeighborhood = $value;
                 break;
-            case($NEIGHBMIA[0]):
+            case($NEIGHBMIA["NAME"]):
                 $this->mHoodMIA = $value;
                 break;
-            case($OWNER[0]):
+            case($OWNER["NAME"]):
                 $this->mOwner = $value;
                 break;
-            case($MARKETVALUE[0]):
+            case($MARKETVALUE["NAME"]):
                 $this->mMarketVal = $value;
                 break;
-            case($LIVINGAREA[0]):
+            case($LIVINGAREA["NAME"]):
                 $this->mLivingArea = $value;
                 break;
-            case($SALEDATE[0]):
+            case($SALEDATE["NAME"]):
                 $this->mSaleDate = $value;
                 break;
-            case($SALEPRICE[0]):
+            case($SALEPRICE["NAME"]):
                 $this->mSalePrice = $value;
                 break;
-            case($SALESOURCE[0]):
+            case($SALESOURCE["NAME"]):
                 $this->mSaleSource = $value;
                 break;
-            case($IMPROVEMENTCNT[0]):
+            case($SALETYPE["NAME"]):
+                $this->mSaleType = $value;
+                break;
+            case($IMPROVEMENTCNT["NAME"]):
                 $this->mImprovCount = $value;
                 break;
-            case($HIGHVALIMPMARCN[0]):
+            case($HIGHVALIMPMARCN["NAME"]):
                 $this->mHighValImpMARCN = $value;
                 break;
-            case($COMPLETE[0]):
+            case($COMPLETE["NAME"]):
                 $this->mPercentComp = $value;
                 break;
-            case($LANDVALUEADJ[0]):
+            case($LANDVALUEADJ["NAME"]):
                 $this->mLandValAdj = $value;
                 break;
-            case($CLASSADJ[0]):
+            case($CLASSADJ["NAME"]):
                 $this->classAdj = $value[0].$value[1];
                 break;
-            case($ACTUALYEARBUILT[0]):
+            case($ACTUALYEARBUILT["NAME"]):
                 $this->mYearBuilt = $value;
                 break;
-            case($GOODADJ[0]):
+            case($GOODADJ["NAME"]):
                 $this->mGoodAdj = $value;
                 break;
-            case($LASIZEADJ[0]):
+            case($LASIZEADJ["NAME"]):
                 $this->mLASizeAdj = $value;
                 break;
-            case($MKTLEVELERDETAILADJ[0]):
+            case($MKTLEVELERDETAILADJ["NAME"]):
                 $this->mMktLevelerDetailAdj = $value;
                 break;
-            case($SEGMENTSADJ[0]):
+            case($SEGMENTSADJ["NAME"]):
 //				if($value != 0)
                 $this->mSegAdj = $value;
 //				else
@@ -705,7 +708,7 @@ class propertyClass
     function getFieldByName($field)
     {
         global $PROPID, $GEOID, $SITUS, $NEIGHB, $OWNER, $NEIGHBMIA, $MARKETVALUE, $MARKETPRICESQFT,
-               $LIVINGAREA, $SALEDATE, $SALEPRICE, $SALEPRICESQFT,
+               $LIVINGAREA, $SALEDATE, $SALEPRICE, $SALEPRICESQFT, $SALERATIO, $SALETYPEANDCONF, $SALETYPE,
                $IMPROVEMENTCNT, $HIGHVALIMPMARCN, $HIGHVALIMPMARCNSQFT, $COMPLETE,
                $LANDVALUEADJ, $CLASSADJ, $ACTUALYEARBUILT, $GOODADJ, $LASIZEADJ, $HIGHVALIMPMASQFTDIFF, $MKTLEVELERDETAILADJ, $SEGMENTSADJ,
                $NETADJ, $INDICATEDVAL, $INDICATEDVALSQFT, $MEANVAL, $MEANVALSQFT, $MEDIANVAL, $MEDIANVALSQFT,
@@ -714,59 +717,67 @@ class propertyClass
         global $landvaladjdelta, $classadjdelta, $goodadjdelta, $lasizeadjdelta, $mktlevelerdetailadjdelta,
                $segmentsadjdelta, $segmentsadjMultiRow;
 
-        if ($field === NULL)
+        if ($field === NULL){
+            error_log("getFieldByName: null field passed in");
             return;
+        }
 
         switch ($field) {
-            case($PROPID[0]):
+            case($PROPID["NAME"]):
                 return $this->propId;
-            case($GEOID[0]):
+            case($GEOID["NAME"]):
                 return $this->mGeoID;
-            case($SITUS[0]):
+            case($SITUS["NAME"]):
                 return $this->getSitus();
-            case($NEIGHB[0]):
+            case($NEIGHB["NAME"]):
                 return $this->mNeighborhood;
-            case($NEIGHBMIA[0]):
+            case($NEIGHBMIA["NAME"]):
                 return "0.00%";//$this->mHoodMIA;
-            case($OWNER[0]):
+            case($OWNER["NAME"]):
                 return $this->mOwner;
-            case($MARKETVALUE[0]):
+            case($MARKETVALUE["NAME"]):
                 return number_format($this->mMarketVal);
-            case($MARKETPRICESQFT[0]):
+            case($MARKETPRICESQFT["NAME"]):
                 return number_format($this->getMrktSqft(), 2);
-            case($LIVINGAREA[0]):
-                return $this->mLivingArea; //($this->mLivingArea);
-            case($SALEDATE[0]):
+            case($LIVINGAREA["NAME"]):
+                return $this->getLivingArea();
+            case($SALEDATE["NAME"]):
                 if (isNotMLS($this))
                     return $this->mSaleDate;
                 else
                     return $this->mSaleDate . "_";
-            case($SALEPRICE[0]):
+            case($SALEPRICE["NAME"]):
                 if (isFlaggableSaleType($this))
                     return $this->mSalePrice . ".";
                 else
                     return $this->mSalePrice;
-            case($SALEPRICESQFT[0]):
+            case($SALEPRICESQFT["NAME"]):
                 return number_format($this->getSalePerSQFT());
-            case($IMPROVEMENTCNT[0]):
+            case($SALERATIO["NAME"]):
+                return number_format($this->getSaleRatio(), 4);
+            case($SALETYPE["NAME"]):
+                return $this->getSaleType();
+            case($SALETYPEANDCONF["NAME"]):
+                return $this->getSaleTypeAndConf();
+            case($IMPROVEMENTCNT["NAME"]):
                 return $this->mImprovCount;
-            case($HIGHVALIMPMARCN[0]):
+            case($HIGHVALIMPMARCN["NAME"]):
                 return number_format($this->mHighValImpMARCN);
-            case($HIGHVALIMPMARCNSQFT[0]):
+            case($HIGHVALIMPMARCNSQFT["NAME"]):
                 return number_format($this->getHVImpMARCNPerSQFT(), 2);
-            case($COMPLETE[0]):
+            case($COMPLETE["NAME"]):
                 return $this->mPercentComp;
-            case($LANDVALUEADJ[0]):
+            case($LANDVALUEADJ["NAME"]):
                 return $this->mLandValAdj;
             case($landvaladjdelta):
                 return number_format($this->mLandValAdjDelta);
-            case($CLASSADJ[0]):
+            case($CLASSADJ["NAME"]):
                 return $this->getClassAdj();
             case($classadjdelta):
                 return number_format($this->classAdjDelta);
-            case($ACTUALYEARBUILT[0]):
+            case($ACTUALYEARBUILT["NAME"]):
                 return $this->mYearBuilt;
-            case($GOODADJ[0]):
+            case($GOODADJ["NAME"]):
                 if ($this->mSubj) {
                     $year = date("Y");
                     if ($this->mYearBuilt <= ($year - 25)) {
@@ -778,41 +789,41 @@ class propertyClass
                 return $this->mGoodAdj;
             case($goodadjdelta):
                 return number_format($this->mGoodAdjDelta);
-            case($LASIZEADJ[0]):
+            case($LASIZEADJ["NAME"]):
                 return $this->mLASizeAdj;
             case($lasizeadjdelta):
                 return number_format($this->mLASizeAdjDelta);
-            case($HIGHVALIMPMASQFTDIFF[0]):
+            case($HIGHVALIMPMASQFTDIFF["NAME"]):
                 return $this->mHVImpSqftDiff;
-            case($MKTLEVELERDETAILADJ[0]):
+            case($MKTLEVELERDETAILADJ["NAME"]):
                 return number_format($this->mMktLevelerDetailAdj);
             case($mktlevelerdetailadjdelta):
                 return number_format($this->mMktLevelerDetailAdjDelta);
-            case($SEGMENTSADJ[0]):
+            case($SEGMENTSADJ["NAME"]):
                 return $this->mSegAdj;
             case($segmentsadjMultiRow):
                 return $this->getImpDets();
-            case($NETADJ[0]):
+            case($NETADJ["NAME"]):
                 return number_format($this->mNetAdj);
-            case($INDICATEDVAL[0]):
+            case($INDICATEDVAL["NAME"]):
                 return number_format($this->getIndicatedVal());
-            case($INDICATEDVALSQFT[0]):
+            case($INDICATEDVALSQFT["NAME"]):
                 return number_format($this->getIndicatedValSqft(), 2);
-            case($MEANVAL[0]):
+            case($MEANVAL["NAME"]):
                 return number_format($this->mMeanVal);
-            case($MEANVALSQFT[0]):
+            case($MEANVALSQFT["NAME"]):
                 return number_format($this->getMeanValSqft(), 2);
-            case($MEDIANVAL[0]):
+            case($MEDIANVAL["NAME"]):
                 return number_format($this->mMedianVal);
-            case($MEDIANVALSQFT[0]):
+            case($MEDIANVALSQFT["NAME"]):
                 return number_format($this->getMedianValSqft(), 2);
             case($segmentsadjdelta):
                 return number_format($this->mSegAdjDelta);
-            case($TCADSCORE[0]):
+            case($TCADSCORE["NAME"]):
                 $tcadScore = $this->getTcadScore();
                 return $tcadScore === null ? null : $tcadScore->getScore();
             default:
-                return "ERROR: UKNOWN field on get:" . $field . PHP_EOL;
+                return "ERROR: UNKNOWN field on get:" . $field . PHP_EOL;
         }
     }
 
@@ -832,6 +843,15 @@ class propertyClass
         return $this->mSalePrice / $this->mLivingArea;
     }
 
+    function getSaleRatio(){
+        if($this->getSalePrice() > 0) {
+            return $this->getMarketVal() / $this->getSalePrice();
+        }
+    }
+
+    function getSaleTypeAndConf(){
+        return $this->getSaleType();
+    }
     /**
      * @return array
      */
@@ -1218,7 +1238,7 @@ class propertyClass
     /**
      * @return mixed
      */
-    public function getMSaleType()
+    public function getSaleType()
     {
         return $this->mSaleType;
     }
@@ -1226,7 +1246,7 @@ class propertyClass
     /**
      * @param mixed $mSaleType
      */
-    public function setMSaleType($mSaleType)
+    public function setSaleType($mSaleType)
     {
         $this->mSaleType = $mSaleType;
     }

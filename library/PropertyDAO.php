@@ -220,6 +220,8 @@ class PropertyDAO{
      }
 
     protected function getHoodPropsSales($hood, $queryContext){
+        $debug = false;
+
         if($queryContext->multiHood) {
             $hoodToUse = substr($hood, 0, -2);
             $hoodQuery =  " WHERE hood_cd LIKE '".$hoodToUse."%'";
@@ -238,8 +240,9 @@ class PropertyDAO{
         $query="SELECT p.prop_id as prop_id, "
             . "s.sale_price as sale_price, "
             . "s.source as source, "
-            . "s.sale_date as sale_date"
-            . " FROM PROP as p, SALES_MLS_MERGED as s"
+            . "s.sale_date as sale_date, "
+            . "s.sale_type as sale_type "
+            . "FROM PROP as p, SALES_MLS_MERGED as s"
             . $hoodQuery
             . $years
             . " AND s.sale_price>0 "
@@ -253,10 +256,16 @@ class PropertyDAO{
                 $currProp->setSalePrice($row['sale_price']);
                 $currProp->mSaleDate = $row['sale_date'];
                 $currProp->setSaleSource($row['source']);
+                if($row['sale_type'] === null && $currProp->getSaleSource() === 'MLS'){
+                    $currProp->setSaleType('mls');
+                } else {
+                    $currProp->setSaleType($row['sale_type']);
+                }
                 $properties[] = $currProp;
             }
         }
 
+        if($debug) var_dump($properties);
         return $properties;
     }
 }

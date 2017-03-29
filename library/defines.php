@@ -18,69 +18,73 @@ $data = array();
 $curryear = 2015;
 
 // Format is one of the following
-//		array(NAME,TABLE,FIELD)
-//		array(NAME,
+//		array(NAME, STRING REPRESENTATION, TABLE,FIELD)
 
-$PROPID = array("Property ID","PROP","prop_id");
-$OWNER = array("Owner","PROP","py_owner_name");
-$GEOID = array("Geo ID","PROP","geo_id");
-$SITUS = array("Situs","PROP",array("situs_num","situs_street_prefx","situs_street","situs_street_suffix","situs_unit","-TX","situs_zip"));
-$NEIGHB = array("Neighborhood","PROP","hood_cd","HOOD" => "hood_cd");
-$OWNER = array("Property Owner","PROP","py_owner_name");
-$NEIGHBMIA = array("Neighborhood Mass Improv Adj","CALCULATED","getNMIA","FIELD"=>"adjust_perc","TABLE"=>"SPECIAL_IMP");
+$PROPID = array("NAME"=>"propId","STRING"=>"Property ID","PROP","prop_id");
+$OWNER = array("NAME"=>"owner", "STRING"=>"Owner","PROP","py_owner_name");
+$GEOID = array("NAME"=>"geoId", "STRING"=>"Geo ID","PROP","geo_id");
+$SITUS = array("NAME"=>"situs", "STRING"=>"Situs","PROP",array("situs_num","situs_street_prefx","situs_street","situs_street_suffix","situs_unit","-TX","situs_zip"));
+$OWNER = array("NAME"=>"owner", "STRING"=>"Property Owner","PROP","py_owner_name");
 
-$MARKETVALUE = array("Market Value","PROP","market_value");
-$MARKETPRICESQFT = array("Market Price/SQFT","CALCULATED","getMrktSqft");
-$LIVINGAREA = array("Living Area","TABLELOOKUP","liv_area","TABLE"=>"SPECIAL_PROPDATA");
+$NEIGHB = array("NAME"=>"neighborhood", "STRING"=>"Neighborhood","PROP","hood_cd","HOOD" => "hood_cd");
+$NEIGHBMIA = array("NAME"=>"hoodMIA", "STRING"=>"Neighborhood Mass Improv Adj","CALCULATED","getNMIA","FIELD"=>"adjust_perc","TABLE"=>"SPECIAL_IMP");
+$NEIGHBADJ = array("NAME"=>"hoodAdj", "STRING"=>"Neighborhood Adj","CALCULATED","getNeigbAdj");
 
-$SALEDATE = array("Sale Date","TABLELOOKUP","sale_date","TABLE"=>"SALES_MLS_MERGED");
-$SALEPRICE = array("Sale Price","TABLELOOKUP","sale_price","TABLE"=>"SALES_MLS_MERGED");
-$SALESOURCE = array("Sale Source","TABLELOOKUP","source","TABLE"=>"SALES_MLS_MERGED");
-$SALETYPE = array("Sale Type","TABLELOOKUP","sale_type","TABLE"=>"SALES_MLS_MERGED");
-$SALEPRICESQFT = array("Sale Price / SQFT","CALCULATED","getSPSqft");
+$MARKETVALUE = array("NAME"=>"marketValue", "STRING"=>"Market Value","PROP","market_value");
+$MARKETPRICESQFT = array("NAME"=>"marketPriceFoot", "STRING"=>"Market Price/SQFT","CALCULATED","getMrktSqft");
+$LIVINGAREA = array("NAME"=>"livingArea", "STRING"=>"Living Area","CALCULATED", "getLivingArea");
+$LIVINGAREAOLD = array("NAME"=>"livingAreaOld", "STRING"=>"Living Area","TABLELOOKUP","FIELD"=>"liv_area","TABLE"=>"SPECIAL_PROPDATA");
 
-$IMPROVEMENTCNT = array("Improvement Count","CALCULATED","getImpCount");
-$HIGHVALIMPMARCN = array("High Value Improv MA RCN","CALCULATED","getHVImpMARCN");
-$HIGHVALIMPMARCNSQFT = array("High Value Improv MA RCN/SQFT","CALCULATED","getHVImpMARCNPerSQFT");
-$COMPLETE = array("% Complete","-CONST","-100");
+$SALEDATE = array("NAME"=>"saleDate", "STRING"=>"Sale Date","TABLELOOKUP","FIELD"=>"sale_date","TABLE"=>"SALES_MLS_MERGED");
+$SALEPRICE = array("NAME"=>"salePrice", "STRING"=>"Sale Price","TABLELOOKUP","FIELD"=>"sale_price","TABLE"=>"SALES_MLS_MERGED");
+$SALESOURCE = array("NAME"=>"saleSource", "STRING"=>"Sale Source","TABLELOOKUP","FIELD"=>"source","TABLE"=>"SALES_MLS_MERGED");
+$SALETYPE = array("NAME"=>"saleType", "STRING"=>"Sale Type","TABLELOOKUP","FIELD"=>"sale_type","TABLE"=>"SALES_MLS_MERGED");
+$SALEPRICESQFT = array("NAME"=>"salePriceSqft", "STRING"=>"Sale Price / SQFT","CALCULATED","getSPSqft");
+$SALERATIO = array("NAME"=>"saleRatio", "STRING"=>"Sale Ratio", "CALCULATED", "getSaleRatio");
+$ADJSALEPRICE = array("NAME"=>"adjSalePrice", "STRING"=>"Adj Sale Price", "CALCULATED", "getAdjSalePrice");
+$SALETYPEANDCONF = array("NAME"=>"saleTypeConf", "STRING"=>"Sale Type - Conf Level", "CALCULATED", "getSaleTypeAndConf");
 
-$LANDVALUEADJ =	array("Land Value Adj","CALCULATED","getLandValueAdj");
-$LANDVALUEADJB =	array("Land Value Adj","PROP","land_non_hstd_val");
-$UNITPRICE = array("Unit Price","TABLE" => "SPECIAL_IMP","FIELD"=>"det_unitprice");
-$CLASSADJ = array("Class Unit Price Adj","CALCULATED","getClassAdj");
-$ACTUALYEARBUILT = array("Year Built","CALCULATED","getYearBuilt");
-$GOODADJ = array("% Good Adj","CALCULATED","getGoodAdj","TABLE"=>"SPECIAL_IMP","FIELD"=>"det_base_deprec_perc");
-$LASIZEADJ = array("L/A Size Adj","CALCULATED","getLASizeAdj");
-$HIGHVALIMPMASQFTDIFF = array("High Value Improv MA SQFT Diff","COMPCALCULATED","getHVImpSqftDiff");
-$MKTLEVELERDETAILADJ = array("Mkt Leveler Detail Adj","CALCULATED","getMktLevelerDetailAdj");
-$SEGMENTSADJ = array("Segments & Adj","CALCULATED","getSegAdj");
-$NEIGHBADJ = array("Neighborhood Adj","CALCULATED","getNeigbAdj");
+$IMPROVEMENTCNT = array("NAME"=>"impCount", "STRING"=>"Improvement Count","CALCULATED","getImpCount");
+$HIGHVALIMPMARCN = array("NAME"=>"highValImpMARCN", "STRING"=>"High Value Improv MA RCN","CALCULATED","getHVImpMARCN");
+$HIGHVALIMPMARCNSQFT = array("NAME"=>"highValImpMARCNSqft", "STRING"=>"High Value Improv MA RCN/SQFT","CALCULATED","getHVImpMARCNPerSQFT");
+$COMPLETE = array("NAME"=>"complete", "STRING"=>"% Complete","-CONST","-100");
 
-$NETADJ = array("Net Adjustment","COMPCALCULATED","getNetAdj");
+$LANDVALUEADJ =	array("NAME"=>"landValAdj", "STRING"=>"Land Value Adj","CALCULATED","getLandValueAdj");
+$LANDVALUEADJB = array("NAME"=>"landValAdjB", "STRING"=>"Land Value Adj","TABLELOOKUP", "FIELD"=>"land_non_hstd_val", "TABLE"=>"PROP");
 
-$TCADSCORE = array("TCAD Score", "CALCULATED", "getTcadScore");
+$STATECODE = array("NAME"=>"stateCode", "STRING"=>"State Code", "PROP", "stateCode");
 
-$INDICATEDVAL = array("Indicated Value","COMPCALCULATED","getIndicatedVal");
-$INDICATEDVALSQFT = array("Indicated Value / SQFT","COMPCALCULATED","getIndicatedValSqft");
+$UNITPRICE = array("NAME"=>"unitPrice", "STRING"=>"Unit Price","TABLE" => "SPECIAL_IMP","FIELD"=>"det_unitprice");
+$CLASSADJ = array("NAME"=>"classAdj", "STRING"=>"Class Unit Price Adj","CALCULATED","getClassAdj");
+$ACTUALYEARBUILT = array("NAME"=>"yearBuilt", "STRING"=>"Year Built","CALCULATED","getYearBuilt");
+$GOODADJ = array("NAME"=>"goodAdj", "STRING"=>"% Good Adj","CALCULATED","getGoodAdj","TABLE"=>"SPECIAL_IMP","FIELD"=>"det_base_deprec_perc");
+$LASIZEADJ = array("NAME"=>"laSizeAdj", "STRING"=>"L/A Size Adj","CALCULATED","getLASizeAdj");
+$HIGHVALIMPMASQFTDIFF = array("NAME"=>"highValImpMASqft", "STRING"=>"High Value Improv MA SQFT Diff","COMPCALCULATED","getHVImpSqftDiff");
+$MKTLEVELERDETAILADJ = array("NAME"=>"mktLevelerDetailAdj", "STRING"=>"Mkt Leveler Detail Adj","CALCULATED","getMktLevelerDetailAdj");
+
+$SEGMENTSADJ = array("NAME"=>"segAdj", "STRING"=>"Segments & Adj","CALCULATED","getSegAdj");
+$SEGMENTSADJSIMPLE = array("NAME"=>"segAdjSimple", "STRING"=>"Segments & Adj", "CALCULATED", "getSegAdjSimple");
+
+$NETADJ = array("NAME"=>"netAdj", "STRING"=>"Net Adjustment","COMPCALCULATED","getNetAdj");
+
+$TCADSCORE = array("NAME"=>"tcadScore", "STRING"=>"TCAD Score", "CALCULATED", "getTcadScore");
+
+$INDICATEDVAL = array("NAME"=>"indicatedVal", "STRING"=>"Indicated Value","COMPCALCULATED","getIndicatedVal");
+$INDICATEDVALSQFT = array("NAME"=>"indicatedValSqft", "STRING"=>"Indicated Value / SQFT","COMPCALCULATED","getIndicatedValSqft");
 
 
-$MEANVAL = array("Mean Value","GLOBALCALCULATED","setMeanVal", "KEY" => "getMeanVal");
-$MEANVALSQFT = array("Mean Value / SQFT","GLOBALCALCULATED","setMeanValSqft", "KEY" => "getMeanValSqft");
-$MEDIANVAL = array("Median Value","GLOBALCALCULATED","setMedianVal", "KEY" => "getMedianVal");
-$MEDIANVALSQFT = array("Median Value / SQFT", "GLOBALCALCULATED","setMedianValSqft", "KEY" => "getMedianValSqft");
+$MEANVAL = array("NAME"=>"meanVal", "STRING"=>"Mean Value","GLOBALCALCULATED","setMeanVal", "KEY" => "getMeanVal");
+$MEANVALSQFT = array("NAME"=>"meanValSqft", "STRING"=>"Mean Value / SQFT","GLOBALCALCULATED","setMeanValSqft", "KEY" => "getMeanValSqft");
+$MEDIANVAL = array("NAME"=>"medianVal", "STRING"=>"Median Value","GLOBALCALCULATED","setMedianVal", "KEY" => "getMedianVal");
+$MEDIANVALSQFT = array("NAME"=>"medianValSqft", "STRING"=>"Median Value / SQFT", "GLOBALCALCULATED","setMedianValSqft", "KEY" => "getMedianValSqft");
 
-$AGENT = array("Agent","PROP","ca_agent_name");
+$AGENT = array("NAME"=>"agent", "STRING"=>"Agent","PROP","ca_agent_name");
 
 $fieldsofinterestPre2015 = array($PROPID,$OWNER,$GEOID,$SITUS,$NEIGHB,NULL,$MARKETVALUE,$MARKETPRICESQFT,$LIVINGAREA,NULL,
 						  $SALEDATE,$SALEPRICE,$SALEPRICESQFT,NULL,$IMPROVEMENTCNT,$HIGHVALIMPMARCN,$HIGHVALIMPMARCNSQFT,
 						  $COMPLETE,NULL,$LANDVALUEADJ,$CLASSADJ,$ACTUALYEARBUILT,$GOODADJ,$LASIZEADJ,$HIGHVALIMPMASQFTDIFF,
 						  $MKTLEVELERDETAILADJ,$SEGMENTSADJ,NULL,$NETADJ,NULL,$INDICATEDVAL,$INDICATEDVALSQFT,NULL,$MEANVAL,
 						  $MEANVALSQFT,$MEDIANVAL,$MEDIANVALSQFT);
-
-$fieldsofinterest = array($PROPID,$OWNER,$GEOID,$SITUS,NULL,$NEIGHB,NULL,$SALEDATE,$MARKETVALUE,$MARKETPRICESQFT,$SALEPRICE,
-	$SALEPRICESQFT,NULL,$LANDVALUEADJB,$IMPROVEMENTCNT,$CLASSADJ,$GOODADJ,$LIVINGAREA,$ACTUALYEARBUILT,
-	$SEGMENTSADJ,NULL,$NETADJ,NULL,$INDICATEDVAL,$INDICATEDVALSQFT,NULL,$MEANVAL,
-	$MEANVALSQFT,$MEDIANVAL,$MEDIANVALSQFT);
 
 $fieldsofinterestwNeigh = array($PROPID,$GEOID,$SITUS,$NEIGHB,$NEIGHBMIA,NULL,$MARKETVALUE,$MARKETPRICESQFT,$LIVINGAREA,NULL,
 						  $SALEDATE,$SALEPRICE,$SALEPRICESQFT,NULL,$IMPROVEMENTCNT,$HIGHVALIMPMARCN,$HIGHVALIMPMARCNSQFT,
@@ -100,11 +104,34 @@ $fieldsofinteresteqPre2016 = array($PROPID,$GEOID,$OWNER,$NEIGHB,$SITUS, $MARKET
 						  $COMPLETE,$LANDVALUEADJ,$CLASSADJ,$ACTUALYEARBUILT,$GOODADJ,$LASIZEADJ,$HIGHVALIMPMASQFTDIFF,
 						  $MKTLEVELERDETAILADJ,$SEGMENTSADJ,$NETADJ,$INDICATEDVAL,$INDICATEDVALSQFT,$MEANVAL,
 						  $MEANVALSQFT,$MEDIANVAL,$MEDIANVALSQFT);
+/*
+ * 2016
+ */
+$fieldsofinterest_2016 = array($PROPID,$OWNER,$GEOID,$SITUS,NULL,$NEIGHB,NULL,$SALEDATE,$MARKETVALUE,$MARKETPRICESQFT,$SALEPRICE,
+    $SALEPRICESQFT,NULL,$LANDVALUEADJB,$IMPROVEMENTCNT,$CLASSADJ,$GOODADJ,$LIVINGAREA,$ACTUALYEARBUILT,
+    $SEGMENTSADJ,NULL,$NETADJ,NULL,$INDICATEDVAL,$INDICATEDVALSQFT,NULL,$MEANVAL,
+    $MEANVALSQFT,$MEDIANVAL,$MEDIANVALSQFT);
 
-$fieldsofinteresteq = array($PROPID,$OWNER,$GEOID,$NEIGHB, $SITUS,$MARKETVALUE,$MARKETPRICESQFT,
+$fieldsofinteresteq_2016 = array($PROPID,$OWNER,$GEOID,$NEIGHB, $SITUS,$MARKETVALUE,$MARKETPRICESQFT,
 	NULL,$LANDVALUEADJB,$IMPROVEMENTCNT,$CLASSADJ,$GOODADJ,$LIVINGAREA,$ACTUALYEARBUILT,
 	$SEGMENTSADJ,NULL,$NETADJ,NULL,$INDICATEDVAL,$INDICATEDVALSQFT,NULL,$MEANVAL,
 	$MEANVALSQFT,$MEDIANVAL,$MEDIANVALSQFT);
+
+/*
+ * Current
+ */
+$fieldsofinterest = array($PROPID,$GEOID,$SITUS,NULL,$NEIGHB,$NEIGHBMIA,NULL,$SALERATIO, $SALEDATE,$MARKETVALUE,$SALEPRICE,
+    $ADJSALEPRICE, $SALETYPE, $SALETYPEANDCONF,NULL,$LANDVALUEADJB, $STATECODE, $IMPROVEMENTCNT, $CLASSADJ, $GOODADJ, $COMPLETE, $LASIZEADJ,
+    $LIVINGAREA, $ACTUALYEARBUILT, $MKTLEVELERDETAILADJ,
+    $SEGMENTSADJSIMPLE, NULL,$NETADJ,NULL,$INDICATEDVAL,NULL,$MEANVAL);
+
+$fieldsofinteresteq = array($PROPID,$GEOID,$NEIGHB,NULL,
+    $NEIGHBMIA,$SITUS,$MARKETVALUE,NULL,
+    $LANDVALUEADJB, $STATECODE, $IMPROVEMENTCNT, $CLASSADJ, $GOODADJ, $COMPLETE, NULL,
+    $ACTUALYEARBUILT, $LASIZEADJ, $LIVINGAREA, $MKTLEVELERDETAILADJ, $SEGMENTSADJSIMPLE, NULL,
+    $NETADJ,NULL,
+    $INDICATEDVAL,NULL,
+    $MEANVAL);
 
 $fieldsofinterestprop = array($PROPID,$GEOID,$SITUS,$NEIGHB,$NEIGHBMIA,NULL,$MARKETVALUE,$MARKETPRICESQFT,$LIVINGAREA,NULL,
 						  $IMPROVEMENTCNT,$HIGHVALIMPMARCN,$HIGHVALIMPMARCNSQFT,

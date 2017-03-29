@@ -51,7 +51,7 @@ $property = getProperty($propid);
 
 $compsarray = findBestComps($property,$isEquityComp,.75);
 
-$subjsqft = $property->getFieldByName($LIVINGAREA[0]);
+$subjsqft = $property->getFieldByName($LIVINGAREA["NAME"]);
 $min = .8 * $subjsqft;
 $max = 1.2 * $subjsqft;
 	
