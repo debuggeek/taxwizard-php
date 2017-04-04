@@ -426,7 +426,7 @@ function getHVImpSqftDiff($subj,$comp)
 
 function hasDelta($class){
 	global $landvaladjdelta,$classadjdelta,$goodadjdelta,$lasizeadjdelta,$mktlevelerdetailadjdelta,$segmentsadjdelta;
-	global $LANDVALUEADJ,$CLASSADJ,$GOODADJ,$LASIZEADJ,$MKTLEVELERDETAILADJ,$SEGMENTSADJ;
+	global $LANDVALUEADJ,$CLASSADJ,$GOODADJ,$LASIZEADJ,$MKTLEVELERDETAILADJ,$SEGMENTSADJ,$SEGMENTSADJSIMPLE;
 	
 	if($class === NULL)
 		return NULL;
@@ -444,6 +444,7 @@ function hasDelta($class){
 		case($MKTLEVELERDETAILADJ["NAME"]):
 			return $mktlevelerdetailadjdelta;
 		case($SEGMENTSADJ["NAME"]):
+        case($SEGMENTSADJSIMPLE["NAME"]):
 			return $segmentsadjdelta;
 		default:
 			return false;
@@ -702,17 +703,6 @@ function findBestComps(propertyClass $subjprop, queryContext $queryContext)
     if($debug) echo "<br/>walking ".count($comps)." potential comps<br/>";
 	foreach($comps as $comp)
 	{
-        /* @var propertyClass $comp */
-        if(!$queryContext->isEquityComp) {
-            $compsCounts = array_count_values($compsSeen);
-            if(array_key_exists($comp->getPropID(),$compsCounts)){
-                //index off of the sale entry based on previously seen
-                setSaleInfo($comp,$queryContext->prevYear,$compsCounts[$comp->getPropID()]);
-            } else{
-                setSaleInfo($comp,$queryContext->prevYear,0);
-            }
-        }
-
         if(addToCompsArray($comp,$subjprop,$queryContext)){
             if($debug) error_log("findBestComps: Adding ".$comp->getPropID(). " as comp::".$comp);
             $compsarray[] = $comp;
@@ -735,6 +725,7 @@ function findBestComps(propertyClass $subjprop, queryContext $queryContext)
 function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext $queryContext)
 {
     global $LIVINGAREA;
+    $min = $max = 0;
     $compsseen = array();
 
     if ($c->getPropID() == $subjprop->getPropID()) {

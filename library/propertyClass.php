@@ -141,20 +141,22 @@ class propertyClass
 
         if ($this->mLandValAdj != null) {
             return $this->mLandValAdj;
+        } else {
+            error_log("Land Val Adjustment NOT set yet");
         }
 
-        $query = "SELECT land_hstd_val + land_non_hstd_val as result
-                  FROM PROP WHERE prop_id = " . $this->propId;;
-
-        $result = doSqlQuery($query);
-        $num = mysqli_num_rows($result);
-
-        if (!$result)
-            return "No Value Found!";
-
-        $row = mysqli_fetch_array($result);
-        $this->mLandValAdj = $row['result'];
-        return $this->mLandValAdj;
+//        $query = "SELECT land_hstd_val + land_non_hstd_val as result
+//                  FROM PROP WHERE prop_id = " . $this->propId;;
+//
+//        $result = doSqlQuery($query);
+//        $num = mysqli_num_rows($result);
+//
+//        if (!$result)
+//            return "No Value Found!";
+//
+//        $row = mysqli_fetch_array($result);
+//        $this->mLandValAdj = $row['result'];
+//        return $this->mLandValAdj;
     }
 
     /**
@@ -315,38 +317,6 @@ class propertyClass
             throw new Exception("mGoodAdj not set as expected");
         }
         return $this->mGoodAdj;
-    }
-
-    function getSegAdj()
-    {
-        global $TABLE_SPEC_IMP;
-
-        if ($this->getImpCount() == 0) {
-            return 0;
-        }
-
-        if ($this->mSegAdj != null) {
-            return $this->mSegAdj;
-        }
-
-        $query = "SELECT DISTINCT imprv_id,imprv_val FROM " . $TABLE_SPEC_IMP . " as specimp WHERE prop_id='$this->propId';";
-
-        $result = doSqlQuery($query);
-
-        if (!$result)
-            return "No Value Found!";
-
-        $num = mysqli_num_rows($result);
-        $value = 0;
-
-        while ($row = mysqli_fetch_array($result)) {
-            if ($this->mPrimeImpId != $row['imprv_id']) {
-                $value = $row['imprv_val'];
-            }
-        }
-
-        $this->mSegAdj = $value;
-        return $value;
     }
 
     function getSecondaryImp()
@@ -548,12 +518,18 @@ class propertyClass
      */
     public function setSegAdj($SegAdj)
     {
+        error_log("setSegAdj:" . $SegAdj);
         $this->mSegAdj = $SegAdj;
+    }
+
+    public function getSegAdj()
+    {
+        return $this->mSegAdj;
     }
 
     function setSegAdjDelta($subj)
     {
-        $this->mSegAdjDelta = $subj->getSegAdj() - $this->mSegAdj;
+        $this->mSegAdjDelta = $this->getSegAdj() - $subj->getSegAdj();
     }
 
     /**
@@ -690,13 +666,9 @@ class propertyClass
                 $this->mMktLevelerDetailAdj = $value;
                 break;
             case($SEGMENTSADJ["NAME"]):
-//				if($value != 0)
                 $this->mSegAdj = $value;
-//				else
-//					$this->mSegAdj = 1;
-//				break;
             default:
-                //echo "ERROR: UNKNOWN field on set: " . $fieldConst.PHP_EOL;
+                error_log("ERROR: UNKNOWN field on set: " . $fieldConst);
         }
 
     }
@@ -708,9 +680,11 @@ class propertyClass
     function getFieldByName($field)
     {
         global $PROPID, $GEOID, $SITUS, $NEIGHB, $OWNER, $NEIGHBMIA, $MARKETVALUE, $MARKETPRICESQFT,
-               $LIVINGAREA, $SALEDATE, $SALEPRICE, $SALEPRICESQFT, $SALERATIO, $SALETYPEANDCONF, $SALETYPE,
+               $LIVINGAREA, $SALEDATE, $SALEPRICE, $SALEPRICESQFT, $SALERATIO, $SALETYPEANDCONF, $SALETYPE, $ADJSALEPRICE,
                $IMPROVEMENTCNT, $HIGHVALIMPMARCN, $HIGHVALIMPMARCNSQFT, $COMPLETE,
-               $LANDVALUEADJ, $CLASSADJ, $ACTUALYEARBUILT, $GOODADJ, $LASIZEADJ, $HIGHVALIMPMASQFTDIFF, $MKTLEVELERDETAILADJ, $SEGMENTSADJ,
+               $STATECODE,
+               $LANDVALUEADJ, $CLASSADJ, $ACTUALYEARBUILT, $GOODADJ, $LASIZEADJ, $HIGHVALIMPMASQFTDIFF, $MKTLEVELERDETAILADJ,
+               $SEGMENTSADJ, $SEGMENTSADJSIMPLE,
                $NETADJ, $INDICATEDVAL, $INDICATEDVALSQFT, $MEANVAL, $MEANVALSQFT, $MEDIANVAL, $MEDIANVALSQFT,
                $TCADSCORE;
 
@@ -718,7 +692,8 @@ class propertyClass
                $segmentsadjdelta, $segmentsadjMultiRow;
 
         if ($field === NULL){
-            error_log("getFieldByName: null field passed in");
+            //gets called for every empty field in presentation
+            //error_log("getFieldByName: null field passed in");
             return;
         }
 
@@ -751,6 +726,8 @@ class propertyClass
                     return $this->mSalePrice . ".";
                 else
                     return $this->mSalePrice;
+            case($ADJSALEPRICE["NAME"]):
+                return $this->getAdjSalePrice();
             case($SALEPRICESQFT["NAME"]):
                 return number_format($this->getSalePerSQFT());
             case($SALERATIO["NAME"]):
@@ -767,8 +744,10 @@ class propertyClass
                 return number_format($this->getHVImpMARCNPerSQFT(), 2);
             case($COMPLETE["NAME"]):
                 return $this->mPercentComp;
+            case($STATECODE["NAME"]):
+                return $this->stateCode;
             case($LANDVALUEADJ["NAME"]):
-                return $this->mLandValAdj;
+                return $this->getLandValAdj();
             case($landvaladjdelta):
                 return number_format($this->mLandValAdjDelta);
             case($CLASSADJ["NAME"]):
@@ -801,6 +780,8 @@ class propertyClass
                 return number_format($this->mMktLevelerDetailAdjDelta);
             case($SEGMENTSADJ["NAME"]):
                 return $this->mSegAdj;
+            case($SEGMENTSADJSIMPLE["NAME"]):
+                return (string)$this->getSegAdj();
             case($segmentsadjMultiRow):
                 return $this->getImpDets();
             case($NETADJ["NAME"]):
@@ -851,6 +832,21 @@ class propertyClass
 
     function getSaleTypeAndConf(){
         return $this->getSaleType();
+    }
+
+    /**
+     * Should return the sale price minus any adjustments
+     *
+     * Per George, a “Sale Adjustment Amount” would be extremely rare.  This would entail personal property that
+     * was included within a sale.  For example, George mentioned there was a $1+M condo that included a $40K boat
+     * with the purchase.  In this instance, the $40k would be subtracted from the property’s sale
+     * price to arrive at “Adjusted Sale Price”.
+     *
+     * @return float
+     */
+    function getAdjSalePrice(){
+        //todo need column/sample of adj amount
+        return $this->getSalePrice();
     }
     /**
      * @return array

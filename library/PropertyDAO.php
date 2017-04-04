@@ -50,7 +50,7 @@ class PropertyDAO{
     }
 
     /**
-     * Retrieves the corresponding row for the specified user ID.
+     * Retrieves the corresponding row for the specified property ID.
      * @param $propId
      * @return propertyClass
      */
@@ -197,6 +197,11 @@ class PropertyDAO{
         }
     }
 
+    /**
+     * @param string $hood
+     * @param bool $multihood
+     * @return propertyClass[]
+     */
     private function getHoodPropsEq($hood, $multihood){
         if($multihood) {
             $hoodToUse = substr($hood, 0, -2);
@@ -258,8 +263,10 @@ class PropertyDAO{
                 $currProp->setSaleSource($row['source']);
                 if($row['sale_type'] === null && $currProp->getSaleSource() === 'MLS'){
                     $currProp->setSaleType('mls');
-                } else {
+                } elseif ($row['sale_type']!= null ) {
                     $currProp->setSaleType($row['sale_type']);
+                } else {
+                    $currProp->setSaleType("don't ask");
                 }
                 $properties[] = $currProp;
             }

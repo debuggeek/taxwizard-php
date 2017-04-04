@@ -23,11 +23,18 @@ class FullTableTest extends PHPUnit_Framework_TestCase
 //        $this->logger = Logger::getLogger("main");
 //    }
 
-    public function test_GenerateFullTable(){
+    private function defaultQueryContext(){
         $queryContext = new queryContext();
+        $queryContext->isEquityComp = false;
+        $queryContext->compsToDisplay = 2;
+        $queryContext->sqftPercent= 10;
+
+        return $queryContext;
+    }
+
+    public function test_GenerateFullTable(){
+        $queryContext = $this->defaultQueryContext();
         $queryContext->subjPropId = 105290;
-        $queryContext->isEquityComp = true;
-        $queryContext->compsToDisplay=2;
 
 
         $fullTable = new FullTable();
