@@ -41,7 +41,7 @@ Copy these files to server:
 - Special_Sales_Exclude_Conf.txt OR Special_Sales.txt.fixed
 
 copy the following into sql files and run insert via mysqladmin
-'mysql -h fivestonetcad2.cusgdaffdgw5.us-west-2.rds.amazonaws.com -p -P 3306 -u dgDBMaster tcad_2017 < specProp.sql'
+''
 
 
 

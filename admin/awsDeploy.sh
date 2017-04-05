@@ -1,5 +1,5 @@
 #!/bin/sh
-src=~/uploads
+src=../
 target=~/fivestone/
 
 echo "src set to $src"
