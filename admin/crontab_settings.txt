@@ -1,0 +1,4 @@
+[ec2-user@ip-172-31-43-181 ~]$ crontab -l
+#mailto="debuggeek@gmail.com"
+*/30 * * * * ~/batch_watchdog.sh
+# */2 * * * * php /var/www/html/cli/batch_pdf.php >> ~/phpcli.log 2> ~/phpcli_error.log
