@@ -101,7 +101,7 @@ LINES TERMINATED BY '\n';
 MLS:
 CSV with : prop_id, sale_price, sale_date, address
 
-LOAD DATA LOCAL INFILE '/home1/cykoduck/TCAD_data/2016/mls.csv'
+LOAD DATA LOCAL INFILE 'mls.csv'
 INTO TABLE MLS_SALES
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n';
@@ -129,3 +129,22 @@ SET `column` = str_to_date( `column`, ‘%m/%d/%Y' );
 MLS might be ok and not need date change
 
 INSERT IGNORE INTO SALES_MLS_MERGED SELECT prop_id,sale_price,sale_date,'MLS',NULL FROM MLS_SALES WHERE sale_price >0
+
+
+---------------------------------
+-- FOR react app
+-------------------------------
+
+Needs to be added to apache conf for site
+
+<Directory /var/www/html>
+                AllowOverride all
+
+                RewriteEngine on
+                # Don't rewrite files or directories
+                RewriteCond %{REQUEST_FILENAME} -f [OR]
+                RewriteCond %{REQUEST_FILENAME} -d
+                RewriteRule ^ - [L]
+                # Rewrite everything else to index.html to allow html5 state links
+                RewriteRule ^ index.html [L]
+        </Directory>
