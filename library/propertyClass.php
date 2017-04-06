@@ -29,7 +29,7 @@ class propertyClass
     public $effectiveYearBuilt;
     public $mGoodAdj;
     public $mGoodAdjDelta;
-    public $mLASizeAdj;
+//    public $mLASizeAdj;
     public $mLASizeAdjDelta;
     public $mHVImpSqftDiff;
     public $mHVIMARCNarea;
@@ -51,6 +51,7 @@ class propertyClass
      * @var int
      */
     private $mLandValAdj;
+    private $mLASizeAdj;
     private $classCode;
     private $subClass;
     private $classAdj;
@@ -126,14 +127,6 @@ class propertyClass
     }
 
     /**
-     * @param propertyClass $subj
-     */
-    function setLandValAdjDelta($subj)
-    {
-        $this->mLandValAdjDelta = $subj->getLandValAdj() - $this->getLandValAdj();
-    }
-
-    /**
      * @return int
      */
     function getLandValAdj()
@@ -144,20 +137,33 @@ class propertyClass
         } else {
             error_log("Land Val Adjustment NOT set yet");
         }
-
-//        $query = "SELECT land_hstd_val + land_non_hstd_val as result
-//                  FROM PROP WHERE prop_id = " . $this->propId;;
-//
-//        $result = doSqlQuery($query);
-//        $num = mysqli_num_rows($result);
-//
-//        if (!$result)
-//            return "No Value Found!";
-//
-//        $row = mysqli_fetch_array($result);
-//        $this->mLandValAdj = $row['result'];
-//        return $this->mLandValAdj;
     }
+
+    /**
+     * @param propertyClass $subj
+     */
+    function setLandValAdjDelta($subj)
+    {
+        $this->mLandValAdjDelta = $subj->getLandValAdj() - $this->getLandValAdj();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLASizeAdj()
+    {
+        return $this->mLASizeAdj;
+    }
+
+    /**
+     * @param mixed $mLASizeAdj
+     */
+    public function setLASizeAdj($mLASizeAdj)
+    {
+        $this->mLASizeAdj = $mLASizeAdj;
+    }
+
+
 
     /**
      * @param mixed $mMarketVal
@@ -339,7 +345,8 @@ class propertyClass
 
     function setLASizeAdjDelta($subjdetailadj)
     {
-        global $debugquery;
+        global $debug;
+        $debug=true;
 
         if ($this->mSubj == true)
             return NULL;
@@ -352,50 +359,51 @@ class propertyClass
         $var3 = number_format($subjdetailadj->getHVImpMARCNPerSQFT(), 2);
 
         $this->mLASizeAdjDelta = ($var1 - $var2) * $var3;
-        if ($debugquery) error_log("getLASizeAdjDelta: (" . $var1 . "-" . $var2 . ")*" . $var3 . " = " . $this->mLASizeAdjDelta);
+        if ($debug) error_log("getLASizeAdjDelta: (" . $var1 . "-" . $var2 . ")*" . $var3 . " = " . $this->mLASizeAdjDelta);
         //Now that we have a LASizeAdjDelta we can also compute the HVIMASQFTDIFF
         $this->setHVImpSqftDiff($subjdetailadj);
+        $debug=false;
     }
 
-    function getLASizeAdj()
-    {
-        global $allowablema, $debugquery;
-
-        if ($this->mLASizeAdj != null)
-            return $this->mLASizeAdj;
-
-        $propid = $this->propId;
-        $subquery = "";
-
-        $i = 0;
-        while ($i < count($allowablema)) {
-            $subquery .= "imprv_det_type_cd='$allowablema[$i]'";
-            if (++$i < count($allowablema))
-                $subquery .= " OR ";
-        }
-
-        $query = "SELECT det_area FROM IMP_DET, SPECIAL_IMP
-				WHERE IMP_DET.prop_id='$propid'
-				AND ( " . $subquery . ")
-				AND imprv_det_id = det_id
-				AND IMP_DET.prop_id = SPECIAL_IMP.prop_id
-				AND IMP_DET.imprv_id = '$this->mPrimeImpId'";
-
-        if ($debugquery) error_log("getLASizeAdj[" . $this->propId . "]: query=" . $query);
-        $result = doSqlQuery($query);
-        $num = mysqli_num_rows($result);
-
-        if (!$result)
-            return "No Value Found!";
-
-        $value = 0;
-
-        while ($row = mysqli_fetch_array($result)) {
-            $value += $row["det_area"];
-        }
-
-        return $value;
-    }
+//    function getLASizeAdj()
+//    {
+//        global $allowablema, $debugquery;
+//
+//        if ($this->mLASizeAdj != null)
+//            return $this->mLASizeAdj;
+//
+//        $propid = $this->propId;
+//        $subquery = "";
+//
+//        $i = 0;
+//        while ($i < count($allowablema)) {
+//            $subquery .= "imprv_det_type_cd='$allowablema[$i]'";
+//            if (++$i < count($allowablema))
+//                $subquery .= " OR ";
+//        }
+//
+//        $query = "SELECT det_area FROM IMP_DET, SPECIAL_IMP
+//				WHERE IMP_DET.prop_id='$propid'
+//				AND ( " . $subquery . ")
+//				AND imprv_det_id = det_id
+//				AND IMP_DET.prop_id = SPECIAL_IMP.prop_id
+//				AND IMP_DET.imprv_id = '$this->mPrimeImpId'";
+//
+//        if ($debugquery) error_log("getLASizeAdj[" . $this->propId . "]: query=" . $query);
+//        $result = doSqlQuery($query);
+//        $num = mysqli_num_rows($result);
+//
+//        if (!$result)
+//            return "No Value Found!";
+//
+//        $value = 0;
+//
+//        while ($row = mysqli_fetch_array($result)) {
+//            $value += $row["det_area"];
+//        }
+//
+//        return $value;
+//    }
 
     function setHVImpSqftDiff($subjdetailadj)
     {
@@ -518,7 +526,7 @@ class propertyClass
      */
     public function setSegAdj($SegAdj)
     {
-        error_log("setSegAdj:" . $SegAdj);
+//        error_log("setSegAdj:" . $SegAdj);
         $this->mSegAdj = $SegAdj;
     }
 
@@ -660,7 +668,7 @@ class propertyClass
                 $this->mGoodAdj = $value;
                 break;
             case($LASIZEADJ["NAME"]):
-                $this->mLASizeAdj = $value;
+                $this->setLASizeAdj($value);
                 break;
             case($MKTLEVELERDETAILADJ["NAME"]):
                 $this->mMktLevelerDetailAdj = $value;
@@ -769,7 +777,7 @@ class propertyClass
             case($goodadjdelta):
                 return number_format($this->mGoodAdjDelta);
             case($LASIZEADJ["NAME"]):
-                return $this->mLASizeAdj;
+                return $this->getLASizeAdj();
             case($lasizeadjdelta):
                 return number_format($this->mLASizeAdjDelta);
             case($HIGHVALIMPMASQFTDIFF["NAME"]):

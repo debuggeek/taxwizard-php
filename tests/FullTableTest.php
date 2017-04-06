@@ -34,7 +34,7 @@ class FullTableTest extends PHPUnit_Framework_TestCase
 
     public function test_GenerateFullTable(){
         $queryContext = $this->defaultQueryContext();
-        $queryContext->subjPropId = 105290;
+        $queryContext->subjPropId = 138282;
 
 
         $fullTable = new FullTable();

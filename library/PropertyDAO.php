@@ -154,6 +154,7 @@ class PropertyDAO{
         $stmt->bindColumn('mOwner', $prop->mOwner, PDO::PARAM_STR);
         $stmt->bindColumn('mMarketVal', $prop->mMarketVal, PDO::PARAM_INT);
         $stmt->bindColumn('mLivingArea', $livingarea, PDO::PARAM_INT);
+       // $stmt->bindColumn('mLivingArea', $mLASizeAdj, PDO::PARAM_INT);
         $stmt->bindColumn('classCode', $classcode, PDO::PARAM_STR);
         $stmt->bindColumn('subClass', $subclass, PDO::PARAM_STR);
         $stmt->bindColumn('mGoodAdj', $prop->mGoodAdj, PDO::PARAM_STR);
@@ -171,6 +172,8 @@ class PropertyDAO{
         $prop->setClassCode($classcode);
         $prop->setSubClass($subclass);
         $prop->setCondition($cond);
+        //Added for 2017 seems to be same as area of main
+        $prop->setLASizeAdj($livingarea);
 
         $stmt2 = $this->pdo->prepare("SELECT SUM(p.land_hstd_val + p.land_non_hstd_val) as totHstd
                                         FROM PROP p WHERE p.prop_id = ?");

@@ -45,6 +45,17 @@ class ImpHelperTest extends PHPUnit_Framework_TestCase{
         $this->assertEquals(12, ImpHelper::getPrimaryImpCount($subjImpArray));
     }
 
+    public function test_getPrimaryImprovements(){
+        $propDao = new PropertyDAO($this->HOST, $this->user, $this->pw, $this->db);
+        $subjImpArray = $propDao->getImpDet(138282);
+        $primaryImps = ImpHelper::getPrimaryImprovements($subjImpArray);
+        $total = 0;
+        foreach ($primaryImps as $imp) {
+            $total += $imp->getDetArea();
+        }
+        $this->assertEquals(3166, $total);
+    }
+
     /*
      * I was seeing the comp get the -162836 taken as a 1st floor delta which is way to high
      */
