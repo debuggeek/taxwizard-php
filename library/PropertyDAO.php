@@ -65,6 +65,7 @@ class PropertyDAO{
         $property->setPrimeImpId(ImpHelper::getPrimaryImpId($property->getImpDets()));
         $property->setSegAdj(ImpHelper::getSecondaryImprovementsValue($property->getImpDets()));
         $property->setMktLevelerDetailAdj(ImpHelper::getMktLevelerDetailAdj($property->getImpDets()));
+        $property->setUnitPrice(ImpHelper::calculateUnitPrice($property->getImpDets()));
         $property->mPercentComp = '100';
 
         return $property;

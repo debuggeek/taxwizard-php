@@ -239,16 +239,37 @@ class ImpHelper
      */
     public static function getMktLevelerDetailAdj($getImpDets)
     {
-        $impCodesToSkip = array("1ST", "2ND", "3RD", "4TH", "5TH");
         $primeImps = self::getPrimaryImprovements($getImpDets);
-        $detValSum = 0;
         $detValCalcSum = 0;
         foreach($primeImps as $imp){
-            if(!in_array($imp->getImprvDetTypeCd(), $impCodesToSkip)) {
-                $detValSum += $imp->getDetVal();
+            if(!self::isMainArea($imp->getImprvDetTypeCd())) {
                 $detValCalcSum += $imp->getDetCalcVal();
             }
         }
         return $detValCalcSum;
+    }
+
+
+    /**
+     * The unit price as of 2017 is
+     * RCN/SF of subj high val main area
+     * NOTE: found that the samples weren't using the simple unit price of imp with 'T'
+     * @param $propertyImps
+     * @return float
+     */
+    public static function calculateUnitPrice($propertyImps){
+        $unitPrice = 0;
+        $primeImps = self::getPrimaryImprovements($propertyImps);
+        $totalReplacementCost = 0; //RCN
+        $mainSqft = 0;
+        foreach($primeImps as $imp){
+            /* @var ImprovementDetailClass $secImp */
+            if(self::isMainArea($imp->getImprvDetTypeCd())){
+                $totalReplacementCost += $imp->getDetCalcVal();
+                $mainSqft += $imp->getDetArea();
+            }
+        }
+        $unitPrice = round(($totalReplacementCost / $mainSqft), 2);
+        return $unitPrice;
     }
 }

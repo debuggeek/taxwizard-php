@@ -521,7 +521,10 @@ function populateDeltaObj($prop, $field){
 	$delta = hasDelta($field["NAME"]);
 	$deltaObj = new stdClass();
 	$deltaObj->value = $prop->getFieldByName($field["NAME"]);
-	$deltaObj->delta = $prop->getFieldByName($delta);
+	if(!$prop->isSubj()) {
+	    // Don't populate deltas on the subject
+        $deltaObj->delta = $prop->getFieldByName($delta);
+    }
 	return $deltaObj;
 }
 

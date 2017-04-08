@@ -69,10 +69,16 @@ class propertyClass
     private $classCode;
     private $subClass;
     private $classAdj;
+    /**
+     * @var int
+     */
     private $classAdjDelta;
     private $condition;
     private $mHVIMARCNareaPerSqft;
-    private $mUnitPrice;
+    /**
+     * @var float
+     */
+    private $unitPrice;
 
     private $mPrimeImpId;
 
@@ -810,7 +816,7 @@ class propertyClass
             case($CLASSADJ["NAME"]):
                 return $this->getClassAdj();
             case($classadjdelta):
-                return number_format($this->classAdjDelta);
+                return number_format($this->getClassAdjDelta());
             case($ACTUALYEARBUILT["NAME"]):
                 return $this->mYearBuilt;
             case($GOODADJ["NAME"]):
@@ -834,7 +840,7 @@ class propertyClass
             case($MKTLEVELERDETAILADJ["NAME"]):
                 return  $this->getMktLevelerDetailAdj();
             case($mktlevelerdetailadjdelta):
-                return $this->getMktLevelerDetailAdjDelta();
+                return number_format($this->getMktLevelerDetailAdjDelta());
             case($SEGMENTSADJ["NAME"]):
                 return $this->mSegAdj;
             case($SEGMENTSADJSIMPLE["NAME"]):
@@ -988,25 +994,27 @@ class propertyClass
     }
 
     /**
-     * @return int|null
+     * @return int
      */
     function getNetAdj()
     {
         if ($this->isSubj() == true) {
             //Don't adjust a subject
-            return NULL;
+            return 0;
         }
 
-        $var1 = $this->getLandValueAdjDelta();
-        $var2 = $this->getClassAdjDelta();
+        $landValueAdjDelta = $this->getLandValueAdjDelta();
+        $classAdjDelta = $this->getClassAdjDelta();
         //No longer in sheet as of 2015 and back as of 2017
-        $var3 = $this->getLASizeAdjDelta();
-        $var4 = $this->getGoodAdjDelta();
+        $LASizeAdjDelta = $this->getLASizeAdjDelta();
+        $goodAdjDelta = $this->getGoodAdjDelta();
         //No longer in sheet as of 2015 and back as of 2017
-        $var5 = $this->getMktLevelerDetailAdjDelta();
-        $var6 = $this->getImpDetSegAdj();
+        $mktLevelerDetailAdjDelta = $this->getMktLevelerDetailAdjDelta();
+        //No longer in 2017
+        //$impDetSegAdj = $this->getImpDetSegAdj();
+        $segAdjDelta = $this->getSegAdjDelta();
 
-        $this->mNetAdj = (int)($var1 + $var2 + $var4 + $var5 + $var6);
+        $this->mNetAdj = $landValueAdjDelta + $classAdjDelta + $LASizeAdjDelta + $goodAdjDelta + $mktLevelerDetailAdjDelta + $segAdjDelta;
 
         return $this->mNetAdj;
     }
@@ -1042,11 +1050,22 @@ class propertyClass
     {
         global $debugquery;
 
-        $option = 2016;
-        if ($this->classAdjDelta != null)
+        $option = 2017;
+        if ($this->classAdjDelta != null){
+            error_log("setClassAdjDelta: Attempted more then once, already set");
             return;
+        }
 
-        if ($option == 2016) {
+        if ($option == 2017) {
+            // ((Subj unit price /Comp unit price) -1 ) * Comp main area RCN
+            // Basicaly back to 2010 :)
+            $var1 = $subjdetailadj->getUnitPrice();
+            $var2 = $this->getUnitPrice();
+            $var3 = $var1 / $var2;
+            $var4 = $var3 - 1;
+            $result = $var4 * $var2 * $this->mLivingArea;
+            $this->classAdjDelta = round($result);
+        } else if ($option == 2016) {
             // Added for 2016
             // According to TCAD : Comp Mkt Value * ( Subj Most Valuable Improvement unit - Comp Most Valuable Improvement unit)
             $subjMostValuableImpUnit = $subjdetailadj->getMostValueImpUnit()->getDetUnitprice();
@@ -1180,31 +1199,20 @@ class propertyClass
         return $this->mImprovCount;
     }
 
-    private function getUnitPrice()
+    /**
+     * @return float
+     */
+    public function getUnitPrice(): float
     {
-        if ($this->mUnitPrice != null)
-            return $this->mUnitPrice;
+        return $this->unitPrice;
+    }
 
-        global $UNITPRICE;
-        $value = 0.0;
-
-        $query = "SELECT " . $UNITPRICE["FIELD"] . " FROM `" . $UNITPRICE["TABLE"] . "` WHERE `prop_id`=" . $this->propId . " AND `det_use_unit_price` LIKE 'T'";
-
-        $result = doSqlQuery($query);
-        if (!$result)
-            return "No Hits returned";
-
-        $num = mysqli_num_rows($result);
-
-        if ($num == 0)
-            return "No Value Found!";
-
-        while ($row = mysqli_fetch_array($result)) {
-            $value += $row[$UNITPRICE["FIELD"]];
-        }
-
-        $this->mUnitPrice = $value;
-        return $value;
+    /**
+     * @param float $unitPrice
+     */
+    public function setUnitPrice(float $unitPrice)
+    {
+        $this->unitPrice = $unitPrice;
     }
 
     /**
