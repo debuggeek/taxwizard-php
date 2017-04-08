@@ -30,8 +30,14 @@ class propertyClass
     private $mLandValAdjDelta;
     public $mYearBuilt;
     public $effectiveYearBuilt;
-    public $mGoodAdj;
-    public $mGoodAdjDelta;
+    /**
+     * @var int
+     */
+    private $goodAdj;
+    /**
+     * @var int
+     */
+    private $goodAdjDelta;
     /**
      * @var int
      */
@@ -267,38 +273,6 @@ class propertyClass
     }
 
     /**
-     * @param propertyClass $subjdetailadj
-     */
-    function setGoodAdjDelta($subj, $isEquity)
-    {
-        $option = 2016;
-
-        if ($isEquity)
-            $var1 = $this->getMarketVal();
-        else
-            $var1 = $this->getSalePrice();
-
-        if ($option == 2016) {
-            // (Comp Sale price - Comp Land Value) * (Subj % good - Comp % good)
-            $var2 = $this->getLandValAdj();
-            $this->mGoodAdjDelta = ($var1 - $var2) * ($subj->getGoodAdj() - $this->getGoodAdj()) / 100;
-        } else {
-            $var2 = $this->landValAdj;
-            $var3 = $this->getSegAdj();
-
-            if ($subj->mGoodAdj === null)
-                $subj->mGoodAdj = $subj->getGoodAdj();
-            $var4 = $subj->mGoodAdj;
-
-            if ($this->mGoodAdj === null)
-                $this->mGoodAdj = $this->getGoodAdj();
-            $var5 = $this->mGoodAdj;
-
-            $this->mGoodAdjDelta = ($var1 - $var2 - $var3) / 100 * ($var4 - $var5);
-        }
-    }
-
-    /**
      * @return mixed
      */
     public function getMarketVal()
@@ -330,12 +304,21 @@ class propertyClass
         $this->tcadScore = $tcadScore;
     }
 
-    function getGoodAdj()
+    /**
+     * Represents percentage as int value
+     * @return int
+     */
+    function getGoodAdj(){
+        return $this->goodAdj;
+    }
+
+    /**
+     * Represents percentage as int value
+     * @param int $goodAdj
+     */
+    public function setGoodAdj(int $goodAdj)
     {
-        if(empty($this->mGoodAdj)){
-            throw new Exception("mGoodAdj not set as expected");
-        }
-        return $this->mGoodAdj;
+        $this->goodAdj = $goodAdj;
     }
 
     function getSecondaryImp()
@@ -633,7 +616,7 @@ class propertyClass
                 $this->mYearBuilt = $value;
                 break;
             case($GOODADJ["NAME"]):
-                $this->mGoodAdj = $value;
+                $this->setGoodAdj($value);
                 break;
             case($LASIZEADJ["NAME"]):
                 $this->setLASizeAdj($value);
@@ -736,14 +719,14 @@ class propertyClass
                 if ($this->mSubj) {
                     $year = date("Y");
                     if ($this->mYearBuilt <= ($year - 25)) {
-                        if ($this->mGoodAdj >= 75) {
-                            return $this->mGoodAdj . "_";
+                        if ($this->getGoodAdj() >= 75) {
+                            return $this->getGoodAdj() . "_";
                         }
                     }
                 }
-                return $this->mGoodAdj;
+                return $this->getGoodAdj();
             case($goodadjdelta):
-                return number_format($this->mGoodAdjDelta);
+                return number_format($this->getGoodAdjDelta());
             case($LASIZEADJ["NAME"]):
                 return $this->getLASizeAdj();
             case($lasizeadjdelta):
@@ -1133,8 +1116,46 @@ class propertyClass
      */
     function getGoodAdjDelta()
     {
-        return $this->mGoodAdjDelta;
+        return $this->goodAdjDelta;
     }
+
+    /**
+     * @param propertyClass $subjdetailadj
+     */
+    function setGoodAdjDelta($subj, $isEquity)
+    {
+        $option = 2017;
+
+        $compPrice = 0;
+        if ($isEquity) {
+            $compPrice = $this->getMarketVal();
+        }
+        else {
+            $compPrice = $this->getSalePrice();
+        }
+
+        $result = 0;
+
+        if ($option == 2017) {
+            // ( Comp Price - Comp Land Value - Comp Secondary Value ) * (Subj % good - Comp % good)
+            $compLV = $this->getLandValAdj();
+            $compSecVal = $this->getSegAdj();
+
+            $subjGood = $subj->getGoodAdj();
+            $compGood = $this->getGoodAdj();
+            $goodCalc = ($subjGood - $compGood) / 100; //treat % good as percentage
+            $result = ($compPrice - $compLV - $compSecVal) * $goodCalc;
+        } else if ($option == 2016) {
+            // (Comp Sale price - Comp Land Value) * (Subj % good - Comp % good)
+            $var2 = $this->getLandValAdj();
+            $result = ($compPrice - $var2) * ($subj->getGoodAdj() - $this->getGoodAdj()) / 100;
+        }  else {
+            throw new Exception("setGoodAdjDelta>> Must provide configuration option");
+        }
+
+        $this->goodAdjDelta = $result;
+    }
+
 
     /**
      * Gets the sum of deltas on the primary and secondary improvments

@@ -34,7 +34,7 @@ class Issues extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(42000,$compProperty->mLandValAdjDelta);
         $this->assertEquals(18993, $compProperty->mClassAdjDelta);
-        $this->assertEquals(-19975, $compProperty->mGoodAdjDelta);
+        $this->assertEquals(-19975, $compProperty->goodAdjDelta);
         $this->assertEquals(81550, $compProperty->getNetAdj());
         $this->assertEquals(681050, $compProperty->getIndicatedVal());
 
@@ -67,7 +67,7 @@ class Issues extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(42000,$compProperty->mLandValAdjDelta);
         $this->assertEquals(18993, $compProperty->mClassAdjDelta);
-        $this->assertEquals(-19975, $compProperty->mGoodAdjDelta);
+        $this->assertEquals(-19975, $compProperty->goodAdjDelta);
         $this->assertEquals(81550, $compProperty->getNetAdj());
         $this->assertEquals(681050, $compProperty->getIndicatedVal());
 

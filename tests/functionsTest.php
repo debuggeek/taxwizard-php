@@ -98,7 +98,7 @@ class functionsTest extends PHPUnit_Framework_TestCase{
 
         $this->assertEquals(42000,$compProperty->mLandValAdjDelta);
         $this->assertEquals(18993, $compProperty->getClassAdjDelta());
-        $this->assertEquals(-19975, $compProperty->mGoodAdjDelta);
+        $this->assertEquals(-19975, $compProperty->goodAdjDelta);
     }
 
     public function test_getHoodList(){
