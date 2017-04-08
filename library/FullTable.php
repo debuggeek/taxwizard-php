@@ -121,6 +121,7 @@ class FullTable
         
         $this->subjectProp = getSubjProperty($queryContext->subjPropId);
 
+        //Determine if we should comp off provided list or not
         if(count($queryContext->compInfo) === 0){
             error_log("Finding best comps for ". $this->subjectProp->getPropID());
 
@@ -142,7 +143,7 @@ class FullTable
                 $this->subjCompArray  = array_values($this->subjCompArray);
             }
         } else {
-            error_log("Building comps from provided for ". $this->subjectProp ->getPropID());
+            error_log("Building comps from user provided for ". $this->subjectProp ->getPropID());
 
             $subjcomparray = array();
             $subjcomparray[] = $this->subjectProp;

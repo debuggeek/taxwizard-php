@@ -16,7 +16,7 @@ function getMeanVal($subjcomp)
 	$compCount = count($subjcomp) -1;
 	//don't include subj
 	for($i=1;$i <= $compCount; $i++){
-		$next = str_replace(",","",$subjcomp[$i]->getFieldByName($INDICATEDVAL[0]));
+		$next = str_replace(",","",$subjcomp[$i]->getFieldByName($INDICATEDVAL["NAME"]));
 		$result += $next;
 	}
 	if($compCount > 0){
@@ -38,7 +38,7 @@ function getMeanValSqft($subjcomp){
 	if(count($subjcomp) > 1){
 		$comps = count($subjcomp) -1;
 		for($i=1;$i <= $comps; $i++)
-			$result += $subjcomp[$i]->getFieldByName($INDICATEDVALSQFT[0]);
+			$result += $subjcomp[$i]->getFieldByName($INDICATEDVALSQFT["NAME"]);
 
 		$result = $result / $comps;
 	}
@@ -58,7 +58,7 @@ function getMedianVal($subjcomp){
 		$comparray = array();
 
 		for ($i = 1; $i < count($subjcomp); $i++) {
-			$next = str_replace(",", "", $subjcomp[$i]->getFieldByName($INDICATEDVAL[0]));
+			$next = str_replace(",", "", $subjcomp[$i]->getFieldByName($INDICATEDVAL["NAME"]));
 			$comparray[] = $next;
 		}
 
@@ -87,7 +87,7 @@ function getMedianValSqft($subjcomp){
 		$comparray = array();
 
 		for ($i = 1; $i < count($subjcomp); $i++)
-			$comparray[] = $subjcomp[$i]->getFieldByName($INDICATEDVALSQFT[0]);
+			$comparray[] = $subjcomp[$i]->getFieldByName($INDICATEDVALSQFT["NAME"]);
 
 		$num = count($comparray);
 		sort($comparray);
@@ -155,13 +155,13 @@ function tableLookup($id,$glbfield)
 			return getLivingArea($id);
 		case("High Value Improv MA RCN"):
 			return getHVImpMARCN($id);
-		case($ACTUALYEARBUILT[0]):
+		case($ACTUALYEARBUILT["NAME"]):
 			return getYearBuilt($id);
-		case($SALEDATE[0]):
+		case($SALEDATE["NAME"]):
 			return getSaleDate($id);
-		case($SALEPRICE[0]):
+		case($SALEPRICE["NAME"]):
 			return getSalePrice($id);
-		case($MKTLEVELERDETAILADJ[0]):
+		case($MKTLEVELERDETAILADJ["NAME"]):
 			return getMktLevelerDetailAdj($id);
 		default:
 			return "table lookup failed";
@@ -359,7 +359,7 @@ function getMktLevelerDetailAdjDelta($subj,$comp)
 {
 	global $MKTLEVELERDETAILADJ;
 
-	return $subj[$MKTLEVELERDETAILADJ[0]] - $comp[$MKTLEVELERDETAILADJ[0]];
+	return $subj[$MKTLEVELERDETAILADJ["NAME"]] - $comp[$MKTLEVELERDETAILADJ["NAME"]];
 
 }
 
@@ -391,7 +391,7 @@ function getLandValAdjDelta($subj,$comp)
 {
 	global $LANDVALUEADJ;
 
-	return $subj[$LANDVALUEADJ[0]] - $comp[$LANDVALUEADJ[0]];
+	return $subj[$LANDVALUEADJ["NAME"]] - $comp[$LANDVALUEADJ["NAME"]];
 
 }
 

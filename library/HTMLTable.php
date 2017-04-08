@@ -109,10 +109,10 @@ class HTMLTable
     private function isTableElementGlobal($key){
         global $MEANVAL, $MEANVALSQFT, $MEDIANVAL, $MEDIANVALSQFT;
         switch($key){
-            case str_replace(' ','',$MEANVAL[0]):
-            case str_replace(' ','',$MEANVALSQFT[0]):
-            case str_replace(' ','',$MEDIANVAL[0]):
-            case str_replace(' ','',$MEDIANVALSQFT[0]):
+            case str_replace(' ','',$MEANVAL["NAME"]):
+            case str_replace(' ','',$MEANVALSQFT["NAME"]):
+            case str_replace(' ','',$MEDIANVAL["NAME"]):
+            case str_replace(' ','',$MEDIANVALSQFT["NAME"]):
                 return true;
             default:
                 return false;

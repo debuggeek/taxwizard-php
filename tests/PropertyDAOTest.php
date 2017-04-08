@@ -71,4 +71,10 @@ class PropertyDAOTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(94, $props);
     }
+
+    public function test_MktLevelerAdj(){
+        $propDao = new PropertyDAO($this->HOST, $this->user, $this->pw, $this->db);
+        $property = $propDao->getPropertyById(138282);
+        $this->assertEquals(48877, $property->getMktLevelerDetailAdj());
+    }
 }

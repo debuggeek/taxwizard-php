@@ -51,6 +51,7 @@ class PropertyDAO{
 
     /**
      * Retrieves the corresponding row for the specified property ID.
+     * All non-delta fields should be populated at end of this function
      * @param $propId
      * @return propertyClass
      */
@@ -63,7 +64,7 @@ class PropertyDAO{
         $property->setImprovCount(count(ImpHelper::getUniqueImpIds($property->getImpDets())));
         $property->setPrimeImpId(ImpHelper::getPrimaryImpId($property->getImpDets()));
         $property->setSegAdj(ImpHelper::getSecondaryImprovementsValue($property->getImpDets()));
-
+        $property->setMktLevelerDetailAdj(ImpHelper::getMktLevelerDetailAdj($property->getImpDets()));
         $property->mPercentComp = '100';
 
         return $property;
@@ -82,7 +83,8 @@ class PropertyDAO{
                           LTRIM(RTRIM(id.Imprv_det_type_desc)) as imprv_det_type_desc, 
                           si.det_area, si.det_unitprice, si.det_use_unit_price,
                           LTRIM(RTRIM(id.imprv_det_id)) as imprv_det_id,
-                          si.imprv_val as imprv_val
+                          si.imprv_val as imprv_val,
+                          si.det_calc_val as det_calc_val
                   FROM SPECIAL_IMP si 
                   LEFT JOIN IMP_DET id  
                   ON si.imprv_id = id.imprv_id AND si.det_id = id.imprv_det_id

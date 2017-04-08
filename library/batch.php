@@ -84,7 +84,7 @@ $COMPSTODISPLAY = 100;
 		$result["comps"] = $compCSV;
 		
 		return $result;
-		//putPropHistory($propIdIn,getMeanVal($subjcomparray),$property->getFieldByName($INDICATEDVAL[0]),$property->mNeighborhood);
+		//putPropHistory($propIdIn,getMeanVal($subjcomparray),$property->getFieldByName($INDICATEDVAL["NAME"]),$property->mNeighborhood);
 		//if($debug) echo("inserted " . $propIdIn);
 	}
 

@@ -228,8 +228,27 @@ class ImpHelper
      * @return bool
      */
     private static function isMainArea($improvementCode){
-        $allowablema = array("1/2","1ST","2ND","3RD","4TH","5TH","ADDL","ATRM","BELOW",
+        $allowableMainAreas= array("1/2","1ST","2ND","3RD","4TH","5TH","ADDL","ATRM","BELOW",
                                 "CONC","DOWN","FBSMT","LOBBY","MEZZ","PBSMT","RSBLW","RSDN");
-        return in_array($improvementCode, $allowablema);
+        return in_array($improvementCode, $allowableMainAreas);
+    }
+
+    /**
+     * @param ImprovementDetailClass[] $getImpDets
+     * @return int
+     */
+    public static function getMktLevelerDetailAdj($getImpDets)
+    {
+        $impCodesToSkip = array("1ST", "2ND", "3RD", "4TH", "5TH");
+        $primeImps = self::getPrimaryImprovements($getImpDets);
+        $detValSum = 0;
+        $detValCalcSum = 0;
+        foreach($primeImps as $imp){
+            if(!in_array($imp->getImprvDetTypeCd(), $impCodesToSkip)) {
+                $detValSum += $imp->getDetVal();
+                $detValCalcSum += $imp->getDetCalcVal();
+            }
+        }
+        return $detValCalcSum;
     }
 }

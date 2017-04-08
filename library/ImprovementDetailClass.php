@@ -72,6 +72,11 @@ class ImprovementDetailClass{
      * @var int
      */
     protected $detVal;
+
+    /**
+     * @var int
+     */
+    private $det_calc_val;
     
 
     /**
@@ -248,6 +253,22 @@ class ImprovementDetailClass{
     public function setDetVal($detVal)
     {
         $this->detVal = $detVal;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDetCalcVal(): int
+    {
+        return $this->det_calc_val;
+    }
+
+    /**
+     * @param int $det_calc_val
+     */
+    public function setDetCalcVal(int $det_calc_val)
+    {
+        $this->det_calc_val = $det_calc_val;
     }
 
     /**

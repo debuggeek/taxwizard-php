@@ -24,17 +24,28 @@ class propertyClass
     /* @deprecated */
     public $mHighValImpMARCN;
     public $mPercentComp;
-    public $mLandValAdjDelta;
+    /**
+     * @var int
+     */
+    private $mLandValAdjDelta;
     public $mYearBuilt;
     public $effectiveYearBuilt;
     public $mGoodAdj;
     public $mGoodAdjDelta;
-//    public $mLASizeAdj;
-    public $mLASizeAdjDelta;
+    /**
+     * @var int
+     */
+    private $lASizeAdjDelta;
     public $mHVImpSqftDiff;
     public $mHVIMARCNarea;
-    public $mMktLevelerDetailAdj;
-    public $mMktLevelerDetailAdjDelta;
+    /**
+     * @var int
+     */
+    private $mktLevelerDetailAdj;
+    /**
+     * @var int
+     */
+    private $mktLevelerDetailAdjDelta;
     public $mSegAdj;
     public $mSegAdjDelta;
     public $mNetAdj;
@@ -51,6 +62,9 @@ class propertyClass
      * @var int
      */
     private $mLandValAdj;
+    /**
+     * @var int
+     */
     private $mLASizeAdj;
     private $classCode;
     private $subClass;
@@ -148,7 +162,7 @@ class propertyClass
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getLASizeAdj()
     {
@@ -156,9 +170,9 @@ class propertyClass
     }
 
     /**
-     * @param mixed $mLASizeAdj
+     * @param int $mLASizeAdj
      */
-    public function setLASizeAdj($mLASizeAdj)
+    public function setLASizeAdj(int $mLASizeAdj)
     {
         $this->mLASizeAdj = $mLASizeAdj;
     }
@@ -343,6 +357,14 @@ class propertyClass
         return count($this->mImpDets);
     }
 
+    /**
+     * @return int
+     */
+    public function getLASizeAdjDelta(): int
+    {
+        return $this->lASizeAdjDelta;
+    }
+
     function setLASizeAdjDelta($subjdetailadj)
     {
         global $debug;
@@ -350,7 +372,7 @@ class propertyClass
 
         if ($this->mSubj == true)
             return NULL;
-        if ($this->mLASizeAdjDelta != null)
+        if ($this->lASizeAdjDelta != null)
             return;
         $var1 = $subjdetailadj->mLASizeAdj;
         if ($this->mLASizeAdj === null)
@@ -358,8 +380,8 @@ class propertyClass
         $var2 = $this->mLASizeAdj;
         $var3 = number_format($subjdetailadj->getHVImpMARCNPerSQFT(), 2);
 
-        $this->mLASizeAdjDelta = ($var1 - $var2) * $var3;
-        if ($debug) error_log("getLASizeAdjDelta: (" . $var1 . "-" . $var2 . ")*" . $var3 . " = " . $this->mLASizeAdjDelta);
+        $this->lASizeAdjDelta = ($var1 - $var2) * $var3;
+        if ($debug) error_log("setLASizeAdjDelta: (" . $var1 . "-" . $var2 . ")*" . $var3 . " = " . $this->lASizeAdjDelta);
         //Now that we have a LASizeAdjDelta we can also compute the HVIMASQFTDIFF
         $this->setHVImpSqftDiff($subjdetailadj);
         $debug=false;
@@ -418,59 +440,82 @@ class propertyClass
         return $this->mHVImpSqftDiff;
     }
 
-    function setMktLevelerDetailAdjDelta($subjdetailadj)
+    /**
+     * @param propertyClass $subjDetailAdj
+     */
+    function setMktLevelerDetailAdjDelta($subjDetailAdj)
     {
-        $this->mMktLevelerDetailAdjDelta = (int)$subjdetailadj->mMktLevelerDetailAdj - (int)$this->getMktLevelerDetailAdj();
+//        error_log("setMktLevelerDetailAdjDelta")
+        $this->mktLevelerDetailAdjDelta = $subjDetailAdj->getMktLevelerDetailAdj() - $this->getMktLevelerDetailAdj();
     }
 
-    // Pass the the SQL field to sum over for HVMARCN data
 
+    /**
+     * @return int
+     */
+    function getMktLevelerDetailAdjDelta()
+    {
+        return $this->mktLevelerDetailAdjDelta;
+    }
+
+    /**
+     * The Mkt Leveler Detail Adj is set by determine
+     * @param int $mMktLevelerDetailAdj
+     */
+    public function setMktLevelerDetailAdj($mktLevelerDetailAdj)
+    {
+        $this->mktLevelerDetailAdj = $mktLevelerDetailAdj;
+    }
+
+    /**
+     * @return int
+     */
     function getMktLevelerDetailAdj()
     {
-        if ($this->mMktLevelerDetailAdj === null) {
-            global $MKTLEVELERDETAILADJ, $TABLE_IMP_DET, $TABLE_SPEC_IMP, $allowablema, $mafield, $debugquery;
-            $propid = $this->propId;
-            $subquery = "";
-            $target = "det_calc_val";
-            $target2 = "det_val";
-
-            $i = 0;
-            while ($i < count($allowablema)) {
-                $subquery .= "imprv_det_type_cd != '$allowablema[$i]'";
-                if (++$i < count($allowablema))
-                    $subquery .= " AND ";
-            }
-
-            $query = "SELECT SPECIAL_IMP.$target,SPECIAL_IMP.$target2 FROM $TABLE_SPEC_IMP,$TABLE_IMP_DET
-			WHERE $TABLE_IMP_DET.prop_id = '$propid' AND $TABLE_SPEC_IMP.prop_id = '$propid'
-			AND $TABLE_IMP_DET.Imprv_det_id = $TABLE_SPEC_IMP.det_id
-			AND ( " . $subquery . ")";
-
-            if ($this->getImpCount() > 1) {
-                $query .= " AND IMP_DET.imprv_id = '$this->mPrimeImpId'";
-            }
-            if ($debugquery) error_log("getMktLevelerDetailAdj[" . $this->propId . "]: query=" . $query);
-            $result = doSqlQuery($query);
-
-            if (!$result) {
-                return "No Value Found!";
-            }
-            $num = mysqli_num_rows($result);
-
-            if ($num == 0) {
-                return "No Value Found!";
-            }
-            $value = 0;
-
-            while ($row = mysqli_fetch_array($result)) {
-                if ($row[$target] == 0)
-                    $value += $row[$target2];
-                else
-                    $value += $row[$target];
-            }
-            $this->mMktLevelerDetailAdj = $value;
-        }
-        return $this->mMktLevelerDetailAdj;
+//        if ($this->mMktLevelerDetailAdj === null) {
+//            global $MKTLEVELERDETAILADJ, $TABLE_IMP_DET, $TABLE_SPEC_IMP, $allowablema, $mafield, $debugquery;
+//            $propid = $this->propId;
+//            $subquery = "";
+//            $target = "det_calc_val";
+//            $target2 = "det_val";
+//
+//            $i = 0;
+//            while ($i < count($allowablema)) {
+//                $subquery .= "imprv_det_type_cd != '$allowablema[$i]'";
+//                if (++$i < count($allowablema))
+//                    $subquery .= " AND ";
+//            }
+//
+//            $query = "SELECT SPECIAL_IMP.$target,SPECIAL_IMP.$target2 FROM $TABLE_SPEC_IMP,$TABLE_IMP_DET
+//			WHERE $TABLE_IMP_DET.prop_id = '$propid' AND $TABLE_SPEC_IMP.prop_id = '$propid'
+//			AND $TABLE_IMP_DET.Imprv_det_id = $TABLE_SPEC_IMP.det_id
+//			AND ( " . $subquery . ")";
+//
+//            if ($this->getImpCount() > 1) {
+//                $query .= " AND IMP_DET.imprv_id = '$this->mPrimeImpId'";
+//            }
+//            if ($debugquery) error_log("getMktLevelerDetailAdj[" . $this->propId . "]: query=" . $query);
+//            $result = doSqlQuery($query);
+//
+//            if (!$result) {
+//                return "No Value Found!";
+//            }
+//            $num = mysqli_num_rows($result);
+//
+//            if ($num == 0) {
+//                return "No Value Found!";
+//            }
+//            $value = 0;
+//
+//            while ($row = mysqli_fetch_array($result)) {
+//                if ($row[$target] == 0)
+//                    $value += $row[$target2];
+//                else
+//                    $value += $row[$target];
+//            }
+//            $this->mMktLevelerDetailAdj = $value;
+//        }
+        return $this->mktLevelerDetailAdj;
     }
 
     function getYearBuilt()
@@ -598,6 +643,10 @@ class propertyClass
      */
     function setField($fieldConst, $value)
     {
+        /*
+         * NOTE
+         * Moving away from setting via field name and instead through setter
+         */
         global $PROPID, $GEOID, $SITUS, $NEIGHB, $OWNER, $NEIGHBMIA, $MARKETVALUE, $LIVINGAREA, $SALEDATE, $SALEPRICE, $SALESOURCE, $SALETYPE,
                $IMPROVEMENTCNT, $HIGHVALIMPMARCN, $COMPLETE, $LANDVALUEADJ, $CLASSADJ, $ACTUALYEARBUILT,
                $GOODADJ, $LASIZEADJ, $MKTLEVELERDETAILADJ, $SEGMENTSADJ;
@@ -670,9 +719,9 @@ class propertyClass
             case($LASIZEADJ["NAME"]):
                 $this->setLASizeAdj($value);
                 break;
-            case($MKTLEVELERDETAILADJ["NAME"]):
-                $this->mMktLevelerDetailAdj = $value;
-                break;
+//            case($MKTLEVELERDETAILADJ["NAME"]):
+//                $this->mMktLevelerDetailAdj = $value;
+//                break;
             case($SEGMENTSADJ["NAME"]):
                 $this->mSegAdj = $value;
             default:
@@ -683,7 +732,7 @@ class propertyClass
 
     /**
      * @param string $field
-     * @return string|void
+     * @return float|null|string
      */
     function getFieldByName($field)
     {
@@ -783,9 +832,9 @@ class propertyClass
             case($HIGHVALIMPMASQFTDIFF["NAME"]):
                 return $this->mHVImpSqftDiff;
             case($MKTLEVELERDETAILADJ["NAME"]):
-                return number_format($this->mMktLevelerDetailAdj);
+                return  $this->getMktLevelerDetailAdj();
             case($mktlevelerdetailadjdelta):
-                return number_format($this->mMktLevelerDetailAdjDelta);
+                return $this->getMktLevelerDetailAdjDelta();
             case($SEGMENTSADJ["NAME"]):
                 return $this->mSegAdj;
             case($SEGMENTSADJSIMPLE["NAME"]):
@@ -950,14 +999,14 @@ class propertyClass
 
         $var1 = $this->getLandValueAdjDelta();
         $var2 = $this->getClassAdjDelta();
-        //No longer in sheet as of 2015
-        //$var3 = (int)$this->mLASizeAdjDelta;
+        //No longer in sheet as of 2015 and back as of 2017
+        $var3 = $this->getLASizeAdjDelta();
         $var4 = $this->getGoodAdjDelta();
-        //No longer in sheet as of 2015
-        //$var5 = (int)$this->mMktLevelerDetailAdjDelta;
+        //No longer in sheet as of 2015 and back as of 2017
+        $var5 = $this->getMktLevelerDetailAdjDelta();
         $var6 = $this->getImpDetSegAdj();
 
-        $this->mNetAdj = (int)($var1 + $var2 + $var4 + $var6);
+        $this->mNetAdj = (int)($var1 + $var2 + $var4 + $var5 + $var6);
 
         return $this->mNetAdj;
     }
@@ -1259,4 +1308,5 @@ class propertyClass
     {
         return json_encode($this, JSON_PRETTY_PRINT);
     }
+
 } // end of class
