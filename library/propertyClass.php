@@ -63,7 +63,10 @@ class propertyClass
     private $propId;
     private $mLivingArea;
     private $mSalePrice;
-    private $mIndVal;
+    /**
+     * @var int
+     */
+    private $indicatedVal;
     /**
      * @var int
      */
@@ -746,7 +749,7 @@ class propertyClass
             case($NETADJ["NAME"]):
                 return number_format($this->mNetAdj);
             case($INDICATEDVAL["NAME"]):
-                return number_format($this->getIndicatedVal());
+                return $this->getIndicatedVal(true);
             case($INDICATEDVALSQFT["NAME"]):
                 return number_format($this->getIndicatedValSqft(), 2);
             case($MEANVAL["NAME"]):
@@ -869,31 +872,38 @@ class propertyClass
      */
     function calcIndicatedVal($equityComp){
         if ($this->mSubj == true) {
-            return $this->mMarketVal;
+            return $this->getMarketVal();
         }
         $var = null;
         if ($equityComp) {
-            $var1 = $this->mMarketVal;
+            $var1 = $this->getMarketVal();
         } else {
-            $var1 = $this->mSalePrice;
+            $var1 = $this->getSalePrice();
         }
         $result = $var1 + $this->getNetAdj();
         return $result;
     }
 
     function setIndicatedVal($val){
-        $this->mIndVal = $val;
+        $this->indicatedVal = $val;
     }
 
-    function getIndicatedVal(){
-        return $this->mIndVal;
+    /**
+     * @param bool
+     * @return int|string
+     */
+    function getIndicatedVal($pretty){
+        if($pretty) {
+            return number_format($this->indicatedVal);
+        } else {
+            return $this->indicatedVal;
+        }
     }
 
     /**
      * @return int
      */
-    function getNetAdj()
-    {
+    function calcNetAdj() : int{
         if ($this->isSubj() == true) {
             //Don't adjust a subject
             return 0;
@@ -910,8 +920,22 @@ class propertyClass
         //$impDetSegAdj = $this->getImpDetSegAdj();
         $segAdjDelta = $this->getSegAdjDelta();
 
-        $this->mNetAdj = $landValueAdjDelta + $classAdjDelta + $LASizeAdjDelta + $goodAdjDelta + $mktLevelerDetailAdjDelta + $segAdjDelta;
+        $result = $landValueAdjDelta + $classAdjDelta + $LASizeAdjDelta + $goodAdjDelta + $mktLevelerDetailAdjDelta + $segAdjDelta;
+        return $result;
+    }
 
+    /**
+     * @param $netAdj
+     */
+    function setNetAdj($netAdj){
+        $this->mNetAdj = $netAdj;
+    }
+
+    /**
+     * @return int
+     */
+    function getNetAdj()
+    {
         return $this->mNetAdj;
     }
 
@@ -1120,7 +1144,10 @@ class propertyClass
     }
 
     /**
-     * @param propertyClass $subjdetailadj
+     * @param propertyClass $subj
+     * @param $isEquity
+     * @throws Exception
+     * @internal param propertyClass $subjdetailadj
      */
     function setGoodAdjDelta($subj, $isEquity)
     {
@@ -1182,7 +1209,7 @@ class propertyClass
             return NULL;
         if ($this->getLivingArea() == 0)
             return NULL;
-        return ($this->getIndicatedVal() / $this->getLivingArea());
+        return ($this->getIndicatedVal(false) / $this->getLivingArea());
     }
 
     /**

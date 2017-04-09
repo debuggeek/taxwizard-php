@@ -328,6 +328,7 @@ function emitHTMLFooter(){
  * @param FullTable $fullTable
  * @param bool $isEquityComp
  * @return string
+ * @internal param propertyclass[] $subjcomparray
  */
 function generateJsonRows($fullTable, $isEquityComp = true){
 	global $fieldsofinterest,$fieldsofinteresteq, $SEGMENTSADJ, $TCADSCORE;
@@ -341,6 +342,9 @@ function generateJsonRows($fullTable, $isEquityComp = true){
 		$relaventfields[]  = $TCADSCORE;
 	}
 
+    /**
+     * @var propertyClass[]
+     */
 	$subjcomparray = $fullTable->getSubjCompArray();
 
     if($subjcomparray === null || count($subjcomparray) == 0){
@@ -355,7 +359,7 @@ function generateJsonRows($fullTable, $isEquityComp = true){
 
 	$roundtwo = array();
 	foreach($relaventfields as $field){
-		if($field[2] == "GLOBALCALCULATED"){
+		if($field["TYPE"] == "GLOBALCALCULATED"){
 			$roundtwo[] = $field;
 		} else if($field["NAME"] !== $SEGMENTSADJ["NAME"]) {
 			$currRow = array();

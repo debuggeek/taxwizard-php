@@ -9,6 +9,10 @@ include_once 'PropertyDAO.php';
 use TaxWizard\TcadScore;
 require_once 'TcadScore.php';
 
+/**
+ * @param propertyClass[] $subjcomp
+ * @return string
+ */
 function getMeanVal($subjcomp)
 {
 	global $INDICATEDVAL;
@@ -16,7 +20,7 @@ function getMeanVal($subjcomp)
 	$compCount = count($subjcomp) -1;
 	//don't include subj
 	for($i=1;$i <= $compCount; $i++){
-		$next = str_replace(",","",$subjcomp[$i]->getFieldByName($INDICATEDVAL["NAME"]));
+		$next = $subjcomp[$i]->getIndicatedVal(false);
 		$result += $next;
 	}
 	if($compCount > 0){
@@ -29,7 +33,7 @@ function getMeanVal($subjcomp)
 }
 
 /**
- * @param array $subjcomp
+ * @param propertyClass[] $subjcomp
  * @return string
  */
 function getMeanValSqft($subjcomp){
@@ -37,16 +41,16 @@ function getMeanValSqft($subjcomp){
 	$result = 0;
 	if(count($subjcomp) > 1){
 		$comps = count($subjcomp) -1;
-		for($i=1;$i <= $comps; $i++)
-			$result += $subjcomp[$i]->getFieldByName($INDICATEDVALSQFT["NAME"]);
-
+		for($i=1;$i <= $comps; $i++) {
+            $result += $subjcomp[$i]->getIndicatedValSqft();
+        }
 		$result = $result / $comps;
 	}
 	return number_format($result,2);
 }
 
 /**
- * @param array $subjcomp
+ * @param propertyClass[] $subjcomp
  * @return string
  */
 function getMedianVal($subjcomp){
@@ -58,7 +62,7 @@ function getMedianVal($subjcomp){
 		$comparray = array();
 
 		for ($i = 1; $i < count($subjcomp); $i++) {
-			$next = str_replace(",", "", $subjcomp[$i]->getFieldByName($INDICATEDVAL["NAME"]));
+            $next = $subjcomp[$i]->getIndicatedVal(false);
 			$comparray[] = $next;
 		}
 
@@ -75,7 +79,7 @@ function getMedianVal($subjcomp){
 }
 
 /**
- * @param array $subjcomp
+ * @param propertyClass[] $subjcomp
  * @return string
  */
 
@@ -87,7 +91,7 @@ function getMedianValSqft($subjcomp){
 		$comparray = array();
 
 		for ($i = 1; $i < count($subjcomp); $i++)
-			$comparray[] = $subjcomp[$i]->getFieldByName($INDICATEDVALSQFT["NAME"]);
+			$comparray[] = $subjcomp[$i]->getIndicatedValSqft();
 
 		$num = count($comparray);
 		sort($comparray);
@@ -608,7 +612,7 @@ function calcDeltas($subj,$currprop, $isEquity)
     $tcadScore->setScore($subj, $currprop);
     $currprop->setTcadScore($tcadScore);
 
-	$currprop->getNetAdj();
+	$currprop->setNetAdj($currprop->calcNetAdj());
 	$currprop->setIndicatedVal($currprop->calcIndicatedVal($isEquity));
 	$currprop->getIndicatedValSqft();
 }
@@ -850,14 +854,19 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
 
 //Compares two properties for their indicated value
 //Returns 0 if equal , -1 if prop1 is less the prop2, or 1 if prop1 > prop2
+/**
+ * @param propertyClass $prop1
+ * @param propertyClass $prop2
+ * @return int
+ */
 function compareIndicatedVal(propertyClass $prop1, propertyClass $prop2)
 {
     global $debug;
 
-    $prop1_Ind = intval($prop1->getIndicatedVal());
+    $prop1_Ind = $prop1->getIndicatedVal(false);
     if($prop1_Ind == 0)
         error_log("Error during comparison for indicated value of propid:".$prop1->getPropID());
-    $prop2_Ind = intval($prop2->getIndicatedVal());
+    $prop2_Ind = $prop2->getIndicatedVal(false);
     if($prop2_Ind == 0)
         error_log("Error during comparison for indicated value of propid:".$prop2->getPropID());
     if($debug) echo "<br/>Comparing indicated values of".$prop1_Ind." and ".$prop2_Ind."<br/>";

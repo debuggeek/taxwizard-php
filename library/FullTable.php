@@ -34,7 +34,7 @@ class FullTable
     }
 
     /**
-     * @return propertyClass()
+     * @return propertyClass[]
      */
     public function getSubjCompArray()
     {
