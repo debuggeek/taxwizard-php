@@ -117,7 +117,7 @@ class queryContext {
         if(isset($getContext['rangeEnabled'])){
             if(strcmp($getContext['rangeEnabled'],'on') == 0){
                 $this->subClassRangeEnabled = true;
-                $this->subClassRange = trim($getContext['range']);
+                $this->subClassRange = intval(trim($getContext['subClassRange']));
             }
         }
 
