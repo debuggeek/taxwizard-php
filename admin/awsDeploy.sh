@@ -28,4 +28,4 @@ mkdir $target/upload
 
 cp ~/accountinfo.php $target/library/
 
-cp -r $src/cli $target/cli:wq
+cp -r $src/cli $target/cli
