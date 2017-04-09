@@ -786,6 +786,9 @@ class propertyClass
         return $this->mSalePrice / $this->mLivingArea;
     }
 
+    /**
+     * @return float
+     */
     function getSaleRatio(){
         if($this->getSalePrice() > 0) {
             return $this->getMarketVal() / $this->getSalePrice();

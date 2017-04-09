@@ -40,7 +40,7 @@ $SALEPRICE = array("NAME"=>"salePrice", "STRING"=>"Sale Price","TABLELOOKUP","FI
 $SALESOURCE = array("NAME"=>"saleSource", "STRING"=>"Sale Source","TABLELOOKUP","FIELD"=>"source","TABLE"=>"SALES_MLS_MERGED");
 $SALETYPE = array("NAME"=>"saleType", "STRING"=>"Sale Type","TABLELOOKUP","FIELD"=>"sale_type","TABLE"=>"SALES_MLS_MERGED");
 $SALEPRICESQFT = array("NAME"=>"salePriceSqft", "STRING"=>"Sale Price / SQFT","TYPE"=>"CALCULATED","getSPSqft");
-$SALERATIO = array("NAME"=>"saleRatio", "STRING"=>"Sale Ratio", "TYPE"=>"CALCULATED", "getSaleRatio");
+$SALERATIO = array("NAME"=>"saleRatio", "STRING"=>"Sale Ratio", "TYPE"=>"CALCULATED", "getSaleRatio", "SKIPABLE"=>true);
 $ADJSALEPRICE = array("NAME"=>"adjSalePrice", "STRING"=>"Adj Sale Price", "TYPE"=>"CALCULATED", "getAdjSalePrice");
 $SALETYPEANDCONF = array("NAME"=>"saleTypeConf", "STRING"=>"Sale Type - Conf Level", "TYPE"=>"CALCULATED", "getSaleTypeAndConf");
 
@@ -67,7 +67,7 @@ $SEGMENTSADJSIMPLE = array("NAME"=>"segAdjSimple", "STRING"=>"Segments & Adj", "
 
 $NETADJ = array("NAME"=>"netAdj", "STRING"=>"Net Adjustment","TYPE"=>"COMPCALCULATED","getNetAdj");
 
-$TCADSCORE = array("NAME"=>"tcadScore", "STRING"=>"TCAD Score", "TYPE"=>"CALCULATED", "getTcadScore");
+$TCADSCORE = array("NAME"=>"tcadScore", "STRING"=>"TCAD Score", "TYPE"=>"CALCULATED", "getTcadScore", "SKIPABLE"=>true);
 
 $INDICATEDVAL = array("NAME"=>"indicatedVal", "STRING"=>"Indicated Value","TYPE"=>"COMPCALCULATED","getIndicatedVal");
 $INDICATEDVALSQFT = array("NAME"=>"indicatedValSqft", "STRING"=>"Indicated Value / SQFT","TYPE"=>"COMPCALCULATED","getIndicatedValSqft");
@@ -123,7 +123,7 @@ $fieldsofinteresteq_2016 = array($PROPID,$OWNER,$GEOID,$NEIGHB, $SITUS,$MARKETVA
 $fieldsofinterest = array($PROPID,$GEOID,$SITUS,NULL,$NEIGHB,$NEIGHBMIA,NULL,$SALERATIO, $SALEDATE,$MARKETVALUE,$SALEPRICE,
     $ADJSALEPRICE, $SALETYPE, $SALETYPEANDCONF,NULL,$LANDVALUEADJ, $STATECODE, $IMPROVEMENTCNT, $CLASSADJ, $GOODADJ, $COMPLETE, $LASIZEADJ,
     $LIVINGAREA, $ACTUALYEARBUILT, $MKTLEVELERDETAILADJ,
-    $SEGMENTSADJSIMPLE, NULL,$NETADJ,NULL,$INDICATEDVAL,NULL,$MEDIANVAL);
+    $SEGMENTSADJSIMPLE, NULL,$NETADJ,NULL,$INDICATEDVAL,$TCADSCORE, NULL,$MEDIANVAL);
 
 $fieldsofinteresteq = array($PROPID,$GEOID,$NEIGHB,NULL,
     $NEIGHBMIA,$SITUS,$MARKETVALUE,NULL,

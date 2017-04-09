@@ -332,14 +332,13 @@ function emitHTMLFooter(){
  */
 function generateJsonRows($fullTable, $isEquityComp = true){
 	global $fieldsofinterest,$fieldsofinteresteq, $SEGMENTSADJ, $TCADSCORE;
+
+	$debug = false;
+
 	if($isEquityComp){
 		$relaventfields = $fieldsofinteresteq;
 	}else{
 		$relaventfields = $fieldsofinterest;
-	}
-	//Tack it on
-	if($fullTable->getShowTcadScores()){
-		$relaventfields[]  = $TCADSCORE;
 	}
 
     /**
@@ -362,6 +361,12 @@ function generateJsonRows($fullTable, $isEquityComp = true){
 		if($field["TYPE"] == "GLOBALCALCULATED"){
 			$roundtwo[] = $field;
 		} else if($field["NAME"] !== $SEGMENTSADJ["NAME"]) {
+		    if(isSkipable($field)){
+		        if(!shouldDisplay($fullTable, $field)){
+		            if($debug) error_log("Skipping display of ".$field["NAME"]);
+		            continue;
+                }
+            }
 			$currRow = array();
 			$currRow['description'] = $field["STRING"];
 			for ($i = 0; $i < count($subjcomparray); $i++) {
@@ -376,18 +381,17 @@ function generateJsonRows($fullTable, $isEquityComp = true){
 			}
 			$obj->rows[] = $currRow;
 		} else {
-			// Dealing with segments and Adj as only case right now
+		    // Special case
+			// 2016 Dealing with segments and Adj as only case right now
 			$obj->rows = array_merge($obj->rows, addPrimaryImprovements($subjcomparray, $field));
 			//Add secondary improvements
 			$obj->rows = array_merge($obj->rows, addSecondaryImprovements($subjcomparray));
 		}
-		
-		
 	}
 
 	foreach($roundtwo as $field){
 		$currRow = array();
-		$currRow['description'] = $field["NAME"];
+		$currRow['description'] = $field["STRING"];
 		for ($i = 0; $i < count($subjcomparray); $i++) {
 			$currCol = 'col' . ($i + 1);
 			if($currCol == 'col1') {
@@ -660,6 +664,36 @@ function returnGenericTable($subjcomparray,$isEquityComp){
 	return $returnHTML;
 }
 
+
+/**
+ * @param mixed[] $fieldArray
+ * @return bool
+ */
+function isSkipable($fieldArray) : bool{
+    if(in_array("SKIPABLE", $fieldArray)) {
+        return $fieldArray["SKIPABLE"];
+    } else {
+        return false;
+    }
+}
+
+/**
+ * @param FullTable $fullTable
+ * @param mixed[] $fieldArray
+ * @return bool
+ */
+function shouldDisplay($fullTable, $fieldArray) : bool{
+    global $TCADSCORE, $SALERATIO;
+
+    switch($fieldArray["NAME"]){
+        case $SALERATIO["NAME"]:
+            return $fullTable->getShowSaleRatios();
+        case $TCADSCORE["NAME"]:
+            return $fullTable->getShowTcadScores();
+        default:
+            return false;
+    }
+}
 
 
 ?>

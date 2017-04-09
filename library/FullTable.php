@@ -25,6 +25,8 @@ class FullTable
 
     private $showTcadScores;
 
+    private $showSaleRatios;
+
     /**
      * @return propertyClass
      */
@@ -107,6 +109,21 @@ class FullTable
         $this->showTcadScores = $showTcadScores;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getShowSaleRatios()
+    {
+        return $this->showSaleRatios;
+    }
+
+    /**
+     * @param mixed $setShowSaleRatios
+     */
+    public function setShowSaleRatios($setShowSaleRatios)
+    {
+        $this->showSaleRatios = $setShowSaleRatios;
+    }
 
     /**
      * @param  queryContext $queryContext
@@ -173,6 +190,7 @@ class FullTable
         }
 
         $this->setShowTcadScores($queryContext->showTcadScores);
+        $this->setShowSaleRatios($queryContext->showSaleRatios);
 
         $this->meanVal = getMeanVal($this->subjCompArray);
         $this->meanValSqft = getMeanValSqft($this->subjCompArray);

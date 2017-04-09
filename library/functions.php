@@ -787,6 +787,7 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
         }
     }
 
+    //Check Percent Good
     if ($queryContext->percentGoodRangeEnabled) {
         if (!fallsWithinPercentGood($c, $subjprop, $queryContext)) {
             if ($queryContext->traceComps) error_log("addToCompsArray: failed to fall inside percent good range ");
@@ -794,6 +795,7 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
         }
     }
 
+    // Check limit filter
 	if ($queryContext->limitToLessImps){
 		$varCompImpCount = count(ImpHelper::getUniqueImpIds($c->getImpDets()));
 		$varSubjImpCount = count(ImpHelper::getUniqueImpIds($subjprop->getImpDets()));
@@ -802,6 +804,14 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
 			return false;
 		}
 	}
+
+	// Check Sale Ratio
+    if ($queryContext->saleRatioEnabled){
+	    if(!fallsWithinSaleRatio($c, $queryContext)){
+            if ($queryContext->traceComps) error_log("addToCompsArray: failed to fall inside sale ratio range ");
+            return false;
+        }
+    }
 
     calcDeltas($subjprop,$c, $queryContext->isEquityComp);
 
@@ -909,6 +919,22 @@ function fallsInsideClassRange($subjSubClass, $compSubClass, $range){
 	}
 	
 	return true;
+}
+
+/**
+ * @param propertyClass $comp
+ * @param queryContext $queryContext
+ * @return bool
+ */
+function fallsWithinSaleRatio(propertyClass $comp, queryContext $queryContext){
+    $compSaleRatio = $comp->getSaleRatio();
+
+    if($compSaleRatio < $queryContext->saleRatioMin){
+        return false;
+    } else if($compSaleRatio > $queryContext->saleRatioMax){
+        return false;
+    }
+    return true;
 }
 
 function fallsWithinPercentGood(propertyClass $comp, propertyClass $subjprop, queryContext $queryContext){

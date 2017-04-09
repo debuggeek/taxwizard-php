@@ -20,6 +20,10 @@ class queryContext {
     public $subClassRange = 2;
     public $subClassRangeEnabled = false;
 
+    public $saleRatioEnabled = false;
+    public $saleRatioMin = null;
+    public $saleRatioMax = null;
+
     public $percentGoodRangeEnabled = false;
     public $percentGoodRange = 10;
     public $percentGoodMin = null;
@@ -37,8 +41,8 @@ class queryContext {
     public $limitToOnlyCurrentYearLowered = false;
     public $grossAdjFilterEnabled = false;
     // Group used for display filtering
-    public $showTcadScores = true;
-    public $displayRatios = false;
+    public $showTcadScores = false;
+    public $showSaleRatios = true;
 
 
     /*
@@ -121,6 +125,21 @@ class queryContext {
             }
         }
 
+        if(isset($getContext['saleRatioEnabled'])){
+            if(strcmp($getContext['saleRatioEnabled'], 'on') ==0 ) {
+                $this->saleRatioEnabled = true;
+
+                $val =  trim($getContext['saleRatioRange']);
+                $valArray = explode(":", $val);
+                if(count($valArray) == 2){
+                    $this->saleRatioMin = floatval($valArray[0]);
+                    $this->saleRatioMax = floatval($valArray[1]);
+                } else {
+                    error_log("Unexpected query value for saleRatioEnabled");
+                }
+            }
+        }
+
         if(isset($getContext['pctGoodRangeEnabled'])){
             if(strcmp($getContext['pctGoodRangeEnabled'], 'on') ==0 ) {
                 $this->percentGoodRangeEnabled = true;
@@ -171,14 +190,24 @@ class queryContext {
             $this->traceComps = true;
         }
 
+        //////////////
+        // Display filter options
+        /////////////
+
         if(isset($getContext['showTcadScores'])){
             if(strcmp($getContext['showTcadScores'], 'on') == 0) {
                 $this->showTcadScores = true;
             } else {
                 $this->showTcadScores = false;
             }
-        } else {
-            $this->showTcadScores = false;
+        }
+
+        if(isset($getContext['showSaleRatio'])){
+            if(strcmp($getContext['showTcadScores'], 'on') == 0) {
+                $this->showSaleRatios = true;
+            } else {
+                $this->showSaleRatios = false;
+            }
         }
 
         if(isset($getContext['limitTcadScores'])){
