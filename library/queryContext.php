@@ -8,9 +8,9 @@ class queryContext {
 
     // The first grouping are all used in search filtering
     public $trimIndicated = false;
-    public $includeMls = false;
     public $multiHood = false;
     public $includeVu = false;
+    public $includeMls = false;
     public $prevYear = 1;
 
     public $sqftPercent = null;
@@ -203,7 +203,7 @@ class queryContext {
         }
 
         if(isset($getContext['showSaleRatio'])){
-            if(strcmp($getContext['showTcadScores'], 'on') == 0) {
+            if(strcmp($getContext['showSaleRatio'], 'on') == 0) {
                 $this->showSaleRatios = true;
             } else {
                 $this->showSaleRatios = false;
