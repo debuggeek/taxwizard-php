@@ -183,14 +183,29 @@ class BatchDAO
                               IncludeVU as includeVu,
                               IncludeMLS as includeMls,
                               NumPrevYears as prevYear,
-                              SqftRange as sqftPercent,
+                              SqftRangePct as sqftPercent,
+                              SqftRangeMin as sqftRangeMin,
+                              SqftRangeMax as sqftRangeMax,
                               ClassRange as subClassRange,
                               ClassRangeEnabled as subClassRangeEnabled,
+                              SaleRatioEnabled as saleRatioEnabled,
+                              SaleRatioMin as saleRatioMin,
+                              SaleRatioMax as saleRatioMax,
                               PercentGood as percentGoodRange,
                               PercentGoodEnabled as percentGoodRangeEnabled,
+                              PercentGoodMin as percentGoodMin,
+                              PercentGoodMax as percentGoodMax,
                               NetAdj as netAdjustAmount,
                               NetAdjEnabled as netAdjustEnabled,
-                              ImpLimit as limitToLessImps
+                              ImpLimit as limitToLessImps,
+                              LimitTcadScores as limitTcadScores,
+                              LimitTcadScoresAmount as limitTcadScoreAmount,
+                              TcadScoreLimitMin as limitTcadScoresMin,
+                              TcadScoreLimitMax as limitTcadScoresMax,
+                              LimitToCurrentYearLowered as limitToCurrYear,
+                              GrossAdjFilterEnabled as grossAdjFilterEnabled,
+                              ShowTcadScores as showTcadScores,
+                              ShowSaleRatios as showSaleRatios
                           FROM BATCH_PROP_SETTINGS 
                           WHERE id=(SELECT max(id) FROM BATCH_PROP_SETTINGS)");
         $stmt->execute();
@@ -201,16 +216,33 @@ class BatchDAO
         $stmt->bindColumn(4, $queryContext->includeMls, PDO::PARAM_BOOL);
         $stmt->bindColumn(5, $queryContext->prevYear, PDO::PARAM_INT);
         $stmt->bindColumn(6, $queryContext->sqftPercent, PDO::PARAM_INT);
-        $stmt->bindColumn(7, $queryContext->subClassRange, PDO::PARAM_INT);
-        $stmt->bindColumn(8, $queryContext->subClassRangeEnabled, PDO::PARAM_BOOL);
-        $stmt->bindColumn(9, $queryContext->percentGoodRange, PDO::PARAM_INT);
-        $stmt->bindColumn(10, $queryContext->percentGoodRangeEnabled, PDO::PARAM_BOOL);
-        $stmt->bindColumn(11, $queryContext->netAdjustAmount, PDO::PARAM_INT);
-        $stmt->bindColumn(12, $queryContext->netAdjustEnabled, PDO::PARAM_BOOL);
-        $stmt->bindColumn(13, $queryContext->limitToLessImps, PDO::PARAM_BOOL);
+        $stmt->bindColumn(7, $queryContext->sqftRangeMin, PDO::PARAM_INT);
+        $stmt->bindColumn(8, $queryContext->sqftRangeMax, PDO::PARAM_INT);
+        $stmt->bindColumn(9, $queryContext->subClassRange, PDO::PARAM_INT);
+        $stmt->bindColumn(10, $queryContext->subClassRangeEnabled, PDO::PARAM_BOOL);
+        $stmt->bindColumn(11, $queryContext->saleRatioEnabled, PDO::PARAM_BOOL);
+        $stmt->bindColumn(12, $ratioMin, PDO::PARAM_STR);
+        $stmt->bindColumn(13, $ratioMax, PDO::PARAM_STR);
+        $stmt->bindColumn(14, $queryContext->percentGoodRange, PDO::PARAM_INT);
+        $stmt->bindColumn(15, $queryContext->percentGoodRangeEnabled, PDO::PARAM_BOOL);
+        $stmt->bindColumn(16, $queryContext->percentGoodMin, PDO::PARAM_INT);
+        $stmt->bindColumn(17, $queryContext->percentGoodMax, PDO::PARAM_INT);
+        $stmt->bindColumn(18, $queryContext->netAdjustAmount, PDO::PARAM_INT);
+        $stmt->bindColumn(19, $queryContext->netAdjustEnabled, PDO::PARAM_BOOL);
+        $stmt->bindColumn(20, $queryContext->limitToLessImps, PDO::PARAM_BOOL);
+        $stmt->bindColumn(21, $queryContext->limitTcadScores, PDO::PARAM_BOOL);
+        $stmt->bindColumn(22, $queryContext->limitTcadScoresAmount, PDO::PARAM_INT);
+        $stmt->bindColumn(23, $queryContext->tcadScoreLimitMin, PDO::PARAM_INT);
+        $stmt->bindColumn(24, $queryContext->tcadScoreLimitMax, PDO::PARAM_INT);
+        $stmt->bindColumn(25, $queryContext->grossAdjFilterEnabled, PDO::PARAM_BOOL);
+        $stmt->bindColumn(26, $queryContext->grossAdjFilterEnabled, PDO::PARAM_BOOL);
+        $stmt->bindColumn(27, $queryContext->showTcadScores, PDO::PARAM_BOOL);
+        $stmt->bindColumn(28, $queryContext->showSaleRatios, PDO::PARAM_BOOL);
+
 
         $stmt->fetch(PDO::FETCH_BOUND);
-
+        $queryContext->saleRatioMin = floatval($ratioMin);
+        $queryContext->saleRatioMax = floatval($ratioMax);
         return $queryContext;
     }
 
