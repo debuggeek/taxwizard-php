@@ -8,6 +8,8 @@
  */
 class ImprovementDetailClass{
 
+    protected $prop_id;
+
     /**
      * Improvement ID
      * @var string
@@ -315,5 +317,21 @@ class ImprovementDetailClass{
             $retstring = $retstring . "[$name : $value],";
         }
         return $retstring;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPropId()
+    {
+        return $this->prop_id;
+    }
+
+    /**
+     * @param mixed $prop_id
+     */
+    public function setPropId($prop_id)
+    {
+        $this->prop_id = $prop_id;
     }
 }

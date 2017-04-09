@@ -123,12 +123,12 @@ $batchJobs = $batchService->getPagedBatchJobs(true, $start_from, 20);
         ?>
         <tr>
             <td><?php echo "<a href='download_pdf.php?subj=".$row->propId."'>".$row->propId."</a>"; ?></td>
-            <td><?php echo $row->propMktVal; ?></td>
-            <td><?php echo $row->propMedSale5; ?></td>
-            <td><?php echo $row->propMedSale10; ?></td>
-            <td><?php echo $row->propMedSale15; ?></td>
-            <td><?php echo $row->propMedEq11; ?></td>
-            <td><?php echo $row->totalSalesComps; ?></td>
+            <td><?php echo number_format($row->propMktVal); ?></td>
+            <td><?php echo number_format($row->propMedSale5); ?></td>
+            <td><?php echo number_format($row->propMedSale10); ?></td>
+            <td><?php echo number_format($row->propMedSale15); ?></td>
+            <td><?php echo number_format($row->propMedEq11); ?></td>
+            <td><?php echo number_format($row->totalSalesComps); ?></td>
             <td><?php echo "<a href='reset.php?subj=".$row->propId."'>recompute</a>"; ?></td>
             <td><?php echo "<a href='remove.php?propid=".$row->propId."'>remove</a>"; ?></td>
         </tr>

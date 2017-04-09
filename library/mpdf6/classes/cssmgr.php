@@ -1294,6 +1294,8 @@ class cssmgr
 		$p = array();
 		$zp = array();
 
+        $attr = is_array($attr) ? $attr : [];
+
 		$classes = array();
 		if (isset($attr['CLASS'])) {
 			$classes = preg_split('/\s+/', $attr['CLASS']);

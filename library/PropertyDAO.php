@@ -59,6 +59,9 @@ class PropertyDAO{
         /* @var propertyClass $property */
         $property = $this->getCoreProp($propId);
         $property->setImpDets($this->getImpDet($propId));
+        if(sizeof($property->getImpDets()) == 0){
+            error_log("getPropertyById>> [INFO] : no improvements found for ". $propId);
+        }
 
         $property->setPropId($propId);
         $property->setImprovCount(count(ImpHelper::getUniqueImpIds($property->getImpDets())));
@@ -78,6 +81,7 @@ class PropertyDAO{
      */
     public function getImpDet($propId) {
         $stmt = $this->pdo->prepare("SELECT id.imprv_id, 
+                          id.prop_id as prop_id,
                           LTRIM(RTRIM(si.adjust_perc)) as adjPercRaw,
                           si.det_val as detVal,
                           LTRIM(RTRIM(id.imprv_det_type_cd)) as imprv_det_type_cd, 

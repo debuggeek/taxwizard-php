@@ -42,7 +42,12 @@ namespace DebugGeek\TaxWizard\Services {
          */
         public function getPagedBatchJobs($status, $start, $limit)
         {
-            return $this->batchDao->getPagedBatchJobs($status, $start, $limit);
+            $debug = false;
+            $batchJobs = $this->batchDao->getPagedBatchJobs($status, $start, $limit);
+            if($debug){
+                error_log("getPagedBatchJobs>> ". var_dump($batchJobs));
+            }
+            return $batchJobs;
         }
 
         /**

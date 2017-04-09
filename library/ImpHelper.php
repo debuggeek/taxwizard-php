@@ -258,6 +258,11 @@ class ImpHelper
      * @return float
      */
     public static function calculateUnitPrice($propertyImps){
+
+        if(sizeof($propertyImps) == 0){
+//            error_log("calculateUnitPrice>> No improvments found for this property");
+            return 0;
+        }
         $unitPrice = 0;
         $primeImps = self::getPrimaryImprovements($propertyImps);
         $totalReplacementCost = 0; //RCN
@@ -268,6 +273,10 @@ class ImpHelper
                 $totalReplacementCost += $imp->getDetCalcVal();
                 $mainSqft += $imp->getDetArea();
             }
+        }
+        if($mainSqft == 0){
+            error_log("calculateUnitPrice>> mainSqft still 0 for ". $primeImps[0]->getPropId());
+            return 0;
         }
         $unitPrice = round(($totalReplacementCost / $mainSqft), 2);
         return $unitPrice;
