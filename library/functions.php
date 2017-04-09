@@ -11,9 +11,9 @@ require_once 'TcadScore.php';
 
 /**
  * @param propertyClass[] $subjcomp
- * @return string
+ * @return int
  */
-function getMeanVal($subjcomp)
+function getMeanVal($subjcomp) : int
 {
 	global $INDICATEDVAL;
 	$result = 0;
@@ -29,14 +29,14 @@ function getMeanVal($subjcomp)
         error_log("getMeanVal: No comps to average over");
         $result = 0;
     }
-	return number_format($result);
+	return $result;
 }
 
 /**
  * @param propertyClass[] $subjcomp
- * @return string
+ * @return float
  */
-function getMeanValSqft($subjcomp){
+function getMeanValSqft($subjcomp) : float {
 	global $INDICATEDVALSQFT;
 	$result = 0;
 	if(count($subjcomp) > 1){
@@ -46,14 +46,14 @@ function getMeanValSqft($subjcomp){
         }
 		$result = $result / $comps;
 	}
-	return number_format($result,2);
+	return $result;
 }
 
 /**
  * @param propertyClass[] $subjcomp
- * @return string
+ * @return int
  */
-function getMedianVal($subjcomp){
+function getMedianVal($subjcomp): int {
 	global $INDICATEDVAL;
 
 	$median = 0;
@@ -75,15 +75,15 @@ function getMedianVal($subjcomp){
 			$median = ($comparray[$num / 2] + $comparray[$num / 2 - 1]) / 2;
 		}
 	}
-	return number_format($median);
+	return $median;
 }
 
 /**
  * @param propertyClass[] $subjcomp
- * @return string
+ * @return float
  */
 
-function getMedianValSqft($subjcomp){
+function getMedianValSqft($subjcomp) : float {
 	global $INDICATEDVALSQFT;
 
 	$median = 0;
@@ -102,7 +102,7 @@ function getMedianValSqft($subjcomp){
 			$median = ($comparray[$num / 2] + $comparray[$num / 2 - 1]) / 2;
 		}
 	}
-	return number_format($median,2);
+	return $median;
 }
 
 /**
@@ -1021,7 +1021,7 @@ function generateArrayOfBestComps(propertyClass $property, queryContext $queryCo
     $compsarray = findBestComps($property, $queryContext);
 
     if (sizeof($compsarray) == 0) {
-        error_log("massreport: no comps found for " . $property->getPropID());
+        error_log("generateArrayOfBestComps>>  no comps found for " . $property->getPropID());
         return null;
     }
 
@@ -1030,10 +1030,12 @@ function generateArrayOfBestComps(propertyClass $property, queryContext $queryCo
     }
 
     if (sizeof($compsarray) == 0) {
-        error_log("massreport: no comps found after MLS Sort for " . $property->getPropID());
+        error_log("generateArrayOfBestComps>> no comps found after MLS Sort for " . $property->getPropID());
     }
 
-    error_log("massreport: found " . sizeof($compsarray) . " comp(s) for " . $property->getPropID());
+    error_log("generateArrayOfBestComps>> found " . sizeof($compsarray) .
+        " comp(s) for " . $property->getPropID() .
+        " during " . ($queryContext->isEquityComp ? " equity " : " sales ") . "search");
 
     //resort to reset their index of any removed
     usort($compsarray, "compareIndicatedVal");

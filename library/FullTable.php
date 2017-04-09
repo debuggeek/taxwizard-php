@@ -52,33 +52,65 @@ class FullTable
     }
 
     /**
+     * @param int $meanVal
+     */
+    public function setMeanVal(int $meanVal)
+    {
+        $this->meanVal = $meanVal;
+    }
+
+    /**
      * @return int
      */
-    public function getMeanVal()
+    public function getMeanVal() : int
     {
         return $this->meanVal;
     }
 
     /**
+     * @param int $medianVal
+     */
+    public function setMedianVal(int $medianVal)
+    {
+        $this->medianVal = $medianVal;
+    }
+
+    /**
      * @return int
      */
-    public function getMedianVal()
+    public function getMedianVal() : int
     {
         return $this->medianVal;
     }
 
     /**
-     * @return int
+     * @param float $meanValSqft
      */
-    public function getMeanValSqft()
+    public function setMeanValSqft(float $meanValSqft)
+    {
+        $this->meanValSqft = $meanValSqft;
+    }
+
+    /**
+     * @return float
+     */
+    public function getMeanValSqft() : float
     {
         return $this->meanValSqft;
     }
 
     /**
-     * @return int
+     * @param float $medianValSqft
      */
-    public function getMedianValSqft()
+    public function setMedianValSqft(float $medianValSqft)
+    {
+        $this->medianValSqft = $medianValSqft;
+    }
+
+    /**
+     * @return float
+     */
+    public function getMedianValSqft() : float
     {
         return $this->medianValSqft;
     }
@@ -96,7 +128,7 @@ class FullTable
     /**
      * @return bool
      */
-    public function getShowTcadScores()
+    public function getShowTcadScores() : bool
     {
         return $this->showTcadScores;
     }
@@ -110,25 +142,28 @@ class FullTable
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
-    public function getShowSaleRatios()
+    public function getShowSaleRatios() : bool
     {
         return $this->showSaleRatios;
     }
 
     /**
-     * @param mixed $setShowSaleRatios
+     * @param bool $setShowSaleRatios
      */
     public function setShowSaleRatios($setShowSaleRatios)
     {
+        if($setShowSaleRatios == null){
+            throw new Exception("Recieved null for setting");
+        }
         $this->showSaleRatios = $setShowSaleRatios;
     }
 
     /**
      * @param  queryContext $queryContext
-     * @param  array $compInfo
      * @throws Exception
+     * @internal param propertyClass[] $compInfo
      */
     public function generateTableData($queryContext){
         if($queryContext->subjPropId === null){
@@ -192,16 +227,16 @@ class FullTable
         $this->setShowTcadScores($queryContext->showTcadScores);
         $this->setShowSaleRatios($queryContext->showSaleRatios);
 
-        $this->meanVal = getMeanVal($this->subjCompArray);
-        $this->meanValSqft = getMeanValSqft($this->subjCompArray);
-        $this->medianVal = getMedianVal($this->subjCompArray);
-        $this->medianValSqft = getMedianValSqft($this->subjCompArray);
+        $this->setMeanVal(getMeanVal($this->subjCompArray));
+        $this->setMeanValSqft(getMeanValSqft($this->subjCompArray));
+        $this->setMedianVal(getMedianVal($this->subjCompArray));
+        $this->setMedianValSqft(getMedianValSqft($this->subjCompArray));
     }
 
     /**
      * Returns a FullTable object with a subjCompArray object that is the size or less of passed in count
      * @param int $count
-     * @return $this|FullTable
+     * @return FullTable
      */
     public function trimTo($count){
         if($this->getNumComp() < $count){
@@ -211,11 +246,15 @@ class FullTable
         $newTable->subjectProp = $this->subjectProp;
         $newTable->subjCompArray = array_slice($this->subjCompArray, 0, $count);
 
-        $newTable->meanVal = getMeanVal($newTable->subjCompArray);
-        $newTable->meanValSqft = getMeanValSqft($newTable->subjCompArray);
-        $newTable->medianVal = getMedianVal($newTable->subjCompArray);
-        $newTable->medianValSqft = getMedianValSqft($newTable->subjCompArray);
+        $newTable->setShowTcadScores($this->getShowTcadScores());
+        $newTable->setShowSaleRatios($this->getShowSaleRatios());
+
+        $newTable->setMeanVal(getMeanVal($newTable->subjCompArray));
+        $newTable->setMeanValSqft(getMeanValSqft($newTable->subjCompArray));
+        $newTable->setMedianVal(getMedianVal($newTable->subjCompArray));
+        $newTable->setMedianValSqft(getMedianValSqft($newTable->subjCompArray));
         
         return $newTable;
     }
+
 }

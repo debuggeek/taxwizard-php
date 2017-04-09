@@ -3,7 +3,8 @@ include_once 'defines.php';
 include_once 'presentation.php';
 include_once 'functions.php';
 include_once 'FullTable.php';
-include_once 'MPDF56/mpdf.php';
+include_once __DIR__ .'/mpdf6/mpdf.php';
+
 
 function strbool($value)
 {
@@ -19,7 +20,7 @@ function generatePropMultiPDF($queryContext){
 	$_SESSION = array();
 	$retArray = array();
 
-	$mpdf=new mPDF('c','A4-L');
+	$mpdf= new mPDF('c','A4-L');
 	$mpdf->SetMargins(1,1,1);
 	// LOAD a stylesheet
 	$stylesheet = file_get_contents('default_pdf.css');
