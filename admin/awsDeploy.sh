@@ -21,7 +21,7 @@ cp -r $src/library $target/library
 
 
 cp -r $src/resources $target/resources
-cp -r $src/MPDF56 $target/MPDF56
+cp -r $src/library/mpdf6 $target/library/mpdf6
 cp -r $src/services $target/services
 
 mkdir $target/upload
