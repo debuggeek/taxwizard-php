@@ -670,11 +670,12 @@ function returnGenericTable($subjcomparray,$isEquityComp){
  * @return bool
  */
 function isSkipable($fieldArray) : bool{
-    if(in_array("SKIPABLE", $fieldArray)) {
-        return $fieldArray["SKIPABLE"];
-    } else {
-        return false;
+    if($fieldArray != null) {
+        if (in_array("SKIPABLE", $fieldArray)) {
+            return $fieldArray["SKIPABLE"];
+        }
     }
+    return false;
 }
 
 /**
