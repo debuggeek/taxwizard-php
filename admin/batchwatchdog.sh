@@ -4,7 +4,7 @@ if ps -ef | grep -v grep | grep batch_pdf.php ; then
 	exit 0
 else
         d=$(date +%y-%m-%d)
-	/usr/bin/php /var/www/html/cli/batch_pdf.php >> ~/phpcli.$d.log 2> ~/phpcli_error.$d.log
+	/usr/bin/php ~/fivestone/cli/batch_pdf_aws.php >> ~/phpcli.$d.log 2> ~/phpcli_error.$d.log
 
 	#mailing program
         echo "restarted batch_pdf, not found in process list" | mutt -s "Restarted batch_pdf" debuggeek@gmail.comdd

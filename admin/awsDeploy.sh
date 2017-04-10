@@ -29,3 +29,6 @@ mkdir $target/upload
 cp ~/accountinfo.php $target/library/
 
 cp -r $src/cli $target/cli
+
+cp ./batchwatchdog.sh ~/
+chmod +x ~/batchwatchdog.sh
