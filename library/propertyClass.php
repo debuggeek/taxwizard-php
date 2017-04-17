@@ -487,7 +487,7 @@ class propertyClass
 
     function setSegAdjDelta($subj)
     {
-        $this->mSegAdjDelta = $this->getSegAdj() - $subj->getSegAdj();
+        $this->mSegAdjDelta = $subj->getSegAdj() - $this->getSegAdj();
     }
 
     /**
@@ -711,7 +711,7 @@ class propertyClass
             case($LANDVALUEADJ["NAME"]):
                 return $this->getLandValAdj();
             case($landvaladjdelta):
-                return number_format($this->getLASizeAdjDelta());
+                return number_format($this->getLandValueAdjDelta());
             case($CLASSADJ["NAME"]):
                 return $this->getClassAdj();
             case($classadjdelta):

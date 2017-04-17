@@ -970,7 +970,7 @@ function fallsWithinNetAdjRange(propertyClass $comp, $range){
 
     if($debug) error_log("fallsWithinNetAdjRange: comp ". $compNetAdj . " range ". $range);
 
-    if($compNetAdj < $range * -1){
+    if($compNetAdj < ($range * -1)){
         if($debug) error_log("fallsWithinNetAdjRange: Comp falls below range");
         return false;
     }

@@ -163,7 +163,7 @@ class queryContext {
         if(isset($getContext['netadjust'])){
             if(strcmp($getContext['netadjust'], 'on') ==0 ) {
                 $this->netAdjustEnabled = true;
-                $this->netAdjustAmount = trim($getContext['netAdjustAmt']);
+                $this->netAdjustAmount = intVal(trim($getContext['netAdjustAmt']));
             }
         }
 
