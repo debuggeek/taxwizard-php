@@ -249,9 +249,12 @@ class BatchDAO
     /**
      * @param queryContext $queryContext
      * @return queryResult
+     * @throws Exception
      */
     public function updateBatchSettings($queryContext)
     {
+        throw new Exception("Not expecting this to be called");
+
         $stmt = $this->pdo->prepare("INSERT INTO BATCH_PROP_SETTINGS 
                     SET TrimIndicated = ?, MultiHood = ?, IncludeVU = ?, IncludeMLS = ?, NumPrevYears = ?, 
                      SqftRange = ?, ClassRange = ?, ClassRangeEnabled = ?, PercentGood = ?, PercentGoodEnabled = ?,

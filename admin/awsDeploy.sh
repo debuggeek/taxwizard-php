@@ -26,6 +26,8 @@ cp -r $src/services $target/services
 
 mkdir $target/upload
 
+chown :www-data $target/upload
+
 cp ~/accountinfo.php $target/library/
 
 cp -r $src/cli $target/cli
