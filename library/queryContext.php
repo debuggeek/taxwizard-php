@@ -41,6 +41,7 @@ class queryContext {
     public $limitToOnlyCurrentYearLowered = false;
     public $grossAdjFilterEnabled = false;
     // Group used for display filtering
+    public $showBaseMktData = true;
     public $showTcadScores = false;
     public $showSaleRatios = true;
 
@@ -193,6 +194,14 @@ class queryContext {
         //////////////
         // Display filter options
         /////////////
+
+        if(isset($getContext['showBaseMktData'])){
+            if(strcmp($getContext['showBaseMktData'], 'on') == 0) {
+                $this->showBaseMktData = true;
+            } else {
+                $this->showBaseMktData = false;
+            }
+        }
 
         if(isset($getContext['showTcadScores'])){
             if(strcmp($getContext['showTcadScores'], 'on') == 0) {

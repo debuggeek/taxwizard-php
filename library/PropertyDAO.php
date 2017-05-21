@@ -9,10 +9,12 @@ class PropertyDAO{
      */
     protected $pdo;
 
+    protected $basePdo;
     /**
      * @var
      */
     protected $db;
+
 
     /**
      * PropertyDAO constructor.
@@ -22,11 +24,14 @@ class PropertyDAO{
      * @param string $database
      * @param int $dbport
      */
-    public function __construct($host, $username, $password, $database, $dbport=3306){
+    public function __construct($host, $username, $password, $database, $baseDB, $dbport=3306){
         // Create connection
         $pdo = new PDO("mysql:host=".$host.";dbname=".$database, $username, $password);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this->pdo = $pdo;
+        $basePDO = new PDO("mysql:host=".$host.";dbname=".$baseDB, $username, $password);
+        $basePDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->basePdo = $basePDO;
     }
 
 
@@ -58,6 +63,7 @@ class PropertyDAO{
     public function getPropertyById($propId) {
         /* @var propertyClass $property */
         $property = $this->getCoreProp($propId);
+        $property->setBaseYearMktVal($this->getBaseYearVal($propId));
         $property->setImpDets($this->getImpDet($propId));
         if(sizeof($property->getImpDets()) == 0){
             error_log("getPropertyById>> [INFO] : no improvements found for ". $propId);
@@ -194,6 +200,21 @@ class PropertyDAO{
         $prop->setLandValAdj($landVal);
         return $prop;
     }
+
+    private function getBaseYearVal($propId)
+    {
+        $stmt = $this->basePdo->prepare("SELECT p.market_value as mMarketVal FROM PROP p WHERE p.prop_id = ?");
+        $stmt->bindValue(1, $propId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $stmt->bindColumn('mMarketVal', $MKTVAL, PDO::PARAM_INT);
+        $result = $stmt->fetch(PDO::FETCH_BOUND);
+        if($result === false){
+            throw new Exception("Unable to find property with propId=".$propId);
+        }
+        return $MKTVAL;
+    }
+
 
     /**
      * @param string $hood

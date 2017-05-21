@@ -684,13 +684,17 @@ function isSkipable($fieldArray) : bool{
  * @return bool
  */
 function shouldDisplay($fullTable, $fieldArray) : bool{
-    global $TCADSCORE, $SALERATIO;
+    global $TCADSCORE, $SALERATIO, $BASEYEARMKTVAL, $BASECURRDIFF;
 
     switch($fieldArray["NAME"]){
         case $SALERATIO["NAME"]:
             return $fullTable->getShowSaleRatios();
         case $TCADSCORE["NAME"]:
             return $fullTable->getShowTcadScores();
+        case $BASEYEARMKTVAL["NAME"]:
+            return $fullTable->getShowBaseMktData();
+        case $BASECURRDIFF["NAME"]:
+            return $fullTable->getShowBaseMktData();
         default:
             return false;
     }

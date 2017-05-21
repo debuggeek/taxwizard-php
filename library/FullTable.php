@@ -23,6 +23,8 @@ class FullTable
 
     private $medianValSqft;
 
+    private $showBaseMktData;
+
     private $showTcadScores;
 
     private $showSaleRatios;
@@ -126,6 +128,22 @@ class FullTable
     }
 
     /**
+     * @return mixed
+     */
+    public function getShowBaseMktData()
+    {
+        return $this->showBaseMktData;
+    }
+
+    /**
+     * @param mixed $showBaseMktData
+     */
+    public function setShowBaseMktData($showBaseMktData)
+    {
+        $this->showBaseMktData = $showBaseMktData;
+    }
+
+    /**
      * @return bool
      */
     public function getShowTcadScores() : bool
@@ -224,6 +242,7 @@ class FullTable
             return;
         }
 
+        $this->setShowBaseMktData($queryContext->showBaseMktData);
         $this->setShowTcadScores($queryContext->showTcadScores);
         $this->setShowSaleRatios($queryContext->showSaleRatios);
 

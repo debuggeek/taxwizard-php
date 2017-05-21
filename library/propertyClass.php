@@ -16,6 +16,10 @@ class propertyClass
     public $mNeighborhood;
     public $mOwner;
     public $mHoodMIA;
+
+    /* @var int */
+    private $baseYearMktVal;
+
     public $mMarketVal;
     public $mSaleDate;
     public $mSaleSource;
@@ -186,6 +190,23 @@ class propertyClass
     {
         $this->mLASizeAdj = $mLASizeAdj;
     }
+
+    /**
+     * @return int
+     */
+    public function getBaseYearMktVal(): int
+    {
+        return $this->baseYearMktVal;
+    }
+
+    /**
+     * @param int $baseYearMktVal
+     */
+    public function setBaseYearMktVal(int $baseYearMktVal)
+    {
+        $this->baseYearMktVal = $baseYearMktVal;
+    }
+
 
     /**
      * @param mixed $mMarketVal
@@ -641,7 +662,8 @@ class propertyClass
      */
     function getFieldByName($field)
     {
-        global $PROPID, $GEOID, $SITUS, $NEIGHB, $OWNER, $NEIGHBMIA, $MARKETVALUE, $MARKETPRICESQFT,
+        global $PROPID, $GEOID, $SITUS, $NEIGHB, $OWNER, $NEIGHBMIA,
+               $BASEYEARMKTVAL, $MARKETVALUE, $MARKETPRICESQFT, $BASECURRDIFF,
                $LIVINGAREA, $SALEDATE, $SALEPRICE, $SALEPRICESQFT, $SALERATIO, $SALETYPEANDCONF, $SALETYPE, $ADJSALEPRICE,
                $IMPROVEMENTCNT, $HIGHVALIMPMARCN, $HIGHVALIMPMARCNSQFT, $COMPLETE,
                $STATECODE,
@@ -672,8 +694,12 @@ class propertyClass
                 return "0.00%";//$this->mHoodMIA;
             case($OWNER["NAME"]):
                 return $this->mOwner;
+            case($BASEYEARMKTVAL["NAME"]):
+                return number_format($this->getBaseYearMktVal());
             case($MARKETVALUE["NAME"]):
                 return number_format($this->mMarketVal);
+            case($BASECURRDIFF["NAME"]):
+                return (number_format($this->getBaseCurrDiff(), 4) * 100) . "%";
             case($MARKETPRICESQFT["NAME"]):
                 return number_format($this->getMrktSqft(), 2);
             case($LIVINGAREA["NAME"]):
@@ -1279,6 +1305,11 @@ class propertyClass
     public function toJson()
     {
         return json_encode($this, JSON_PRETTY_PRINT);
+    }
+
+    private function getBaseCurrDiff()
+    {
+        return ($this->getMarketVal() - $this->getBaseYearMktVal()) / $this->getMarketVal();
     }
 
 } // end of class

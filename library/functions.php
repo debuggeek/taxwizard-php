@@ -635,8 +635,8 @@ function getProperty($propid, $newMethod=true)
     $debug=false;
 
 	if($newMethod){
-		global $servername,$username,$password,$database,$dbport;
-		$propDao = new PropertyDAO($servername, $username, $password, $database);
+		global $servername,$username,$password,$database, $baseDB, $dbport;
+		$propDao = new PropertyDAO($servername, $username, $password, $database, $baseDB);
         $currprop = $propDao->getPropertyById($propid);
         if($debug) error_log("getProperty: currProp="+var_dump($currprop));
         $currprop->setisSubj(false);
@@ -665,8 +665,8 @@ function getHoodList($hood, queryContext $queryContext){
 		$hoodSearch = $NEIGHB["HOOD"] ." LIKE '$subHood%'";
 	}
 
-	global $servername,$username,$password,$database,$dbport;
-	$propDao = new PropertyDAO($servername, $username, $password, $database);
+	global $servername,$username,$password,$database,$baseDB, $dbport;
+	$propDao = new PropertyDAO($servername, $username, $password, $database, $baseDB);
 	return $propDao->getHoodProperties($hood, $queryContext);
 }
 
