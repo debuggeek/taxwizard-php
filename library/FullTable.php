@@ -172,9 +172,6 @@ class FullTable
      */
     public function setShowSaleRatios($setShowSaleRatios)
     {
-        if($setShowSaleRatios == null){
-            throw new Exception("Recieved null for setting");
-        }
         $this->showSaleRatios = $setShowSaleRatios;
     }
 

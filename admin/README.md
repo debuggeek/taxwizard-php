@@ -30,7 +30,7 @@ These can be extracted from the source expected zip files with names like
 
 NOTE: For PROP and IMP_DELIM if you need to break into smaller files due to SQL insert 
 timeout you can do so with the following command:
->> `split -l 100000 PROP_DELIM.txt prop_delim`
+>> `split -l 250000 PROP_DELIM.txt prop_delim`
 <br>
 >> linux: `split -d -l 1000000 IMP_DET_DELIM.txt` 
 <br>
@@ -43,6 +43,9 @@ INTO TABLE [tablename]
 FIELDS TERMINATED BY '|'
 LINES TERMINATED BY '\n';`
 
+If you have .sql files with each of the above commands then you can run
+
+> `mysql -h fivestonetcad2.cusgdaffdgw5.us-west-2.rds.amazonaws.com -u dgDBMaster -p tcad_2017 < specImp.sql`
 #####SALES MLS Merged:
 Check that the sale_date column is in the YYYY-MM-DD format and if not do this
 
