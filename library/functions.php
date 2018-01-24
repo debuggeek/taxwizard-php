@@ -629,6 +629,7 @@ function getSubjProperty($propid){
  * @return propertyClass when successful
  *
  * Note: this function will NOT give delta information just basic and calculated data of property
+ * @throws Exception
  */
 function getProperty($propid, $newMethod=true)
 {
