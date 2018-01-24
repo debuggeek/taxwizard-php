@@ -3,3 +3,4 @@ library/accountinfo.php
 .idea/
 *error_log
 upload/
+.DS_Store
