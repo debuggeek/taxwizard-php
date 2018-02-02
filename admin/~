@@ -1,6 +1,6 @@
 #!/bin/sh
 src=../
-target=~/fivestone/
+target=~/fivestone
 
 echo "src set to $src"
 echo "target set to $target"
@@ -21,16 +21,11 @@ cp -r $src/library $target/library
 
 
 cp -r $src/resources $target/resources
-cp -r $src/library/mpdf6 $target/library/mpdf6
+cp -r $src/MPDF56 $target/MPDF56
 cp -r $src/services $target/services
 
 mkdir $target/upload
 
-sudo chown :www-data $target/upload
-
 cp ~/accountinfo.php $target/library/
 
-cp -r $src/cli $target/cli
-
-cp ./batchwatchdog.sh ~/
-chmod +x ~/batchwatchdog.sh
+cp -r $src/cli $target/cli:wq
