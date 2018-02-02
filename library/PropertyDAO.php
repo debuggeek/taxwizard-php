@@ -26,12 +26,16 @@ class PropertyDAO{
      */
     public function __construct($host, $username, $password, $database, $baseDB, $dbport=3306){
         // Create connection
-        $pdo = new PDO("mysql:host=".$host.";dbname=".$database, $username, $password);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $this->pdo = $pdo;
-        $basePDO = new PDO("mysql:host=".$host.";dbname=".$baseDB, $username, $password);
-        $basePDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $this->basePdo = $basePDO;
+        try {
+            $pdo = new PDO("mysql:host=" . $host . ";dbname=" . $database, $username, $password);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->pdo = $pdo;
+            $basePDO = new PDO("mysql:host=" . $host . ";dbname=" . $baseDB, $username, $password);
+            $basePDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->basePdo = $basePDO;
+        } catch(PDOException $e) {
+            error_log('Connection failed: ' . $e->getMessage());
+        }
     }
 
 
@@ -61,23 +65,27 @@ class PropertyDAO{
      * @return propertyClass
      */
     public function getPropertyById($propId) {
-        /* @var propertyClass $property */
-        $property = $this->getCoreProp($propId);
-        $property->setBaseYearMktVal($this->getBaseYearVal($propId));
-        $property->setImpDets($this->getImpDet($propId));
-        if(sizeof($property->getImpDets()) == 0){
-            error_log("getPropertyById>> [INFO] : no improvements found for ". $propId);
+        try{
+            /* @var propertyClass $property */
+            $property = $this->getCoreProp($propId);
+            $property->setBaseYearMktVal($this->getBaseYearVal($propId));
+            $property->setImpDets($this->getImpDet($propId));
+            if(sizeof($property->getImpDets()) == 0){
+                error_log("getPropertyById>> [INFO] : no improvements found for ". $propId);
+            }
+
+            $property->setPropId($propId);
+            $property->setImprovCount(count(ImpHelper::getUniqueImpIds($property->getImpDets())));
+            $property->setPrimeImpId(ImpHelper::getPrimaryImpId($property->getImpDets()));
+            $property->setSegAdj(ImpHelper::getSecondaryImprovementsValue($property->getImpDets()));
+            $property->setMktLevelerDetailAdj(ImpHelper::getMktLevelerDetailAdj($property->getImpDets()));
+            $property->setUnitPrice(ImpHelper::calculateUnitPrice($property->getImpDets()));
+            $property->mPercentComp = '100';
+
+            return $property;
+        } catch (Exception $e){
+            error_log("Error in getPropertyById: " . $e->getMessage());
         }
-
-        $property->setPropId($propId);
-        $property->setImprovCount(count(ImpHelper::getUniqueImpIds($property->getImpDets())));
-        $property->setPrimeImpId(ImpHelper::getPrimaryImpId($property->getImpDets()));
-        $property->setSegAdj(ImpHelper::getSecondaryImprovementsValue($property->getImpDets()));
-        $property->setMktLevelerDetailAdj(ImpHelper::getMktLevelerDetailAdj($property->getImpDets()));
-        $property->setUnitPrice(ImpHelper::calculateUnitPrice($property->getImpDets()));
-        $property->mPercentComp = '100';
-
-        return $property;
     }
 
 
@@ -86,28 +94,32 @@ class PropertyDAO{
      * @return array
      */
     public function getImpDet($propId) {
-        $stmt = $this->pdo->prepare("SELECT id.imprv_id, 
-                          id.prop_id as prop_id,
-                          LTRIM(RTRIM(si.adjust_perc)) as adjPercRaw,
-                          si.det_val as detVal,
-                          LTRIM(RTRIM(id.imprv_det_type_cd)) as imprv_det_type_cd, 
-                          LTRIM(RTRIM(id.Imprv_det_type_desc)) as imprv_det_type_desc, 
-                          si.det_area, si.det_unitprice, si.det_use_unit_price,
-                          LTRIM(RTRIM(id.imprv_det_id)) as imprv_det_id,
-                          si.imprv_val as imprv_val,
-                          si.det_calc_val as det_calc_val
-                  FROM SPECIAL_IMP si 
-                  LEFT JOIN IMP_DET id  
-                  ON si.imprv_id = id.imprv_id AND si.det_id = id.imprv_det_id
-                  WHERE si.prop_id=:propId;");
-        $stmt->bindValue(":propId", $propId, PDO::PARAM_INT);
-        $stmt->execute();
+        try{
+            $stmt = $this->pdo->prepare("SELECT id.imprv_id, 
+                              id.prop_id as prop_id,
+                              LTRIM(RTRIM(si.adjust_perc)) as adjPercRaw,
+                              si.det_val as detVal,
+                              LTRIM(RTRIM(id.imprv_det_type_cd)) as imprv_det_type_cd, 
+                              LTRIM(RTRIM(id.Imprv_det_type_desc)) as imprv_det_type_desc, 
+                              si.det_area, si.det_unitprice, si.det_use_unit_price,
+                              LTRIM(RTRIM(id.imprv_det_id)) as imprv_det_id,
+                              si.imprv_val as imprv_val,
+                              si.det_calc_val as det_calc_val
+                      FROM SPECIAL_IMP si 
+                      LEFT JOIN IMP_DET id  
+                      ON si.imprv_id = id.imprv_id AND si.det_id = id.imprv_det_id
+                      WHERE si.perc_complete = 100 AND si.prop_id=:propId;");
+            $stmt->bindValue(":propId", $propId, PDO::PARAM_INT);
+            $stmt->execute();
 
-        $impArray = Array();
-        while($impDet = $stmt->fetchObject("ImprovementDetailClass")){
-            $impArray[] = $impDet;
+            $impArray = Array();
+            while($impDet = $stmt->fetchObject("ImprovementDetailClass")){
+                $impArray[] = $impDet;
+            }
+            return $impArray;
+        } catch (Exception $e){
+            error_log("Error in getImpDet : " . $e->getMessage());
         }
-        return $impArray;
     }
 
     /**
@@ -258,53 +270,59 @@ class PropertyDAO{
 
     protected function getHoodPropsSales($hood, $queryContext){
         $debug = false;
-
-        if($queryContext->multiHood) {
-            $hoodToUse = substr($hood, 0, -2);
-            $hoodQuery =  " WHERE hood_cd LIKE '".$hoodToUse."%'";
-        } else {
-            $hoodToUse = $hood;
-            $hoodQuery = " WHERE hood_cd = '".$hoodToUse."' ";
-        }
-        //Add on sale restrictions
-        $year = date("Y");
-        $years = " AND (s.sale_date LIKE '%".$year."%'";
-        for($i=1; $i <= $queryContext->prevYear; $i++){
-            $yearsBack = $year - $i ;
-            $years = $years . " OR s.sale_date LIKE '%".$yearsBack."%' ";
-        }
-        $years = $years . ") ";
-        $query="SELECT p.prop_id as prop_id, "
-            . "s.sale_price as sale_price, "
-            . "s.source as source, "
-            . "s.sale_date as sale_date, "
-            . "s.sale_type as sale_type "
-            . "FROM PROP as p, SALES_MLS_MERGED as s"
-            . $hoodQuery
-            . $years
-            . " AND s.sale_price>0 "
-            . " AND p.prop_id = s.prop_id;";
-        $stmt = $this->pdo->prepare($query);
-
-        $properties = array();
-        if ($stmt->execute()) {
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $currProp = $this->getPropertyById($row['prop_id']);
-                $currProp->setSalePrice($row['sale_price']);
-                $currProp->mSaleDate = $row['sale_date'];
-                $currProp->setSaleSource($row['source']);
-                if($row['sale_type'] === null && $currProp->getSaleSource() === 'MLS'){
-                    $currProp->setSaleType('mls');
-                } elseif ($row['sale_type']!= null ) {
-                    $currProp->setSaleType($row['sale_type']);
-                } else {
-                    $currProp->setSaleType("don't ask");
-                }
-                $properties[] = $currProp;
+        try {
+            if ($queryContext->multiHood) {
+                $hoodToUse = substr($hood, 0, -2);
+                $hoodQuery = " WHERE hood_cd LIKE '" . $hoodToUse . "%'";
+            } else {
+                $hoodToUse = $hood;
+                $hoodQuery = " WHERE hood_cd = '" . $hoodToUse . "' ";
             }
-        }
+            //Add on sale restrictions
+            $year = date("Y");
+            $years = " AND (s.sale_date LIKE '%" . $year . "%'";
+            for ($i = 1; $i <= $queryContext->prevYear; $i++) {
+                $yearsBack = $year - $i;
+                $years = $years . " OR s.sale_date LIKE '%" . $yearsBack . "%' ";
+            }
+            $years = $years . ") ";
+            $query = "SELECT p.prop_id as prop_id, "
+                . "s.sale_price as sale_price, "
+                . "s.source as source, "
+                . "s.sale_date as sale_date, "
+                . "s.sale_type as sale_type "
+                . "FROM PROP as p, SALES_MLS_MERGED as s"
+                . $hoodQuery
+                . $years
+                . " AND s.sale_price>0 "
+                . " AND p.prop_id = s.prop_id;";
+            $stmt = $this->pdo->prepare($query);
 
-        if($debug) var_dump($properties);
-        return $properties;
+            $properties = array();
+            if ($stmt->execute()) {
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    if ($debug) error_log("attempting to get " . $row['prop_id']);
+                    $currProp = $this->getPropertyById($row['prop_id']);
+                    $currProp->setSalePrice($row['sale_price']);
+                    $currProp->mSaleDate = $row['sale_date'];
+                    $currProp->setSaleSource($row['source']);
+                    if ($row['sale_type'] === null && $currProp->getSaleSource() === 'MLS') {
+                        $currProp->setSaleType('mls');
+                    } elseif ($row['sale_type'] != null) {
+                        $currProp->setSaleType($row['sale_type']);
+                    } else {
+                        $currProp->setSaleType("don't ask");
+                    }
+                    $properties[] = $currProp;
+                }
+            }
+
+            if ($debug) var_dump($properties);
+            return $properties;
+        } catch (PDOException $e){
+            error_log("DB Error " . $e->getMessage());
+        } catch (Exception $e){
+            error_log("Other Error " . $e->getMessage());
+        }
     }
 }
