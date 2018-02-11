@@ -40,23 +40,23 @@ class PropertyDAO{
 
 
     /**
-     * @return queryResult
+     * @return string
      */
-    protected function doSqlQuery($query){
-        global $debugquery;
-
-        if($debugquery) error_log("query:".$query);
-        $result=$this->mysqli->query($query);
-        $this->mysqli->close();
-        if($debugquery){
-            if (!$result){
-                error_log("false query came back:".$result);
-            } else {
-                error_log("query came back:".var_dump($result));
-            }
-        }
-        return $result;
-    }
+//    protected function doSqlQuery($query){
+//        global $debugquery;
+//
+//        if($debugquery) error_log("query:".$query);
+//        $result=$this->mysqli->query($query);
+//        $this->mysqli->close();
+//        if($debugquery){
+//            if (!$result){
+//                error_log("false query came back:".$result);
+//            } else {
+//                error_log("query came back:".var_dump($result));
+//            }
+//        }
+//        return $result;
+//    }
 
     /**
      * Retrieves the corresponding row for the specified property ID.
@@ -80,12 +80,14 @@ class PropertyDAO{
             $property->setSegAdj(ImpHelper::getSecondaryImprovementsValue($property->getImpDets()));
             $property->setMktLevelerDetailAdj(ImpHelper::getMktLevelerDetailAdj($property->getImpDets()));
             $property->setUnitPrice(ImpHelper::calculateUnitPrice($property->getImpDets()));
+            $property->setLASizeAdj(ImpHelper::calcLASizeAdj($property->getImpDets()));
             $property->mPercentComp = '100';
 
             return $property;
         } catch (Exception $e){
             error_log("Error in getPropertyById: " . $e->getMessage());
         }
+        return null;
     }
 
 
@@ -120,11 +122,13 @@ class PropertyDAO{
         } catch (Exception $e){
             error_log("Error in getImpDet : " . $e->getMessage());
         }
+        return [];
     }
 
     /**
      * @var int $propId
      * @return propertyClass
+     * @throws Exception
      */
     private function getCoreProp($propId){
         $prop = new propertyClass();
@@ -203,8 +207,6 @@ class PropertyDAO{
         $prop->setClassCode($classcode);
         $prop->setSubClass($subclass);
         $prop->setCondition($cond);
-        //Added for 2017 seems to be same as area of main
-        $prop->setLASizeAdj($livingarea);
         $prop->setGoodAdj($base_deprec_perc + $phy_perc + $func_perc + $eco_perc);
 
         $stmt2 = $this->pdo->prepare("SELECT SUM(p.land_hstd_val + p.land_non_hstd_val) as totHstd
@@ -219,6 +221,11 @@ class PropertyDAO{
         return $prop;
     }
 
+    /**
+     * @param $propId
+     * @return mixed
+     * @throws Exception
+     */
     private function getBaseYearVal($propId)
     {
         $stmt = $this->basePdo->prepare("SELECT p.market_value as mMarketVal FROM PROP p WHERE p.prop_id = ?");
@@ -274,6 +281,11 @@ class PropertyDAO{
         return $properties;
      }
 
+    /**
+     * @param $hood
+     * @param $queryContext
+     * @return array
+     */
     protected function getHoodPropsSales($hood, $queryContext){
         $debug = false;
         try {
@@ -330,5 +342,6 @@ class PropertyDAO{
         } catch (Exception $e){
             error_log("Other Error " . $e->getMessage());
         }
+        return [];
     }
 }

@@ -18,6 +18,7 @@ class ImpHelper
      * @param ImprovementDetailClass[] $subjImps
      * @param ImprovementDetailClass[] $compImps
      * @return ImprovementDetailClass[]
+     * @throws Exception
      */
     public static function compareImpDetails_AddDelta($subjImps, $compImps){
 
@@ -102,7 +103,7 @@ class ImpHelper
     /**
      * Walks all improvements and returns array of all the improvement ids (distinct)
      * @param $propertyImps
-     * @return int
+     * @return array
      */
     public static function getUniqueImpIds($propertyImps){
         $impDetImprIdList = self::getAllImpIds($propertyImps);
@@ -175,6 +176,22 @@ class ImpHelper
     }
 
     /**
+     * @param $propertyImps
+     * @return int
+     */
+    public static function calcLASizeAdj($propertyImps){
+        $LASizeAdjResult = 0;
+        $primeImps = self::getPrimaryImprovements($propertyImps);
+        foreach($primeImps as $imp){
+            if($imp->isDetUseUnitPrice() == 'T'){
+                $LASizeAdjResult = $imp->getDetArea();
+            }
+        }
+
+        return $LASizeAdjResult;
+    }
+
+    /**
      * Finds the first improvement with a given code
      * @param $propertyImps
      * @param $impDetCode
@@ -199,6 +216,7 @@ class ImpHelper
      * @param ImprovementDetailClass $subjImp
      * @param ImprovementDetailClass $compImp
      * @return int
+     * @throws Exception
      */
     private static function getDelta($subjImp, $compImp){
         if(ImpHelper::isMainArea($subjImp->getImprvDetTypeCd())){
@@ -263,7 +281,6 @@ class ImpHelper
 //            error_log("calculateUnitPrice>> No improvments found for this property");
             return 0;
         }
-        $unitPrice = 0;
         $primeImps = self::getPrimaryImprovements($propertyImps);
         $totalReplacementCost = 0; //RCN
         $mainSqft = 0;
