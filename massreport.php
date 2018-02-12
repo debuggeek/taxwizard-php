@@ -10,7 +10,10 @@ global $INDICATEDVAL;
 
 //Parse Inputs
 $queryContext = new queryContext();
-$queryContext->parseQueryString($_GET);
+//$queryContext->parseQueryString($_GET);
+$json = file_get_contents('php://input');
+$obj = json_decode($json);
+$queryContext->parseQueryContextJson($obj);
 
 if($queryContext->subjPropId == ""){
     echo json_encode(array("error" => "Must provide subject property id", "propId"=>"0"));

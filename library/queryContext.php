@@ -40,6 +40,10 @@ class queryContext {
 
     public $limitToOnlyCurrentYearLowered = false;
     public $grossAdjFilterEnabled = false;
+
+    // Rank by
+    public $rankByIndicated = true;
+
     // Group used for display filtering
     public $showBaseMktData = true;
     public $showTcadScores = false;
@@ -64,47 +68,88 @@ class queryContext {
 
     public $traceComps = false;
 
-    public function parseQueryString($getContext){
+    public function parseQueryContextJson($inputContext){
+        $this->subjPropId = $inputContext->propId;
+        $this->trimIndicated = $inputContext->onlyLowerComps;
+        $this->includeMls = $inputContext->includeMLS;
+        $this->prevYear = $inputContext->mlsMultiYear;
+        $this->limitToOnlyCurrentYearLowered = $inputContext->onlyCurrYearLowered;
+        $this->multiHood = $inputContext->multiHood;
+        $this->limitToLessImps = $inputContext->limitImps;
+        $this->netAdjustEnabled = $inputContext->netAdjEnabled;
+        $this->netAdjustAmount = $inputContext->netAdjustAmt;
+        $this->subClassRangeEnabled = $inputContext->subClassRangeEnabled;
+        $this->subClassRange = $inputContext->subClassRange;
+        $this->percentGoodRangeEnabled = $inputContext->pctGoodRangeEnabled;
+        $this->percentGoodRange = $inputContext->pctGoodRange;
+        $this->percentGoodMin = $inputContext->pctGoodMin;
+        $this->percentGoodMax = $inputContext->pctGoodMax;
+        $this->limitTcadScores = $inputContext->tcadScoreLimitEnabled;
+        $this->saleRatioEnabled = $inputContext->ratiosEnabled;
+        $this->saleRatioMin = $inputContext->saleRatioMin;
+        $this->saleRatioMax = $inputContext->saleRatioMax;
+        $this->limitTcadScoresAmount = $inputContext->tcadScoreLimitPct;
+        $this->tcadScoreLimitMin = $inputContext->tcadScoreLimitMin;
+        $this->tcadScoreLimitMax = $inputContext->tcadScoreLimitMax;
+        $this->isEquityComp = $inputContext->isEquity;
+        $this->sqftPercent = $inputContext->sqftRangePct;
+        $this->sqftRangeMin = $inputContext->sqftRangeMin;
+        $this->sqftRangeMax = $inputContext->sqftRangeMax;
+
+        // Ranking
+        $this->rankByIndicated = $inputContext->rankByIndicated;
+
+        // Display Options
+        $this->showBaseMktData = $inputContext->showBaseMktData;
+        $this->showTcadScores = $inputContext->showTcadScores;
+        $this->showSaleRatios = $inputContext->showRatios;
+
+        $this->compsToDisplay = $inputContext->maxDisplay;
+
+    }
+
+    public function parseQueryString($inputContextRaw){
+       // $inputContext = json_decode($inputContextRaw[0]);
         //Parse Inputs
-        if(isset($getContext['multiyear'])){
-            $this->prevYear = $getContext['multiyear'];
+        if(isset($inputContext['multiyear'])){
+            $this->prevYear = $inputContext['multiyear'];
         }
 
-        if(isset($getContext['display'])){
-            $this->compsToDisplay = intval(trim($getContext['display']));
+        if(isset($inputContext['display'])){
+            $this->compsToDisplay = intval(trim($inputContext['display']));
         }
-        if(isset($getContext['propid'])){
-            $this->subjPropId = trim($getContext['propid']);
+        if(isset($inputContext['propid'])){
+            $this->subjPropId = trim($inputContext['propid']);
         }
-        if(isset($getContext['trimindicated'])){
-            if (trim($getContext['trimindicated']) == 'on'){
+        if(isset($inputContext['trimindicated'])){
+            if (trim($inputContext['trimindicated']) == 'on'){
                 $this->trimIndicated = true;
             }
         }
-        if(isset($getContext['style'])){
-            if (trim($getContext['style']) == 'sales'){
+        if(isset($inputContext['style'])){
+            if (trim($inputContext['style']) == 'sales'){
                 $this->isEquityComp = false;
             }
         }
-        if(isset($getContext['includemls'])){
-            if (trim($getContext['includemls']) == 'on'){
+        if(isset($inputContext['includemls'])){
+            if (trim($inputContext['includemls']) == 'on'){
                 $this->includeMls = true;
             }
         }
-        if(isset($getContext['multihood'])){
-            if (trim($getContext['multihood']) == 'on'){
+        if(isset($inputContext['multihood'])){
+            if (trim($inputContext['multihood']) == 'on'){
                 $this->multiHood = true;
             }
         }
 
-        if(isset($getContext['includevu'])) {
-            if (trim($getContext['includevu']) == 'on'){
+        if(isset($inputContext['includevu'])) {
+            if (trim($inputContext['includevu']) == 'on'){
                 $this->includeVu = true;
             }
         }
 
-        if(isset($getContext['sqftPct'])){
-          $val =  trim($getContext['sqftPct']);
+        if(isset($inputContext['sqftPct'])){
+          $val =  trim($inputContext['sqftPct']);
           $valArray = explode(":", $val);
           if(count($valArray) == 2){
             $this->sqftRangeMin = $valArray[0];
@@ -119,18 +164,18 @@ class queryContext {
           }
         }
 
-        if(isset($getContext['rangeEnabled'])){
-            if(strcmp($getContext['rangeEnabled'],'on') == 0){
+        if(isset($inputContext['rangeEnabled'])){
+            if(strcmp($inputContext['rangeEnabled'],'on') == 0){
                 $this->subClassRangeEnabled = true;
-                $this->subClassRange = intval(trim($getContext['subClassRange']));
+                $this->subClassRange = intval(trim($inputContext['subClassRange']));
             }
         }
 
-        if(isset($getContext['saleRatioEnabled'])){
-            if(strcmp($getContext['saleRatioEnabled'], 'on') ==0 ) {
+        if(isset($inputContext['saleRatioEnabled'])){
+            if(strcmp($inputContext['saleRatioEnabled'], 'on') ==0 ) {
                 $this->saleRatioEnabled = true;
 
-                $val =  trim($getContext['saleRatioRange']);
+                $val =  trim($inputContext['saleRatioRange']);
                 $valArray = explode(":", $val);
                 if(count($valArray) == 2){
                     $this->saleRatioMin = floatval($valArray[0]);
@@ -141,11 +186,11 @@ class queryContext {
             }
         }
 
-        if(isset($getContext['pctGoodRangeEnabled'])){
-            if(strcmp($getContext['pctGoodRangeEnabled'], 'on') ==0 ) {
+        if(isset($inputContext['pctGoodRangeEnabled'])){
+            if(strcmp($inputContext['pctGoodRangeEnabled'], 'on') ==0 ) {
                 $this->percentGoodRangeEnabled = true;
 
-                $val =  trim($getContext['pctGoodRange']);
+                $val =  trim($inputContext['pctGoodRange']);
                 $valArray = explode(":", $val);
                 if(count($valArray) == 2){
                     $this->percentGoodMin = $valArray[0];
@@ -161,69 +206,80 @@ class queryContext {
             }
         }
 
-        if(isset($getContext['netadjust'])){
-            if(strcmp($getContext['netadjust'], 'on') ==0 ) {
+        if(isset($inputContext['netadjust'])){
+            if(strcmp($inputContext['netadjust'], 'on') ==0 ) {
                 $this->netAdjustEnabled = true;
-                $this->netAdjustAmount = intVal(trim($getContext['netAdjustAmt']));
+                $this->netAdjustAmount = intVal(trim($inputContext['netAdjustAmt']));
             }
         }
 
-        if(isset($getContext['exclude'])){
-            $excludeStrList = trim($getContext['exclude']);
+        if(isset($inputContext['exclude'])){
+            $excludeStrList = trim($inputContext['exclude']);
             $this->excludes = explode('_',$excludeStrList);
         }
 
-        if(isset($getContext['Submit'])){
-            if($getContext['Submit'] == 'Build Sales Table'){
+        if(isset($inputContext['Submit'])){
+            if($inputContext['Submit'] == 'Build Sales Table'){
                 $this->isEquityComp = false;
-            } else if(strpos($getContext['Submit'], 'Equity') !== false){
+            } else if(strpos($inputContext['Submit'], 'Equity') !== false){
                 $this->isEquityComp = true;
             }
         }
 
-        if(isset($getContext['limitImps'])){
-            if(strcmp($getContext['limitImps'], 'on') == 0) {
+        if(isset($inputContext['limitImps'])){
+            if(strcmp($inputContext['limitImps'], 'on') == 0) {
                 $this->limitToLessImps = true;
             }
         }
 
-        if(isset($getContext['tracecomps'])){
+        if(isset($inputContext['tracecomps'])){
             $this->traceComps = true;
+        }
+
+        //////////////
+        // Rank options
+        /////////////
+        if(isset($inputContext['rank'])){
+            if(strcmp($inputContext['rank'], 'indicated') == 0) {
+                $this->rankByIndicated = true;
+            } else {
+                $this->rankByIndicated = false;
+            }
         }
 
         //////////////
         // Display filter options
         /////////////
 
-        if(isset($getContext['showBaseMktData'])){
-            if(strcmp($getContext['showBaseMktData'], 'on') == 0) {
+        if(isset($inputContext['showBaseMktData'])){
+            if(strcmp($inputContext['showBaseMktData'], 'on') == 0) {
                 $this->showBaseMktData = true;
             } else {
                 $this->showBaseMktData = false;
             }
         }
 
-        if(isset($getContext['showTcadScores'])){
-            if(strcmp($getContext['showTcadScores'], 'on') == 0) {
+        if(isset($inputContext['showTcadScores'])){
+            if(strcmp($inputContext['showTcadScores'], 'on') == 0) {
                 $this->showTcadScores = true;
             } else {
                 $this->showTcadScores = false;
             }
         }
 
-        if(isset($getContext['showSaleRatio'])){
-            if(strcmp($getContext['showSaleRatio'], 'on') == 0) {
+        if(isset($inputContext['showSaleRatio'])){
+            if(strcmp($inputContext['showSaleRatio'], 'on') == 0) {
                 $this->showSaleRatios = true;
             } else {
                 $this->showSaleRatios = false;
             }
         }
 
-        if(isset($getContext['limitTcadScores'])){
-            if(strcmp($getContext['limitTcadScores'], 'on') ==0 ) {
+        if(isset($inputContext['limitTcadScores'])){
+            if(strcmp($inputContext['limitTcadScores'], 'on') ==0 ) {
                 $this->limitTcadScores = true;
 
-                $val =  trim($getContext['limitTcadScoresAmount']);
+                $val =  trim($inputContext['limitTcadScoresAmount']);
                 $valArray = explode(":", $val);
                 if(count($valArray) == 2){
                     $this->tcadScoreLimitMin = $valArray[0];
