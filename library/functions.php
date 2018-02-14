@@ -701,7 +701,7 @@ function findBestComps(propertyClass $subjprop, queryContext $queryContext)
     }
 
 	$comps = getHoodList($subjprop->getFieldByName($NEIGHB["NAME"]),$queryContext);
-
+    if($queryContext->traceComps) error_log("findBestComps: found ".count($comps). " possible comps in hood list");
     //Track for duplicates
     $compsSeen = array();
 
@@ -709,10 +709,10 @@ function findBestComps(propertyClass $subjprop, queryContext $queryContext)
 	foreach($comps as $comp)
 	{
         if(addToCompsArray($comp,$subjprop,$queryContext)){
-            if($debug) error_log("findBestComps: Adding ".$comp->getPropID(). " as comp::".$comp);
+            if($queryContext->traceComps) error_log("findBestComps: Adding ".$comp->getPropID(). " as comp::".$comp);
             $compsarray[] = $comp;
         } else {
-            if($debug) error_log("findBestComps: Skipped adding ".$comp->getPropID()." as comp to ".$subjprop->getPropID());
+            if($queryContext->traceComps) error_log("findBestComps: Skipped adding ".$comp->getPropID()." as comp to ".$subjprop->getPropID());
         }
         $compsSeen[] = $comp->getPropID();
 	}

@@ -950,6 +950,9 @@ class propertyClass
         $segAdjDelta = $this->getSegAdjDelta();
 
         $result = $landValueAdjDelta + $classAdjDelta + $LASizeAdjDelta + $goodAdjDelta + $mktLevelerDetailAdjDelta + $segAdjDelta;
+        if($result == NAN){
+            error_log("calcNetadj for propId=".$this->propId." has bad values to calculate with");
+        }
         return $result;
     }
 
@@ -1161,6 +1164,9 @@ class propertyClass
      */
     public function setUnitPrice(float $unitPrice)
     {
+        if($unitPrice == null || $unitPrice == 0) {
+            error_log("ERROR: unit price for ".$this->propId." being set to ".$unitPrice);
+        }
         $this->unitPrice = $unitPrice;
     }
 

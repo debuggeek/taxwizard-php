@@ -106,6 +106,9 @@ class queryContext {
 
         $this->compsToDisplay = $inputContext->maxDisplay;
 
+        // Other
+        $this->traceComps = $inputContext->traceComps;
+
     }
 
     public function parseQueryString($inputContextRaw){
