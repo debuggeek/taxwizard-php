@@ -327,10 +327,11 @@ function emitHTMLFooter(){
 /**
  * @param FullTable $fullTable
  * @param bool $isEquityComp
+ * @param responseCtx $responseCtx
  * @return string
  * @internal param propertyclass[] $subjcomparray
  */
-function generateJsonRows($fullTable, $isEquityComp = true){
+function generateJsonRows($fullTable, $isEquityComp = true, $responseCtx){
 	global $fieldsofinterest,$fieldsofinteresteq, $SEGMENTSADJ, $TCADSCORE;
 
 	$debug = false;
@@ -404,6 +405,8 @@ function generateJsonRows($fullTable, $isEquityComp = true){
 		}
 		$obj->rows[] = $currRow;
 	}
+
+	$obj->hidden = $responseCtx;
 
 	return json_encode($obj, JSON_PRETTY_PRINT);
 }
