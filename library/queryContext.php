@@ -68,6 +68,8 @@ class queryContext {
 
     public $traceComps = false;
 
+    public $responseCtx = null;
+
     public function parseQueryContextJson($inputContext){
         $this->subjPropId = $inputContext->propId;
         $this->trimIndicated = $inputContext->onlyLowerComps;

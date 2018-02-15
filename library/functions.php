@@ -607,14 +607,14 @@ function calcDeltas($subj,$currprop, $isEquity)
     $currprop->setMktLevelerDetailAdjDelta($subj);
     $currprop->setSegAdjDelta($subj);
 
-	$currprop->setImpDets(ImpHelper::compareImpDetails_AddDelta($subj->getImpDets(), $currprop->getImpDets()));
+    $currprop->setImpDets(ImpHelper::compareImpDetails_AddDelta($subj->getImpDets(), $currprop->getImpDets()));
     $tcadScore = new \TaxWizard\TcadScore();
     $tcadScore->setScore($subj, $currprop);
     $currprop->setTcadScore($tcadScore);
 
-	$currprop->setNetAdj($currprop->calcNetAdj());
-	$currprop->setIndicatedVal($currprop->calcIndicatedVal($isEquity));
-	$currprop->getIndicatedValSqft();
+    $currprop->setNetAdj($currprop->calcNetAdj());
+    $currprop->setIndicatedVal($currprop->calcIndicatedVal($isEquity));
+    $currprop->getIndicatedValSqft();
 }
 
 function getSubjProperty($propid){
@@ -675,6 +675,7 @@ function getHoodList($hood, queryContext $queryContext){
  * Takes a subject property and returns the comparables from the same neighborhood
  * where the square footage of the compared properties are within 25% of the subject (as of 2014 rules).
  * This function will also remove any properties of class 'XX'
+ * @param propertyClass $subjprop
  * @param queryContext queryContext
  * @return Array of comparable properties
  */
@@ -682,14 +683,16 @@ function findBestComps(propertyClass $subjprop, queryContext $queryContext)
 {
 	global $NEIGHB,$LIVINGAREA,$PROPID,$debug,$isEquityComp;
     $compsarray = array();
+    /** @var responseContext $responseCtx */
+    $responseCtx = $queryContext->responseCtx;
 
 //    $debug=true;
 
 	//set global correctly, cuz prop_class uses this
 	$isEquityComp = $queryContext->isEquityComp;
 
-    if($debug) error_log("findBestComps Start Memory >> ". memory_get_usage() . "\n");
-    if($debug) error_log("findBestComps subj: " . var_dump($subjprop));
+    if($debug) error_log("DEBUG\tfindBestComps Start Memory >> ". memory_get_usage() . "\n");
+    if($debug) error_log("DEBUG\tfindBestComps subj: " . var_dump($subjprop));
 
     if($debug) error_log($subjprop->getFieldByName($LIVINGAREA["NAME"]));
 
@@ -701,22 +704,23 @@ function findBestComps(propertyClass $subjprop, queryContext $queryContext)
     }
 
 	$comps = getHoodList($subjprop->getFieldByName($NEIGHB["NAME"]),$queryContext);
-    if($queryContext->traceComps) error_log("findBestComps: found ".count($comps). " possible comps in hood list");
+    if($queryContext->traceComps) error_log("TRACE\tfindBestComps: found ".count($comps). " possible comps in hood list");
+    $responseCtx->unfilteredPropCount = count($comps);
     //Track for duplicates
     $compsSeen = array();
 
-    if($debug) echo "<br/>walking ".count($comps)." potential comps<br/>";
 	foreach($comps as $comp)
 	{
         if(addToCompsArray($comp,$subjprop,$queryContext)){
-            if($queryContext->traceComps) error_log("findBestComps: Adding ".$comp->getPropID(). " as comp::".$comp);
+            if($queryContext->traceComps) error_log("TRACE\tfindBestComps: Adding ".$comp->getPropID(). " as comp::".$comp);
             $compsarray[] = $comp;
         } else {
-            if($queryContext->traceComps) error_log("findBestComps: Skipped adding ".$comp->getPropID()." as comp to ".$subjprop->getPropID());
+            if($queryContext->traceComps) error_log("TRACE\tfindBestComps: Skipped adding ".$comp->getPropID()." as comp to ".$subjprop->getPropID());
         }
         $compsSeen[] = $comp->getPropID();
 	}
 	error_log("findBestComps: compsarray count= ".count($compsarray). " sizeof=".sizeof($compsarray));
+    $responseCtx->filteredPropCount = count($compsarray);
 	return $compsarray;
 }
 
@@ -734,7 +738,7 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
     $compsseen = array();
 
     if ($c->getPropID() == $subjprop->getPropID()) {
-        error_log("addToCompsArray: Skipping Comp prop id matched subject:" . $c->getPropID());
+        error_log("INFO\taddToCompsArray: Skipping Comp prop id matched subject:" . $c->getPropID());
         return false;
     }
 
@@ -749,10 +753,20 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
         $max = $queryContext->sqftRangeMax;
     }
 
+    if($c->getImpCount() == 0){
+        $msg = sprintf("%u skipped due to 0 detail improvements found", $c->getPropID());
+        if ($queryContext->traceComps) error_log("TRACE\taddToCompsArray: ".$msg);
+        //Might be error that we have no improvements
+        $queryContext->responseCtx->errors[] = $msg;
+        return false;
+    }
+
     $sqft = $c->getFieldByName($LIVINGAREA["NAME"]);
 
     if ($sqft < $min || $sqft > $max) {
-        if ($queryContext->traceComps) error_log("addToCompsArray: " . $c->getPropID() . " removed as potential comp due to size min=" . $min . " max=" . $max . " size=" . $sqft);
+        $msg = sprintf("%u removed as potential comp due to size min=%u max=%u size=%u", $c->getPropID(), $min, $max, $sqft);
+        if ($queryContext->traceComps) error_log("TRACE\taddToCompsArray: ".$msg);
+        $queryContext->responseCtx->infos[] = $msg;
         return false;
     }
 
@@ -761,7 +775,7 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
     if (!$queryContext->isEquityComp && $queryContext->includeVu == false) {
         $badSaleTypes = "VU";
         if ($c->mSaleType == $badSaleTypes) {
-            if ($queryContext->traceComps) error_log("addToCompsArray: Sale type was bad: " . $c->mSaleType);
+            if ($queryContext->traceComps) error_log("TRACE\taddToCompsArray: Sale type was bad: " . $c->mSaleType);
             return false;
         }
     }
@@ -772,18 +786,24 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
 
     $badClass = "XX"; //don't include this type as it's not a good property to use
     if ($c->getClassCode() === null) {
-        error_log("ERROR> addToCompsArray: Property has no class data: " . $c->getPropID());
+        $msg = sprintf("%u has no class data and will be skipped", $c->getPropID());
+        error_log("ERROR> addToCompsArray: " . $msg);
+        $queryContext->responseCtx->errors[] = $msg;
         return false;
     }
     //Only review further if badClass string not found
     if ($c->getClassCode() === $badClass) {
-        if ($queryContext->traceComps) error_log("addToCompsArray: Property has badclass " . $badClass);
+        $msg = sprintf("%u has bad class %s data and will be skipped", $c->getPropID(), $badClass);
+        if ($queryContext->traceComps) error_log("addToCompsArray: ".$msg);
+        $queryContext->responseCtx->errors[] = $msg;
         return false;
     }
 
     if ($queryContext->subClassRangeEnabled) {
         if (!fallsInsideClassRange($subjprop->getSubClass(), $c->getSubClass(), $queryContext->subClassRange)) {
-            if ($queryContext->traceComps) error_log("addToCompsArray: failed to fall inside class range ");
+            $msg = sprintf("%u failed to fall inside class range and will be skipped", $c->getPropID());
+            if ($queryContext->traceComps) error_log("addToCompsArray: ");
+            $queryContext->responseCtx->errors[] = $msg;
             return false;
         }
     }
@@ -791,7 +811,9 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
     //Check Percent Good
     if ($queryContext->percentGoodRangeEnabled) {
         if (!fallsWithinPercentGood($c, $subjprop, $queryContext)) {
-            if ($queryContext->traceComps) error_log("addToCompsArray: failed to fall inside percent good range ");
+            $msg = sprintf("%u failed to fall inside percent good range and will be skipped", $c->getPropID());
+            if ($queryContext->traceComps) error_log("addToCompsArray: ".$msg);
+            $queryContext->responseCtx->errors[] = $msg;
             return false;
         }
     }
@@ -801,7 +823,9 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
 		$varCompImpCount = count(ImpHelper::getUniqueImpIds($c->getImpDets()));
 		$varSubjImpCount = count(ImpHelper::getUniqueImpIds($subjprop->getImpDets()));
 		if($varCompImpCount > $varSubjImpCount){
-			if ($queryContext->traceComps) error_log("addToCompsArray: ". $c->getPropID() . " failed due to more subjects them prop");
+            $msg = sprintf("%u failed due to more subjects them prop and will be skipped", $c->getPropID());
+            if ($queryContext->traceComps) error_log("addToCompsArray: ".$msg);
+            $queryContext->responseCtx->errors[] = $msg;
 			return false;
 		}
 	}
@@ -809,17 +833,29 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
 	// Check Sale Ratio
     if ($queryContext->saleRatioEnabled){
 	    if(!fallsWithinSaleRatio($c, $queryContext)){
-            if ($queryContext->traceComps) error_log("addToCompsArray: failed to fall inside sale ratio range ");
+            $msg = sprintf("%u failed to fall inside sale ratio range and will be skipped", $c->getPropID());
+            error_log("INFO\taddToCompsArray: ".$msg);
+            $queryContext->responseCtx->errors[] = $msg;
             return false;
         }
     }
 
-    calcDeltas($subjprop,$c, $queryContext->isEquityComp);
+    if($queryContext->traceComps) error_log("TRACE\tTesting deltas for ". $c->getPropID());
+    try{
+        calcDeltas($subjprop,$c, $queryContext->isEquityComp);
+    } catch (Exception $e){
+        $error = sprintf("%u failed to calcDelta and will be skipped due to: %s", $c->getPropID(), $e->getMessage());
+        error_log("ERROR\taddToCompsArray: ".$error);
+        $queryContext->responseCtx->errors[] = $error;
+        return false;
+    }
 
     if ($queryContext->netAdjustEnabled){
-        error_log("addToCompsArray: Filtering for net adjustment amount of " . $queryContext->netAdjustAmount);
+        error_log("INFO\taddToCompsArray: Filtering for net adjustment amount of " . $queryContext->netAdjustAmount);
         if(!fallsWithinNetAdjRange($c, $queryContext->netAdjustAmount)){
-            error_log("addToCompsArray: failed to fall inside net adjustment range ");
+            $msg = sprintf("%u failed to fall inside net adjustment range and will be skipped", $c->getPropID());
+            error_log("INFO\taddToCompsArray: ".$msg);
+            $queryContext->responseCtx->errors[] = $msg;
             return false;
         }
     }
@@ -836,7 +872,7 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
         }
         if($tcadScore->getScore() < $min){
             if($queryContext->traceComps){
-                error_log("addToCompsArray: comp ".$c->getPropID(). " tcad score ". $tcadScore->getScore()
+                error_log("TRACE\taddToCompsArray: comp ".$c->getPropID(). " tcad score ". $tcadScore->getScore()
                     . " falls below threshold ". $min);
             }
             return false;
@@ -852,11 +888,11 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
 
     if($queryContext->trimIndicated){
         if(compareIndicatedVal($subjprop,$c)==1){
-            if($queryContext->traceComps) error_log("addToCompsArray: Found comp ".$c->getPropID());
+            if($queryContext->traceComps) error_log("TRACE\taddToCompsArray: Found comp ".$c->getPropID());
             return true;
         }
     } else {
-        if($queryContext->traceComps) error_log("addToCompsArray: Found comp ".$c->getPropID());
+        if($queryContext->traceComps) error_log("TRACE\taddToCompsArray: Found comp ".$c->getPropID());
         return true;
     }
 
@@ -1034,7 +1070,7 @@ function generateArrayOfBestComps(propertyClass $property, queryContext $queryCo
         error_log("generateArrayOfBestComps>> no comps found after MLS Sort for " . $property->getPropID());
     }
 
-    error_log("generateArrayOfBestComps>> found " . sizeof($compsarray) .
+    error_log("INFO\tgenerateArrayOfBestComps>> found " . sizeof($compsarray) .
         " comp(s) for " . $property->getPropID() .
         " during " . ($queryContext->isEquityComp ? " equity " : " sales ") . "search");
 

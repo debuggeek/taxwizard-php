@@ -194,7 +194,8 @@ class FullTable
 
             //no comps provided so we must find some
             $this->subjCompArray  = generateArrayOfBestComps( $this->subjectProp , $queryContext);
-            
+
+            if($queryContext->traceComps) error_log("TRACE\tFound ".count($this->subjCompArray)." comps after filtering");
             if(count($queryContext->excludes) > 0){
                 //Save off since it might go down
                 $startCount = count($this->subjCompArray);

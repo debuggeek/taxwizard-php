@@ -283,11 +283,13 @@ class PropertyDAO{
 
     /**
      * @param $hood
-     * @param $queryContext
+     * @param queryContext $queryContext
      * @return array
      */
     protected function getHoodPropsSales($hood, $queryContext){
         $debug = false;
+        $mlsSaleCount = 0;
+        $tcadSaleCount = 0;
         try {
             if ($queryContext->multiHood) {
                 $hoodToUse = substr($hood, 0, -2);
@@ -326,8 +328,10 @@ class PropertyDAO{
                     $currProp->setSaleSource($row['source']);
                     if ($row['sale_type'] === null && $currProp->getSaleSource() === 'MLS') {
                         $currProp->setSaleType('mls');
+                        $mlsSaleCount++;
                     } elseif ($row['sale_type'] != null) {
                         $currProp->setSaleType($row['sale_type']);
+                        $tcadSaleCount++;
                     } else {
                         $currProp->setSaleType("don't ask");
                     }
@@ -336,6 +340,9 @@ class PropertyDAO{
             }
 
             if ($debug) var_dump($properties);
+            $queryContext->responseCtx->unfilteredMLSSalesCount = $mlsSaleCount;
+            $queryContext->responseCtx->unfilteredTCADSalesCount = $tcadSaleCount;
+
             return $properties;
         } catch (PDOException $e){
             error_log("DB Error " . $e->getMessage());

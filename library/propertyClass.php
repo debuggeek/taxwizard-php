@@ -931,6 +931,7 @@ class propertyClass
 
     /**
      * @return int
+     * @throws Exception
      */
     function calcNetAdj() : int{
         if ($this->isSubj() == true) {
@@ -950,8 +951,9 @@ class propertyClass
         $segAdjDelta = $this->getSegAdjDelta();
 
         $result = $landValueAdjDelta + $classAdjDelta + $LASizeAdjDelta + $goodAdjDelta + $mktLevelerDetailAdjDelta + $segAdjDelta;
-        if($result == NAN){
+        if(is_nan($result)){
             error_log("calcNetadj for propId=".$this->propId." has bad values to calculate with");
+            throw new Exception("calcNetAdj resulted in NAN");
         }
         return $result;
     }

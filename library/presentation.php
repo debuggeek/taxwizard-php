@@ -327,7 +327,7 @@ function emitHTMLFooter(){
 /**
  * @param FullTable $fullTable
  * @param bool $isEquityComp
- * @param responseCtx $responseCtx
+ * @param responseContext $responseCtx
  * @return string
  * @internal param propertyclass[] $subjcomparray
  */
@@ -406,7 +406,7 @@ function generateJsonRows($fullTable, $isEquityComp = true, $responseCtx){
 		$obj->rows[] = $currRow;
 	}
 
-	$obj->hidden = $responseCtx;
+	$obj->hiddenDetails = $responseCtx;
 
 	return json_encode($obj, JSON_PRETTY_PRINT);
 }
