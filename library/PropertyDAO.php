@@ -38,26 +38,6 @@ class PropertyDAO{
         }
     }
 
-
-    /**
-     * @return string
-     */
-//    protected function doSqlQuery($query){
-//        global $debugquery;
-//
-//        if($debugquery) error_log("query:".$query);
-//        $result=$this->mysqli->query($query);
-//        $this->mysqli->close();
-//        if($debugquery){
-//            if (!$result){
-//                error_log("false query came back:".$result);
-//            } else {
-//                error_log("query came back:".var_dump($result));
-//            }
-//        }
-//        return $result;
-//    }
-
     /**
      * Retrieves the corresponding row for the specified property ID.
      * All non-delta fields should be populated at end of this function
@@ -77,9 +57,14 @@ class PropertyDAO{
             $property->setPropId($propId);
             $property->setImprovCount(count(ImpHelper::getUniqueImpIds($property->getImpDets())));
             $property->setPrimeImpId(ImpHelper::getPrimaryImpId($property->getImpDets()));
-            $property->setSegAdj(ImpHelper::getSecondaryImprovementsValue($property->getImpDets()));
+            if($property->getImprovCount() > 1) {
+                $property->setSegAdj(ImpHelper::getSecondaryImprovementsValue($property->getImpDets()));
+            } else {
+                $property->setSegAdj(0);
+            }
             $property->setMktLevelerDetailAdj(ImpHelper::getMktLevelerDetailAdj($property->getImpDets()));
             $property->setUnitPrice(ImpHelper::calculateUnitPrice($property->getImpDets()));
+            //This should be based on the primary improvement (highest value)
             $property->setLASizeAdj(ImpHelper::calcLASizeAdj($property->getImpDets()));
             $property->mPercentComp = '100';
 

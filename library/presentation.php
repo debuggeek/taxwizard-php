@@ -562,18 +562,18 @@ function getMaxPrimaryImpCount($subjCompArray){
  * @param $subjcomparray
  * @return int
  */
-function getMaxSecondaryImprovement($subjCompArray){
-	$maxCount = 0;
-	foreach($subjCompArray as $prop){
-		/* @var propertyClass $prop */
-		$currCount = count(ImpHelper::getSecondaryImprovements($prop->getImpDets()));
-		if($currCount > $maxCount){
-			$maxCount = $currCount;
-		}
-
-	}
-	return $maxCount;
-}
+//function getMaxSecondaryImprovement($subjCompArray){
+//	$maxCount = 0;
+//	foreach($subjCompArray as $prop){
+//		/* @var propertyClass $prop */
+//		$currCount = count(ImpHelper::getSecondaryImprovements($prop->getImpDets()));
+//		if($currCount > $maxCount){
+//			$maxCount = $currCount;
+//		}
+//
+//	}
+//	return $maxCount;
+//}
 
 /**
  * For a given array of properties return an HTML table

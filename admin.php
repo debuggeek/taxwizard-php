@@ -13,7 +13,6 @@
 <ul id="tabs">
 <li id="tab1"><a href="index.html">Table Lookups</a></li>
 <li id="tab2"><a href="batch_complete.php">Batch Processing</a></li>
-<li id="tab3"><a href="beta.html">Beta Tools</a></li>
 <li id="tab4"><a href="admin.php">Admin Tools</a></li></ul>
 Database:<?php echo $database ?>
 <p><strong>Test Samples</strong><br>
@@ -26,7 +25,6 @@ Database:<?php echo $database ?>
 <a href="resultSubjComps.html?target=massreport&propid=129972&amp;display=10&amp;Submit=Search&amp;style=sales">Find Comps Sales & Gen Report</a><br>
 <a href="resultSubjComps.html?target=massreport&propid=708686&amp;display=10&amp;Submit=Search&amp;style=sales">Test Empty Sales Comps</a><br>
 <a href="resultSubjComps.html?target=properties&propid=100218&c1=101636&c1sp=450000&c1sd=02%2F01%2F2010&Submit=Build+Sales+Table">Test Comps with multi Improvements</a><br>
-<a href="comps_pdf.php?subj=708686&complist=438058">PDF Test of comps_pdf</a><br>
 </p>
 <p>Prior Issues</p>
 <a href="resultSubjComps.html?target=massreport&multiyear=1&limit=20&style=sales&propid=114667&S%26G=Search+and+Generate&sqftPct=2">Issue 17: Should return 0 hits</a><br>
@@ -36,23 +34,5 @@ Database:<?php echo $database ?>
 <a href="resultSubjComps.html?target=massreport&includemls=off&multihood=off&limit=10&style=sales&propid=210850&S%26G=Search+and+Generate">Issue 8: Duplicate Comps</a><br>
 <a href="resultSubjComps.html?target=properties&propid=105290&c1=104522&c1sp=739000&c1sd=2%2F18%2F2014&Submit=Build+Sales+Table">Issue 23: Multi Improvements</a><br>
 <a href="resultSubjComps.html?propid=187428&c1=189181&c1sp=&c1sd=&target=properties&Submit=Build+Equity+Table">Multiple Imps of same type causing reuse of matching PORCH</a>
-<br>
-<p><strong>Prospect information</strong>
-<?php 
-include_once("library/functions.php");
-
-$query="SELECT COUNT(prop_id) FROM PROSPECT_LIST";
-$result=doSqlQuery($query);
-$resultCount=mysqli_result($result,0,"COUNT(prop_id)");
-echo $resultCount." Prospects Found"
-?>
-<form name="form" action="prospects.php" method="get" target="_blank">
-<input type="submit" name="prospects" value="Generate" <?php if($resultCount>0) echo 'disabled=""'?>>Mine for Prospects (Only need to run once per db)
-<br>
-<input type="submit" name="prospects" value="Lookup">LookupProspect<br>
-<input type="text" name="propid"><input type="submit" name="prospects" value="Singleton">Test Singleton<br>
-<a href="library/prospects_list.php">Show Prospect List</a>
-</form>
-<p><strong>Batch Admin Controls</strong>
 </body>
 </html>
