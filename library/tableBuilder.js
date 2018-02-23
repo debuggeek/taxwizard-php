@@ -29,8 +29,7 @@ function addTitle(){
     }
 
     $("#title").append("Comp "+ tableType + " Grid - Five Stone - " + new Date($.now()));
-};
-
+}
 function drawTable(data) {
     var totalCol = data.compCount + 2; // one for desc column and one for subject
     var totalComps = data.compCount;
@@ -55,8 +54,7 @@ function drawTable(data) {
 //                    currComp += maxCompCol;
 //                }
 //            }
-};
-
+}
 function insertPage(){
     $('body').append(document.createElement('p'));
 }
@@ -71,17 +69,16 @@ function insertTable(tableNum){
 function drawHeader(tableId, comps, start, end){
     var start = typeof start !== 'undefined' ?  start : 1;
     var end = typeof end !== 'undefined' ?  end : comps;
-    var row = $("<tr />")
+    var row = $("<tr />");
     $(tableId).append(row); //this will append tr element to table... keep its reference for a while since we will add cells into it
     row.append($("<th></th>")); // cell 0,0 empty
     row.append($("<th class='colhead'> Subject <div id='subject'/></th>"));
     for(var i=start; i <= end; i++){ // Start count naturally
         row.append($("<th class='colhead'> Comp #" + i + "</th>"));
     }
-};
-
+}
 function drawRow(tableId, rowData){
-    var row = $("<tr />")
+    var row = $("<tr />");
     $(tableId).append(row); //this will append tr element to table... keep its reference for a while since we will add cels into it
     var rowClass;
     $.each(rowData, function(key, value) {
@@ -120,4 +117,4 @@ function drawRow(tableId, rowData){
             }
         }
     });
-};
+}

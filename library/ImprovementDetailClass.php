@@ -18,7 +18,7 @@ class ImprovementDetailClass{
 
     /**
      * Code that represents improvement type
-     * @var int
+     * @var string
      */
     protected $imprv_det_type_cd;
 
@@ -82,7 +82,7 @@ class ImprovementDetailClass{
     
 
     /**
-     * @return int
+     * @return string
      */
     public function getImprvDetTypeCd()
     {

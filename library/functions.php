@@ -336,7 +336,8 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
         return false;
     }
 
-    $subjsqft = $subjprop->getFieldByName($LIVINGAREA["NAME"]);
+    //For a single improvement property the LASize and Sqft should be the same, but for multiImp we need just the primary
+    $subjsqft = $subjprop->getLASizeAdj();
 	//sqftPercent is stored as int so convert to percentage
     if($queryContext->sqftPercent != null) {
         $percentAllowed = $queryContext->sqftPercent * .01;
@@ -358,7 +359,7 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
     $sqft = $c->getFieldByName($LIVINGAREA["NAME"]);
 
     if ($sqft < $min || $sqft > $max) {
-        $msg = sprintf("%u removed as potential comp due to size min=%u max=%u size=%u", $c->getPropID(), $min, $max, $sqft);
+        $msg = sprintf("%u removed as potential comp due to size=%u min=%u max=%u size=%u", $c->getPropID(), $min, $max, $sqft);
         if ($queryContext->traceComps) error_log("TRACE\taddToCompsArray: ".$msg);
         $queryContext->responseCtx->infos[] = $msg;
         return false;

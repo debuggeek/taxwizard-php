@@ -112,23 +112,32 @@ class ImpHelper
 
     /**
      * Returns the improvement id used for the primary improvement
+     * This is based on the improvement (in a multi-improvement property)
+     * with the highest improvement value
      * @param array ImprovementDetailClass $propertyImps
-     * @return null|string
+     * @return int
+     * @throws Exception
      */
     public static function getPrimaryImpId($propertyImps){
+        $imprvIdValues = array();
         foreach ($propertyImps as $improv) {
             /* @var $improv ImprovementDetailClass */
             if($improv->isDetUseUnitPrice()){
-                return $improv->getImprvId();
+                $imprvIdValues[$improv->getImprvId()] = $improv->getImprvVal();
             }
-        }    
-        return null;
+        }
+        if(count($imprvIdValues) == 0){
+            throw new Exception("No primary improvement found");
+        }
+        arsort($imprvIdValues);
+        return key($imprvIdValues);
     }
 
     /**
-     * Finds the number of primary improvements on a property
-     * @param $properImps
+     * Gets the list of primary improvements on a property
+     * @param array ImprovementDetailClass $propertyImps
      * @return ImprovementDetailClass[]
+     * @throws Exception
      */
     public static function getPrimaryImprovements($propertyImps){
         global $EXCLUDED_IMPROVEMENT_CODES;
@@ -150,45 +159,54 @@ class ImpHelper
      * Finds all the non-primary improvements
      * @param $propertyImps
      * @return array
+     * @throws Exception
      */
     public static function getSecondaryImprovements($propertyImps){
         $primaryImpId = self::getPrimaryImpId($propertyImps);
         $secondaryImpr = array();
         foreach ($propertyImps as $improv) {
             /* @var $improv ImprovementDetailClass */
-            if($primaryImpId !== $improv->getImprvId()){
+            if($primaryImpId != $improv->getImprvId()){
                 $secondaryImpr[] = $improv;
             }
         }
         return $secondaryImpr;    
     }
 
+    /**
+     * @param $propertyImps
+     * @return int
+     * @throws Exception
+     */
     public static function getSecondaryImprovementsValue($propertyImps){
-        $secImpsVal = 0;
         $secImps = self::getSecondaryImprovements($propertyImps);
         foreach($secImps as $secImp){
             /* @var ImprovementDetailClass $secImp */
             if($secImp->isDetUseUnitPrice() == 'T'){
-                $secImpsVal += $secImp->getImprvVal();
+                return $secImp->getImprvVal();
             }
         }
-        return $secImpsVal;
+        throw new Exception("Now value found for secondary improvement");
     }
 
     /**
+     * Returns the MA area sum of the primary improvement
      * @param $propertyImps
      * @return int
+     * @throws Exception
      */
     public static function calcLASizeAdj($propertyImps){
-        $LASizeAdjResult = 0;
         $primeImps = self::getPrimaryImprovements($propertyImps);
-        foreach($primeImps as $imp){
-            if($imp->isDetUseUnitPrice() == 'T'){
-                $LASizeAdjResult = $imp->getDetArea();
+        $improvementArea = 0;
+        foreach($primeImps as $imp) {
+            if (self::isMainArea($imp->getImprvDetTypeCd())) {
+                $improvementArea += $imp->getDetArea();
             }
         }
-
-        return $LASizeAdjResult;
+        if($improvementArea == 0){
+            throw new Exception("Found no primary improvment areas");
+        }
+        return $improvementArea;
     }
 
     /**
