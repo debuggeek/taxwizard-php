@@ -49,49 +49,54 @@ class BatchPDF{
     
         $completed = 0;
         $errored = 0;
-    
-        foreach ($props as $prop) {
-            try {
-                if (($prop % $mod) != 0) {
-                    logStamp("Skipping $prop due to mod $mod");
-                    continue;
-                }
-                /** @var BatchJob $job */
-                $job = $batchDAO->getBatchJob($prop);
-                if ($job->batchStatus === 'true') {
-                    logStamp("Skipping $prop due to job already set to true");
-                    continue;
-                }
-                logStamp("BatchPDF: Updating " . $job->propId);
-                error_log("Start Mem Usage: " . memory_get_usage());
-                $queryContext->subjPropId = $prop;
-                $retArray = generatePropMultiPDF($queryContext);
-                if ($retArray == null){
-                    throw new Exception("retArray came back null");
-                }
-                if ($retArray["compsFound"] == true) {
-                    $multiPDF = $retArray["mPDF"];
-                    $content = $multiPDF->Output('', 'S');
-                    $content = base64_encode($content);
-                    $retArray['base64'] = $content;
-                    $job->parseArray($retArray);
+
+        try {
+            foreach ($props as $prop) {
+                try {
+                    if (($prop % $mod) != 0) {
+                        logStamp("Skipping $prop due to mod $mod");
+                        continue;
+                    }
+                    /** @var BatchJob $job */
+                    $job = $batchDAO->getBatchJob($prop);
+                    if ($job->batchStatus === 'true') {
+                        logStamp("Skipping $prop due to job already set to true");
+                        continue;
+                    }
+                    logStamp("BatchPDF: Updating " . $job->propId);
+                    error_log("Start Mem Usage: " . memory_get_usage());
+                    $queryContext->subjPropId = $prop;
+                    $retArray = generatePropMultiPDF($queryContext);
+                    if ($retArray == null) {
+                        throw new Exception("retArray came back null");
+                    }
+                    if ($retArray["compsFound"] == true) {
+                        $multiPDF = $retArray["mPDF"];
+                        $content = $multiPDF->Output('', 'S');
+                        $content = base64_encode($content);
+                        $retArray['base64'] = $content;
+                        $job->parseArray($retArray);
+                        $job->batchStatus = true;
+                        $content = null;
+                    } else {
+                        $job->batchStatus = true;
+                        $job->errorsIn = "No comps found";
+                    }
+                    $batchDAO->updateBatchJob($job);
+                    error_log("BatchPDF: Updated " . $job->propId . "\n");
+                    $completed++;
+                    logStamp("BatchPDF: COMPLETED $job->propId : $job->errorsIn");
+                } catch (Exception $e) {
+                    $errored++;
                     $job->batchStatus = true;
-                    $content = null;
-                } else {
-                    $job->batchStatus = true;
-                    $job->errorsIn = "No comps found";
+                    $job->errorsIn = $e->getMessage();
+                    error_log("ERROR\tBatchPDF>>>" . $e->getMessage());
+                    $batchDAO->updateBatchJob($job);
+                    logStamp("BatchPDF: ERRORED $job->propId : $job->errorsIn");
                 }
-                $batchDAO->updateBatchJob($job);
-                error_log("BatchPDF: Updated " . $job->propId . "\n");
-                $completed++;
-                logStamp("BatchPDF: COMPLETED $job->propId : $job->errorsIn");
-            } catch(Exception $e) {
-                $errored++;
-                $job->batchStatus = true;
-                $job->errorsIn = $e->getMessage();
-                $batchDAO->updateBatchJob($job);
-                logStamp("BatchPDF: ERRORED $job->propId : $job->errorsIn");
             }
+        } catch (Exception $e){
+            error_log("ERROR\tBatchPDF>>> SHOULDN'T GET HERE:" . $e->getMessage());
         }
     
         logStamp("Completed Batch Processing.  Completed: " . $completed . " Errored: " . $errored);
