@@ -1,5 +1,5 @@
 <?php
-set_include_path(get_include_path() . PATH_SEPARATOR . "/Users/nick/github/five-stone-property-tax_PhpStorm");
+set_include_path(get_include_path() . PATH_SEPARATOR . "/Users/nick/github/fivestone/five-stone-property-tax_PhpStorm");
 
 echo "\n--------------------------------------------------------------\n";
 echo "Current Working dir: " . getcwd() . "\n";
