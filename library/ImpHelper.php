@@ -186,7 +186,7 @@ class ImpHelper
                 return $secImp->getImprvVal();
             }
         }
-        throw new Exception("Now value found for secondary improvement");
+        throw new Exception("No value found for secondary improvement");
     }
 
     /**
@@ -204,7 +204,7 @@ class ImpHelper
             }
         }
         if($improvementArea == 0){
-            throw new Exception("Found no primary improvment areas");
+            throw new Exception("Found no primary improvement areas");
         }
         return $improvementArea;
     }
@@ -272,6 +272,7 @@ class ImpHelper
     /**
      * @param ImprovementDetailClass[] $getImpDets
      * @return int
+     * @throws Exception
      */
     public static function getMktLevelerDetailAdj($getImpDets)
     {
@@ -292,14 +293,17 @@ class ImpHelper
      * NOTE: found that the samples weren't using the simple unit price of imp with 'T'
      * @param $propertyImps
      * @return float
+     * @throws Exception
      */
     public static function calculateUnitPrice($propertyImps){
 
         if(sizeof($propertyImps) == 0){
-//            error_log("calculateUnitPrice>> No improvments found for this property");
-            return 0;
+            throw new Exception("No improvements found");
         }
         $primeImps = self::getPrimaryImprovements($propertyImps);
+        if(sizeof($primeImps) == 0){
+            throw new Exception("No primary improvements found");
+        }
         $totalReplacementCost = 0; //RCN
         $mainSqft = 0;
         foreach($primeImps as $imp){
@@ -310,8 +314,7 @@ class ImpHelper
             }
         }
         if($mainSqft == 0){
-            error_log("calculateUnitPrice>> mainSqft still 0 for ". $primeImps[0]->getPropId());
-            return 0;
+            throw new Exception("No Main Area in primary improvments");
         }
         $unitPrice = round(($totalReplacementCost / $mainSqft), 2);
         return $unitPrice;

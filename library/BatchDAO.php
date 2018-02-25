@@ -142,7 +142,8 @@ class BatchDAO
                                             Median_Sale15 = ?,
                                             Median_Eq11 = ?,
                                             pdfs = ?,
-                                            TotalComps = ?
+                                            TotalComps = ?,
+                                            ErrorSeen = ?
                                         WHERE 
                                           prop = ?;");
         $boolStr = $this->strbool($batchJob->batchStatus);
@@ -154,7 +155,8 @@ class BatchDAO
         $stmt->bindParam(6, $batchJob->propMedEq11, PDO::PARAM_INT);
         $stmt->bindParam(7, $batchJob->pdfs, PDO::PARAM_LOB);
         $stmt->bindParam(8, $batchJob->totalSalesComps, PDO::PARAM_INT);
-        $stmt->bindParam(9, $batchJob->propId, PDO::PARAM_INT);
+        $stmt->bindParam(9, $batchJob->errorsIn, PDO::PARAM_STR);
+        $stmt->bindParam(10, $batchJob->propId, PDO::PARAM_INT);
 
         return $stmt->execute();
     }

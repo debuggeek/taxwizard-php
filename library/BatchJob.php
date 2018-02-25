@@ -41,6 +41,11 @@ class BatchJob
      */
     public $totalSalesComps;
 
+    /**
+     * @var string
+     */
+    public $errorsIn;
+
     function parseArray($array){
         $this->propMktVal = $array['prop_mktvl'];
         $this->propMedSale5 = $array['medSale5'];
@@ -49,5 +54,6 @@ class BatchJob
         $this->propMedEq11 = $array['medEq11'];
         $this->pdfs = $array['base64'];
         $this->totalSalesComps = $array['totalSalesComps'];
+        $this->errorsIn = $array['errors'];
     }
 }

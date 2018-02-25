@@ -417,8 +417,8 @@ function generateJsonRows($fullTable, $isEquityComp = true, $responseCtx){
  * @param Boolean - True if type = equity
  * @return HTML string of table
  */
-function returnJsonBasedHTMLTable($fullTable, $isEquityComp){
-	$jsonData = generateJsonRows($fullTable, $isEquityComp);
+function returnJsonBasedHTMLTable($fullTable, $isEquityComp, $respCtx){
+	$jsonData = generateJsonRows($fullTable, $isEquityComp, $respCtx);
 	$htmlTable = new HTMLTable();
 	$htmlTable->parseJson($jsonData);
 	return $htmlTable->toHTML($isEquityComp);

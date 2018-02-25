@@ -15,7 +15,7 @@ class PropertyDAOTest extends PHPUnit_Framework_TestCase
     var $HOST = 'localhost';
     var $user = "root";
     var $pw = "root";
-    var $db = "TCAD_2016";
+    var $db = "TCAD_2017_2";
 
     public function test_getPropertyById(){
         $propDao = new PropertyDAO($this->HOST, $this->user, $this->pw, $this->db);
@@ -30,17 +30,6 @@ class PropertyDAOTest extends PHPUnit_Framework_TestCase
         var_dump($impArray);
         $this->assertNotEmpty($impArray);
         $this->assertEquals(13, count($impArray));
-    }
-    
-    public function test_newAsGoodAsOld(){
-        include_once "../library/functions.php";
-
-        $propDao = new PropertyDAO($this->HOST, $this->user, $this->pw, $this->db);
-        $newStyleProp = $propDao->getPropertyById(105290);
-        
-        $oldProp = getProperty(105290,false);
-        
-        $this->assertEquals($oldProp, $newStyleProp);
     }
 
     public function test_oddSecondary(){
@@ -76,5 +65,12 @@ class PropertyDAOTest extends PHPUnit_Framework_TestCase
         $propDao = new PropertyDAO($this->HOST, $this->user, $this->pw, $this->db);
         $property = $propDao->getPropertyById(138282);
         $this->assertEquals(48877, $property->getMktLevelerDetailAdj());
+    }
+
+    public function test_getPropertyByIdNoFailedImps(){
+        $propDao = new PropertyDAO($this->HOST, $this->user, $this->pw, $this->db);
+        $property = $propDao->getPropertyById(100944);
+        var_dump($property);
+        $this->assertNotEmpty($property);
     }
 }

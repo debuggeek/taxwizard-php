@@ -190,7 +190,11 @@ class FullTable
 
         //Determine if we should comp off provided list or not
         if(count($queryContext->compInfo) === 0){
-            error_log("Finding best comps for ". $this->subjectProp->getPropID());
+            if($queryContext->isEquityComp) {
+                error_log("Finding best EQUITY comps for " . $this->subjectProp->getPropID());
+            } else {
+                error_log("Finding best SALES comps for " . $this->subjectProp->getPropID());
+            }
 
             //no comps provided so we must find some
             $this->subjCompArray  = generateArrayOfBestComps( $this->subjectProp , $queryContext);

@@ -4,6 +4,7 @@ require_once 'library/functions.php';
 include_once 'library/functions_pdf.php';
 include_once 'library/BatchDAO.php';
 include_once 'library/BatchJob.php';
+include_once 'library/responseContext.php';
 
 
 class BatchPDF{
@@ -19,7 +20,7 @@ class BatchPDF{
         /*
          * Parse commandline options
          */
-        $options = getopt("m::e::");
+        $options = getopt("m::e::t::");
         $mod = 1;
         if ($options['m'] != false) {
             $mod = $options['m'];
@@ -35,6 +36,11 @@ class BatchPDF{
         echo "\n Current Working dir:" . getcwd();
         $batchDAO = new BatchDAO($servername, $username, $password, $database);
         $queryContext = $batchDAO->getBatchSettings();
+        $queryContext->responseCtx = new responseContext();
+
+        if ($options['t'] === false){
+            $queryContext->traceComps = true;
+        }
     
         echo "\nExecuting with settings: ";
         var_dump($queryContext);
@@ -46,44 +52,50 @@ class BatchPDF{
         $uncompleted = 0;
     
         foreach ($props as $prop) {
-            if (($prop % $mod) != 0) {
-                logStamp("Skipping $prop due to mod $mod");
-                continue;
-            }
-            /** @var BatchJob $job */
-            $job = $batchDAO->getBatchJob($prop);
-            if ($job->batchStatus === 'true') {
-                logStamp("Skipping $prop due to job already set to true");
-                continue;
-            }
-            $date = new DateTime();
-            logStamp("BatchPDF: Updating " . $job->propId);
-            error_log("Start Mem Usage: " . memory_get_usage());
-            $queryContext->subjPropId = $prop;
-            $retArray = generatePropMultiPDF($queryContext);
-            if ($retArray != null) {
-                $multiPDF = $retArray["mPDF"];
-                $content = $multiPDF->Output('', 'S');
-                $content = base64_encode($content);
-                $retArray['base64'] = $content;
-                $job->parseArray($retArray);
-                $job->batchStatus = true;
-                if (!$batchDAO->updateBatchJob($job)) {
-                    error_log("BatchPDF: Unable to update " . $job->propId . "\n");
-                    $uncompleted++;
-                    logStamp("ERROR updating $job->propId");
+            try {
+                if (($prop % $mod) != 0) {
+                    logStamp("Skipping $prop due to mod $mod");
+                    continue;
+                }
+                /** @var BatchJob $job */
+                $job = $batchDAO->getBatchJob($prop);
+                if ($job->batchStatus === 'true') {
+                    logStamp("Skipping $prop due to job already set to true");
+                    continue;
+                }
+                $date = new DateTime();
+                logStamp("BatchPDF: Updating " . $job->propId);
+                error_log("Start Mem Usage: " . memory_get_usage());
+                $queryContext->subjPropId = $prop;
+                $retArray = generatePropMultiPDF($queryContext);
+                if ($retArray != null && $retArray["compsFound"] == true) {
+                    $multiPDF = $retArray["mPDF"];
+                    $content = $multiPDF->Output('', 'S');
+                    $content = base64_encode($content);
+                    $retArray['base64'] = $content;
+                    $job->parseArray($retArray);
+                    $job->batchStatus = true;
+                    if (!$batchDAO->updateBatchJob($job)) {
+                        error_log("BatchPDF: Unable to update " . $job->propId . "\n");
+                        $uncompleted++;
+                        logStamp("ERROR updating $job->propId");
+                    } else {
+                        error_log("BatchPDF: Updated " . $job->propId . "\n");
+                        $completed++;
+                        logStamp("BatchPDF: COMPLETED $job->propId");
+                    }
+                    $content = null;
+                    if ($debug == true) {
+                        error_log("BatchPDF: breaking while due to debug enabled");
+                        break;
+                    }
                 } else {
-                    error_log("BatchPDF: Updated " . $job->propId . "\n");
-                    $completed++;
-                    logStamp("BatchPDF: COMPLETED $job->propId");
+                    error_log("generatePropMultiPDF returned null array");
                 }
-                $content = null;
-                if ($debug == true) {
-                    error_log("BatchPDF: breaking while due to debug enabled");
-                    break;
-                }
-            } else {
-                error_log("generatePropMultiPDF returned null array");
+            } catch(Exception $e) {
+                $job->batchStatus = true;
+                $job->errorsIn = $e->getMessage();
+                $batchDAO->updateBatchJob($job);
             }
         }
     

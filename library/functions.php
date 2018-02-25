@@ -225,20 +225,16 @@ function getSubjProperty($propid){
  * Note: this function will NOT give delta information just basic and calculated data of property
  * @throws Exception
  */
-function getProperty($propid, $newMethod=true)
+function getProperty($propid)
 {
     $debug=false;
 
-	if($newMethod){
-		global $servername,$username,$password,$database, $baseDB, $dbport;
-		$propDao = new PropertyDAO($servername, $username, $password, $database, $baseDB);
-        $currprop = $propDao->getPropertyById($propid);
-        if($debug) error_log("getProperty: currProp="+var_dump($currprop));
-        $currprop->setisSubj(false);
-		return $currprop;
-	} else {
-        throw new Exception("Attempted to use old getProperty method");
-    }
+    global $servername,$username,$password,$database, $dbport;
+    $propDao = new PropertyDAO($servername, $username, $password, $database);
+    $currprop = $propDao->getPropertyById($propid);
+    if($debug) error_log("getProperty: currProp="+var_dump($currprop));
+    $currprop->setisSubj(false);
+    return $currprop;
 }
 
 
@@ -246,7 +242,8 @@ function getProperty($propid, $newMethod=true)
  * Retrieves an array of prop_class objects based on the neighborhood code
  * @param String $hood
  * @param queryContext $queryContext
- * @return Ambigous <propertyClass[], multitype:propertyClass >
+ * @return propertyClass[]
+ * @throws Exception
  */
 function getHoodList($hood, queryContext $queryContext){
 	global $NEIGHB, $debugquery;
@@ -260,8 +257,8 @@ function getHoodList($hood, queryContext $queryContext){
 		$hoodSearch = $NEIGHB["HOOD"] ." LIKE '$subHood%'";
 	}
 
-	global $servername,$username,$password,$database,$baseDB, $dbport;
-	$propDao = new PropertyDAO($servername, $username, $password, $database, $baseDB);
+	global $servername,$username,$password,$database, $dbport;
+	$propDao = new PropertyDAO($servername, $username, $password, $database);
 	return $propDao->getHoodProperties($hood, $queryContext);
 }
 
@@ -271,7 +268,8 @@ function getHoodList($hood, queryContext $queryContext){
  * This function will also remove any properties of class 'XX'
  * @param propertyClass $subjprop
  * @param queryContext queryContext
- * @return Array of comparable properties
+ * @return propertyClass[]
+ * @throws Exception
  */
 function findBestComps(propertyClass $subjprop, queryContext $queryContext)
 {
@@ -327,7 +325,7 @@ function findBestComps(propertyClass $subjprop, queryContext $queryContext)
  */
 function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext $queryContext)
 {
-    global $LIVINGAREA;
+    global $LASIZEADJ;
     $min = $max = 0;
     $compsseen = array();
 
@@ -356,10 +354,10 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
         return false;
     }
 
-    $sqft = $c->getFieldByName($LIVINGAREA["NAME"]);
+    $sqft = $c->getFieldByName($LASIZEADJ["NAME"]);
 
     if ($sqft < $min || $sqft > $max) {
-        $msg = sprintf("%u removed as potential comp due to size=%u min=%u max=%u size=%u", $c->getPropID(), $min, $max, $sqft);
+        $msg = sprintf("%u removed as potential comp due to size=%u min=%u max=%u subj size=%u", $c->getPropID(), $sqft, $min, $max, $subjsqft);
         if ($queryContext->traceComps) error_log("TRACE\taddToCompsArray: ".$msg);
         $queryContext->responseCtx->infos[] = $msg;
         return false;

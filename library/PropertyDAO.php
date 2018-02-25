@@ -9,9 +9,7 @@ class PropertyDAO{
      */
     protected $pdo;
 
-    protected $basePdo;
-    /**
-     * @var
+    /** @var
      */
     protected $db;
 
@@ -24,15 +22,12 @@ class PropertyDAO{
      * @param string $database
      * @param int $dbport
      */
-    public function __construct($host, $username, $password, $database, $baseDB, $dbport=3306){
+    public function __construct($host, $username, $password, $database, $dbport=3306){
         // Create connection
         try {
             $pdo = new PDO("mysql:host=" . $host . ";dbname=" . $database, $username, $password);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->pdo = $pdo;
-            $basePDO = new PDO("mysql:host=" . $host . ";dbname=" . $baseDB, $username, $password);
-            $basePDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->basePdo = $basePDO;
         } catch(PDOException $e) {
             error_log('Connection failed: ' . $e->getMessage());
         }
@@ -41,38 +36,35 @@ class PropertyDAO{
     /**
      * Retrieves the corresponding row for the specified property ID.
      * All non-delta fields should be populated at end of this function
+     *
+     * Will throw exception if property cannot be fully hydrated and valid
      * @param $propId
      * @return propertyClass
+     * @throws Exception
      */
     public function getPropertyById($propId) {
-        try{
-            /* @var propertyClass $property */
-            $property = $this->getCoreProp($propId);
-            $property->setBaseYearMktVal($this->getBaseYearVal($propId));
-            $property->setImpDets($this->getImpDet($propId));
-            if(sizeof($property->getImpDets()) == 0){
-                error_log("getPropertyById>> [INFO] : no improvements found for ". $propId);
-            }
-
-            $property->setPropId($propId);
-            $property->setImprovCount(count(ImpHelper::getUniqueImpIds($property->getImpDets())));
-            $property->setPrimeImpId(ImpHelper::getPrimaryImpId($property->getImpDets()));
-            if($property->getImprovCount() > 1) {
-                $property->setSegAdj(ImpHelper::getSecondaryImprovementsValue($property->getImpDets()));
-            } else {
-                $property->setSegAdj(0);
-            }
-            $property->setMktLevelerDetailAdj(ImpHelper::getMktLevelerDetailAdj($property->getImpDets()));
-            $property->setUnitPrice(ImpHelper::calculateUnitPrice($property->getImpDets()));
-            //This should be based on the primary improvement (highest value)
-            $property->setLASizeAdj(ImpHelper::calcLASizeAdj($property->getImpDets()));
-            $property->mPercentComp = '100';
-
-            return $property;
-        } catch (Exception $e){
-            error_log("Error in getPropertyById: " . $e->getMessage());
+        /* @var propertyClass $property */
+        $property = $this->getCoreProp($propId);
+        $property->setImpDets($this->getImpDet($propId));
+        if(sizeof($property->getImpDets()) == 0){
+            throw new Exception("Unable to find any improvements for ".$propId);
         }
-        return null;
+
+        $property->setPropId($propId);
+        $property->setImprovCount(count(ImpHelper::getUniqueImpIds($property->getImpDets())));
+        $property->setPrimeImpId(ImpHelper::getPrimaryImpId($property->getImpDets()));
+        if($property->getImprovCount() > 1) {
+            $property->setSegAdj(ImpHelper::getSecondaryImprovementsValue($property->getImpDets()));
+        } else {
+            $property->setSegAdj(0);
+        }
+        $property->setMktLevelerDetailAdj(ImpHelper::getMktLevelerDetailAdj($property->getImpDets()));
+        $property->setUnitPrice(ImpHelper::calculateUnitPrice($property->getImpDets()));
+        //This should be based on the primary improvement (highest value)
+        $property->setLASizeAdj(ImpHelper::calcLASizeAdj($property->getImpDets()));
+        $property->mPercentComp = '100';
+
+        return $property;
     }
 
 
@@ -207,28 +199,9 @@ class PropertyDAO{
     }
 
     /**
-     * @param $propId
-     * @return mixed
-     * @throws Exception
-     */
-    private function getBaseYearVal($propId)
-    {
-        $stmt = $this->basePdo->prepare("SELECT p.market_value as mMarketVal FROM PROP p WHERE p.prop_id = ?");
-        $stmt->bindValue(1, $propId, PDO::PARAM_INT);
-        $stmt->execute();
-
-        $stmt->bindColumn('mMarketVal', $MKTVAL, PDO::PARAM_INT);
-        $result = $stmt->fetch(PDO::FETCH_BOUND);
-        if($result === false){
-            throw new Exception("Unable to find property with propId=".$propId);
-        }
-        return $MKTVAL;
-    }
-
-
-    /**
      * @param string $hood
      * @return propertyClass[]
+     * @throws Exception
      */
     public function getHoodProperties($hood,  queryContext $queryContext)
     {
@@ -259,18 +232,24 @@ class PropertyDAO{
         $properties = array();
         if ($stmt->execute()) {
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $properties[] = $this->getPropertyById($row['prop_id']);
+                $propId = $row['prop_id'];
+                try {
+                    $properties[] = $this->getPropertyById($propId);
+                } catch (Exception $e) {
+                    error_log("Skipping property ".$propId." due to: ".$e->getMessage());
+                }
             }
         }
 
         return $properties;
      }
 
-    /**
-     * @param $hood
-     * @param queryContext $queryContext
-     * @return array
-     */
+/**
+ * @param $hood
+ * @param queryContext $queryContext
+ * @return array
+ * @throws Exception
+ */
     protected function getHoodPropsSales($hood, $queryContext){
         $debug = false;
         $mlsSaleCount = 0;
@@ -306,21 +285,31 @@ class PropertyDAO{
             $properties = array();
             if ($stmt->execute()) {
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    if ($debug) error_log("attempting to get " . $row['prop_id']);
-                    $currProp = $this->getPropertyById($row['prop_id']);
-                    $currProp->setSalePrice($row['sale_price']);
-                    $currProp->mSaleDate = $row['sale_date'];
-                    $currProp->setSaleSource($row['source']);
-                    if ($row['sale_type'] === null && $currProp->getSaleSource() === 'MLS') {
-                        $currProp->setSaleType('mls');
-                        $mlsSaleCount++;
-                    } elseif ($row['sale_type'] != null) {
-                        $currProp->setSaleType($row['sale_type']);
-                        $tcadSaleCount++;
-                    } else {
-                        $currProp->setSaleType("don't ask");
+                    $currPropId = $row['prop_id'];
+                    try {
+                        if ($queryContext->traceComps) error_log("attempting to get " . $row['prop_id']);
+                        $currProp = $this->getPropertyById($currPropId);
+                        if ($row['sale_price'] == null) {
+                            throw new Exception("No sales info found");
+                        }
+                        $currProp->setSalePrice($row['sale_price']);
+                        $currProp->mSaleDate = $row['sale_date'];
+                        $currProp->setSaleSource($row['source']);
+                        if ($row['sale_type'] === null && $currProp->getSaleSource() === 'MLS') {
+                            $currProp->setSaleType('mls');
+                            $mlsSaleCount++;
+                        } elseif ($row['sale_type'] != null) {
+                            $currProp->setSaleType($row['sale_type']);
+                            $tcadSaleCount++;
+                        } else {
+                            $currProp->setSaleType("don't ask");
+                        }
+                        $properties[] = $currProp;
+                    } catch (Exception $e){
+                        $error = sprintf("Skipping propId:%s due to error:%s", $currPropId, $e->getMessage());
+                        error_log("ERROR\tgetHoodPropsSales>>".$error);
+                        $queryContext->responseCtx->errors[] = $error;
                     }
-                    $properties[] = $currProp;
                 }
             }
 
@@ -331,8 +320,6 @@ class PropertyDAO{
             return $properties;
         } catch (PDOException $e){
             error_log("DB Error " . $e->getMessage());
-        } catch (Exception $e){
-            error_log("Other Error " . $e->getMessage());
         }
         return [];
     }
