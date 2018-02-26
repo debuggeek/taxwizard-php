@@ -492,9 +492,10 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
     return false;
 }
 
-//Compares two properties for their indicated value
-//Returns 0 if equal , -1 if prop1 is less the prop2, or 1 if prop1 > prop2
 /**
+ * Compares two properties for their indicated value
+ * Returns 0 if equal , -1 if prop1 is less the prop2, or 1 if prop1 > prop2
+ *
  * @param propertyClass $prop1
  * @param propertyClass $prop2
  * @return int
@@ -514,6 +515,35 @@ function compareIndicatedVal(propertyClass $prop1, propertyClass $prop2)
         return 0;
     }
     return ($prop1_Ind < $prop2_Ind) ? -1 : 1;
+}
+
+/**
+ * @param propertyClass $prop1
+ * @param propertyClass $prop2
+ * @param bool $trace
+ * @return int
+ * @throws Exception
+ */
+function compareTcadVal(propertyClass $prop1, propertyClass $prop2){
+
+    $prop1_tcadScore = $prop1->getTcadScore()->getScore();
+    if(!is_numeric($prop1_tcadScore)){
+        throw new Exception("TCAD Score is not a number");
+    }
+    $prop2_tcadScore = $prop2->getTcadScore()->getScore();
+    if(!is_numeric($prop2_tcadScore)){
+        throw new Exception("TCAD Score is not a number");
+    }
+
+//    if($trace){
+//        $err = sprintf("Comparing %s tcad score of %s with %s tcad score of %s", $prop1->getPropID(), $prop1_tcadScore, $prop2->getPropID(), $prop2_tcadScore);
+//        error_log($err);
+//    }
+
+    if($prop1_tcadScore === $prop2_tcadScore){
+        return 0;
+    }
+    return ($prop1_tcadScore > $prop2_tcadScore) ? -1 : 1;
 }
 
 /**
@@ -646,6 +676,12 @@ function isFlaggableSaleType(propertyClass $propertyClass){
         return false;
 }
 
+/**
+ * @param propertyClass $property
+ * @param queryContext $queryContext
+ * @return array|null
+ * @throws Exception
+ */
 function generateArrayOfBestComps(propertyClass $property, queryContext $queryContext)
 {
     $compsarray = findBestComps($property, $queryContext);
@@ -667,8 +703,16 @@ function generateArrayOfBestComps(propertyClass $property, queryContext $queryCo
         " comp(s) for " . $property->getPropID() .
         " during " . ($queryContext->isEquityComp ? " equity " : " sales ") . "search");
 
-    //resort to reset their index of any removed
-    usort($compsarray, "compareIndicatedVal");
+    switch ($queryContext->rank){
+        case RankType::Indicated:
+            usort($compsarray, "compareIndicatedVal");
+            break;
+        case RankType::TCAD:
+            usort($compsarray, "compareTcadVal");
+            break;
+        default:
+            throw new Exception("UNDEFINED RANK SORT");
+    }
 
     $comp_min = MIN($queryContext->compsToDisplay, count($compsarray));
     $subjcomparray = array();

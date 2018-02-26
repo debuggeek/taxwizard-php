@@ -1,5 +1,7 @@
 <?php
 
+include_once 'enums/RankType.php';
+
 class queryContext {
 
     /*
@@ -42,7 +44,7 @@ class queryContext {
     public $grossAdjFilterEnabled = false;
 
     // Rank by
-    public $rankByIndicated = true;
+    public $rank = RankType::Indicated;
 
     // Group used for display filtering
     public $showTcadScores = false;
@@ -98,7 +100,11 @@ class queryContext {
         $this->sqftRangeMax = $inputContext->sqftRangeMax;
 
         // Ranking
-        $this->rankByIndicated = $inputContext->rankByIndicated;
+        if($inputContext->rankByIndicated){
+            $this->rank = RankType::Indicated;
+        } else {
+            $this->rank = RankType::TCAD;
+        }
 
         // Display Options
         $this->showTcadScores = $inputContext->showTcadScores;
