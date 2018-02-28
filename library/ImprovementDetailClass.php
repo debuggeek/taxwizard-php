@@ -79,7 +79,57 @@ class ImprovementDetailClass{
      * @var int
      */
     private $det_calc_val;
-    
+
+    /**
+     * @var string
+     */
+    private $class_code;
+
+    /**
+     * @var string
+     */
+    private $subClass;
+
+    /**
+     * @var int
+     */
+    private $base_deprec_perc;
+
+    /**
+     * @var int
+     */
+    private $phy_perc;
+
+    /**
+     * @var int
+     */
+    private $func_perc;
+
+    /**
+     * @var int
+     */
+    private $eco_perc;
+
+    /**
+     * @var string
+     */
+    private $cond_code;
+
+    /**
+     * @return mixed
+     */
+    public function getPropId()
+    {
+        return $this->prop_id;
+    }
+
+    /**
+     * @param mixed $prop_id
+     */
+    public function setPropId($prop_id)
+    {
+        $this->prop_id = $prop_id;
+    }
 
     /**
      * @return string
@@ -274,6 +324,123 @@ class ImprovementDetailClass{
     }
 
     /**
+     * @return string
+     */
+    public function getClassCode(): string
+    {
+        return $this->class_code;
+    }
+
+    /**
+     * @param string $class_code
+     */
+    public function setClassCode(string $class_code): void
+    {
+        $this->class_code = $class_code;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSubClass(): string
+    {
+        return $this->subClass;
+    }
+
+    /**
+     * @param string $subClass
+     */
+    public function setSubClass(string $subClass): void
+    {
+        $this->subClass = $subClass;
+    }
+
+    /**
+     * @return int
+     */
+    public function getBaseDeprecPerc(): int
+    {
+        return $this->base_deprec_perc;
+    }
+
+    /**
+     * @param int $base_deprec_perc
+     */
+    public function setBaseDeprecPerc(int $base_deprec_perc): void
+    {
+        $this->base_deprec_perc = $base_deprec_perc;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPhyPerc(): int
+    {
+        return $this->phy_perc;
+    }
+
+    /**
+     * @param int $phy_perc
+     */
+    public function setPhyPerc(int $phy_perc): void
+    {
+        $this->phy_perc = $phy_perc;
+    }
+
+    /**
+     * @return int
+     */
+    public function getFuncPerc(): int
+    {
+        return $this->func_perc;
+    }
+
+    /**
+     * @param int $func_perc
+     */
+    public function setFuncPerc(int $func_perc): void
+    {
+        $this->func_perc = $func_perc;
+    }
+
+    /**
+     * @return int
+     */
+    public function getEcoPerc(): int
+    {
+        return $this->eco_perc;
+    }
+
+    /**
+     * @param int $eco_perc
+     */
+    public function setEcoPerc(int $eco_perc): void
+    {
+        $this->eco_perc = $eco_perc;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCondCode(): string
+    {
+        return $this->cond_code;
+    }
+
+    /**
+     * @param string $cond_code
+     */
+    public function setCondCode(string $cond_code): void
+    {
+        $this->cond_code = $cond_code;
+    }
+
+    public function getGoodPerc(): int {
+        return $this->base_deprec_perc + $this->phy_perc + $this->func_perc + $this->eco_perc;
+    }
+
+
+    /**
      * Extracts the Adjustment Percentage for this improvement
      * @return float
      * @throws Exception
@@ -319,19 +486,5 @@ class ImprovementDetailClass{
         return $retstring;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getPropId()
-    {
-        return $this->prop_id;
-    }
 
-    /**
-     * @param mixed $prop_id
-     */
-    public function setPropId($prop_id)
-    {
-        $this->prop_id = $prop_id;
-    }
 }

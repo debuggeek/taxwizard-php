@@ -231,8 +231,11 @@ function getProperty($propid)
 
     global $servername,$username,$password,$database, $dbport;
     $propDao = new PropertyDAO($servername, $username, $password, $database);
-    $currprop = $propDao->getPropertyById($propid);
-    if($debug) error_log("getProperty: currProp="+var_dump($currprop));
+    try {
+        $currprop = $propDao->getPropertyById($propid);
+    } catch(Exception $e){
+        throw new Exception("Unable to get property due to : " . $e->getMessage());
+    }
     $currprop->setisSubj(false);
     return $currprop;
 }

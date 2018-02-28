@@ -58,6 +58,12 @@ class PropertyDAO{
         } else {
             $property->setSegAdj(0);
         }
+        //Following all based on primary improvement
+        $primeImp = ImpHelper::getPrimaryImprovementRepresentative($property->getImpDets());
+        $property->setSubClass($primeImp->getSubClass());
+        $property->setCondition($primeImp->getCondCode());
+        $property->setGoodAdj($primeImp->getGoodPerc());
+        $property->setClassCode($primeImp->getClassCode());
         $property->setMktLevelerDetailAdj(ImpHelper::getMktLevelerDetailAdj($property->getImpDets()));
         $property->setUnitPrice(ImpHelper::calculateUnitPrice($property->getImpDets()));
         //This should be based on the primary improvement (highest value)
@@ -83,7 +89,14 @@ class PropertyDAO{
                               si.det_area, si.det_unitprice, si.det_use_unit_price,
                               LTRIM(RTRIM(id.imprv_det_id)) as imprv_det_id,
                               si.imprv_val as imprv_val,
-                              si.det_calc_val as det_calc_val
+                              si.det_calc_val as det_calc_val,
+                              si.det_class_code as class_code,
+                              si.det_subclass as subClass,
+                              si.det_base_deprec_perc as base_deprec_perc,
+                              si.det_phy_perc as phy_perc,
+                              si.det_func_perc as func_perc,
+                              si.det_eco_perc as eco_perc,
+                              LTRIM(RTRIM(si.det_cond_code)) as cond_code
                       FROM SPECIAL_IMP si 
                       LEFT JOIN IMP_DET id  
                       ON si.imprv_id = id.imprv_id AND si.det_id = id.imprv_det_id
@@ -111,7 +124,8 @@ class PropertyDAO{
         $prop = new propertyClass();
         $prop->setPropID($propId);
 
-        $stmt = $this->pdo->prepare("SELECT 
+        $stmt = $this->pdo->prepare(/** @lang MySQL */
+            "SELECT 
                         p.geo_id as mGeoID,
                         LTRIM(RTRIM(p.situs_street_prefx)) as situs_pre, 
                         LTRIM(RTRIM(p.situs_num)) as situs_num,
@@ -123,15 +137,8 @@ class PropertyDAO{
                         LTRIM(RTRIM(p.py_owner_name)) as mOwner,
                         p.market_value as mMarketVal,
                         sp.liv_area as mLivingArea,
-                        si.det_class_code as classCode,
-                        si.det_subclass as subClass,
-                        si.det_base_deprec_perc as base_deprec_perc,
-                        si.det_phy_perc as phy_perc,
-                        si.det_func_perc as func_perc,
-                        si.det_eco_perc as eco_perc,
                         sp.yr_built as yrBuilt,
                         sp.eff_yr_built as efYrBuilt,
-                        LTRIM(RTRIM(si.det_cond_code)) as cond,
                         LTRIM(RTRIM(p.imprv_state_cd)) as stCode
                     FROM
                         PROP p
@@ -140,13 +147,9 @@ class PropertyDAO{
                     ON 
                         p.prop_id = sp.prop_id
 					LEFT JOIN
-						SPECIAL_IMP si
-					ON
-						p.prop_id = si.prop_id AND si.det_use_unit_price = 'T'
-					LEFT JOIN
 					    IMP_DET i
 					ON 
-					   p.prop_id = i.prop_id AND si.det_id = i.imprv_det_id
+					   p.prop_id = i.prop_id
                     WHERE
                     p.prop_id = ?");
         $stmt->bindValue(1, $propId, PDO::PARAM_INT);
@@ -163,16 +166,8 @@ class PropertyDAO{
         $stmt->bindColumn('mOwner', $prop->mOwner, PDO::PARAM_STR);
         $stmt->bindColumn('mMarketVal', $prop->mMarketVal, PDO::PARAM_INT);
         $stmt->bindColumn('mLivingArea', $livingarea, PDO::PARAM_INT);
-       // $stmt->bindColumn('mLivingArea', $mLASizeAdj, PDO::PARAM_INT);
-        $stmt->bindColumn('classCode', $classcode, PDO::PARAM_STR);
-        $stmt->bindColumn('subClass', $subclass, PDO::PARAM_STR);
-        $stmt->bindColumn('base_deprec_perc', $base_deprec_perc, PDO::PARAM_INT);
-        $stmt->bindColumn('phy_perc', $phy_perc, PDO::PARAM_INT);
-        $stmt->bindColumn('func_perc', $func_perc, PDO::PARAM_INT);
-        $stmt->bindColumn('eco_perc', $eco_perc, PDO::PARAM_INT);
         $stmt->bindColumn('yrBuilt', $prop->mYearBuilt, PDO::PARAM_INT);
         $stmt->bindColumn('efYrBuilt', $prop->effectiveYearBuilt, PDO::PARAM_INT);
-        $stmt->bindColumn('cond', $cond, PDO::PARAM_STR);
         $stmt->bindColumn('stCode', $prop->stateCode, PDO::PARAM_STR);
 
 
@@ -181,10 +176,6 @@ class PropertyDAO{
             throw new Exception("Unable to find property with propId=".$propId);
         }
         $prop->setLivingArea($livingarea);
-        $prop->setClassCode($classcode);
-        $prop->setSubClass($subclass);
-        $prop->setCondition($cond);
-        $prop->setGoodAdj($base_deprec_perc + $phy_perc + $func_perc + $eco_perc);
 
         $stmt2 = $this->pdo->prepare("SELECT SUM(p.land_hstd_val + p.land_non_hstd_val) as totHstd
                                         FROM PROP p WHERE p.prop_id = ?");

@@ -76,6 +76,9 @@ class propertyClass
      * @var int
      */
     private $mLASizeAdj;
+    /**
+     * @var string
+     */
     private $classCode;
     private $subClass;
     private $classAdj;
@@ -816,9 +819,9 @@ class propertyClass
         return $this->getSalePrice();
     }
     /**
-     * @return array
+     * @return string
      */
-    function getClassAdj()
+    function getClassAdj(): string
     {
         return $this->getClassCode().$this->getSubClass();
     }
@@ -832,17 +835,17 @@ class propertyClass
     }
 
     /**
-     * @param mixed $classCode
+     * @param string
      */
-    public function setClassCode($classCode)
+    public function setClassCode($classCodeIn)
     {
-        $this->classCode = $classCode;
+        $this->classCode = $classCodeIn;
     }
 
     /**
      * @return string
      */
-    public function getSubClass()
+    public function getSubClass() : string
     {
         return $this->subClass;
     }

@@ -156,6 +156,23 @@ class ImpHelper
     }
 
     /**
+     * Returns the representative improvement of the primary improvements
+     * @param $propertyImps
+     * @return ImprovementDetailClass
+     * @throws Exception
+     */
+    public static function getPrimaryImprovementRepresentative($propertyImps){
+        $primaryImprv = self::getPrimaryImprovements($propertyImps);
+        foreach ($primaryImprv as $improv) {
+            /* @var $improv ImprovementDetailClass */
+            if($improv->isDetUseUnitPrice() == 'T'){
+                return $improv;
+            }
+        }
+        throw new Exception("Primary Improvement not found");
+    }
+
+    /**
      * Finds all the non-primary improvements
      * @param $propertyImps
      * @return array
@@ -319,4 +336,5 @@ class ImpHelper
         $unitPrice = round(($totalReplacementCost / $mainSqft), 2);
         return $unitPrice;
     }
+
 }
