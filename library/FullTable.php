@@ -207,7 +207,9 @@ class FullTable
                     /* @var propertyClass $property */
                     $property = $this->subjCompArray[$i];
                     if(in_array($property->getPropID(), $queryContext->excludes)){
-                        error_log("Removing ".$property->getPropID()." from comp results due to being in excludes");
+                        $msg = sprintf("%u removed as potential comp due to being in exclusion list", $property->getPropID());
+                        if ($queryContext->traceComps) error_log("TRACE\tgenerateTableData: ".$msg);
+                        $queryContext->responseCtx->infos[] = $msg;
                         unset($this->subjCompArray[$i]);
                     }
                 }
