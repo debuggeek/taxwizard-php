@@ -112,6 +112,9 @@ class queryContext {
 
         $this->compsToDisplay = $inputContext->maxDisplay;
 
+        // Overrides
+        $this->excludes = $inputContext->excludes;
+
         // Other
         $this->traceComps = $inputContext->traceComps;
 
