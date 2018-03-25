@@ -996,7 +996,7 @@ class propertyClass
             $var2 = $this->getUnitPrice();
             $var3 = $var1 / $var2;
             $var4 = $var3 - 1;
-            $result = $var4 * $var2 * $this->mLivingArea;
+            $result = $var4 * $var2 * $this->mLASizeAdj;
             $this->classAdjDelta = round($result);
         } else if ($option == 2016) {
             // Added for 2016

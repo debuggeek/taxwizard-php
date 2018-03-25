@@ -18,6 +18,10 @@ $responseContext = new responseContext();
 //Parse Inputs
 $json = file_get_contents('php://input');
 $obj = json_decode($json);
+if($obj == null){
+    echo json_encode(array("error"=>"Bad json input, check for extra chars"));
+    exit;
+}
 $queryContext->parseQueryContextJson($obj);
 $queryContext->responseCtx = $responseContext;
 
