@@ -24,6 +24,8 @@ The following source files are required
 + MLS:
   csv file with : `prop_id, sale_price, sale_date, address`
 
+The Batch Settings table should be initialized with a new row as the initial default.
+
 These can be extracted from the source expected zip files with names like
 + `2017-04-19_006051_APPRAISAL_R&P ALLJUR AS OF PERLIMINARY.zip` for PROP and IMP
 + `SPECIAL_ALL FILES EXPORT_20170419.zip` for the Special_* files

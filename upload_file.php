@@ -3,6 +3,9 @@ include_once("library/functions.php");
 
 $allowedExts = array("txt", "log", "csv");
 $maxEntries = 20000;
+
+$response = array();
+
 if (!$_FILES)
 	echo("Must upload a file");
 else{
@@ -17,15 +20,19 @@ else{
 	    echo "Return Code: " . $_FILES["file"]["error"] . "<br>";
 	    }
 	  else{
-	    echo "Upload: " . $_FILES["file"]["name"] . "<br>";
-	    echo "Type: " . $_FILES["file"]["type"] . "<br>";
+//	    echo "Upload: " . $_FILES["file"]["name"] . "<br>";
+          $response["file"] = $_FILES["file"]["name"];
+//	    echo "Type: " . $_FILES["file"]["type"] . "<br>";
 	    //echo "Size: " . ($_FILES["file"]["size"] / 1024) . " kB<br>";
 	    //echo "Temp file: " . $_FILES["file"]["tmp_name"] . "<br>";
 	    
 	    $localfile = "upload/" . $_FILES["file"]["name"] . date("Ymd_H_m_s");
 	    if (file_exists($localfile))
 	      {
-	      echo $_FILES["file"]["name"] . " already exists. ";
+//	      echo $_FILES["file"]["name"] . " already exists. ";
+            $response["status"] = "error";
+            $response["error"] = "File Already exists";
+            http_response_code(400);
 	      }
 	    else{  
 	      $total_num = 0;
@@ -45,16 +52,22 @@ else{
 	      			}
 	      		}
                 error_log("debug: upload_file: ".$total_num." properties found : ");
-	      		echo "<p> $total_num properties found <br /></p>\n";
+//	      		echo "<p> $total_num properties found <br /></p>\n";
+	      		$response["idsFound"] = $total_num;
 	      		$query = trim($query,",");
                 $query = $query . "on duplicate key UPDATE completed= 'false', pdfs='', prop_mktval='', Median_Sale5='', Median_Sale10='', Median_Sale15='', Median_Eq11='' ";
 	      		//echo $query . "<br />";
                 error_log("debug: upload_file: query : ". $query);
 	      		fclose($handle);
-	      		if(doSqlQuery($query))
-	      			echo "Successfully inserted into table<br />";
-	      		else
-	      			echo "Insertion error<br />";
+	      		if(doSqlQuery($query)) {
+                    $response["status"] = "success";
+//	      			echo "Successfully inserted into table<br />";
+                }
+	      		else {
+//	      			echo "Insertion error<br />";
+                    $response["status"] = "error";
+                    $response["error"] = "Insertion error";
+                }
 	      	}	
 	      }
 	      //Execute the batch pdf
@@ -68,13 +81,18 @@ else{
 	  }
 	}
 	else{
-	  echo "Invalid file<br>";
-	  echo $_FILES["file"]["type"];
+//	  echo "Invalid file<br>";
+        $response["status"] = "error";
+        $response["error"] = "Invalid File";
+//	  echo $_FILES["file"]["type"];
 	  if ($_FILES["file"]["size"] > $maxEntries)
-	  	echo "File exceeds maximum number of bytes". $maxEntries . ".  size:". $_FILES["file"]["size"];
+//	  	echo "File exceeds maximum number of bytes". $maxEntries . ".  size:". $_FILES["file"]["size"];
+	      $response["error"]="File size exceeded";
 	  if (!in_array($extension, $allowedExts))
-	  	echo "Wrong file type. Must be txt, log, or csv";
+//	  	echo "Wrong file type. Must be txt, log, or csv";
+	      $response["error"] = "Wrong file type";
 	}
 }
-echo '<br><br><A HREF="batch_complete.php">Back</A>';
+//echo '<br><br><A HREF="batch_complete.php">Back</A>';
+echo json_encode($response);
 ?>
