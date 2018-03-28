@@ -58,7 +58,10 @@ class queryContext {
     public $compsToDisplay = 100;
 
     //Holds a list of propertyIds to exclude from consideration
-    public $excludes = array();
+    public $userFilterEnabled = false;
+    public $filterProps = array();
+    //By default the filter is an exclusion list
+    public $filterTypeExclude = true;
 
     //Treat like equity by default so we use market val and not sales price
     public $isEquityComp = true;
@@ -113,222 +116,16 @@ class queryContext {
         $this->compsToDisplay = $inputContext->maxDisplay;
 
         // Overrides
-        $this->excludes = $inputContext->excludes;
+        $this->filterProps = $inputContext->filterProps;
+        if($inputContext->filterTypeExclude !== null) {
+            $this->filterTypeExclude = $inputContext->filterTypeExclude;
+        }
+        if(array_count_values($this->filterProps) > 0){
+            $this->userFilterEnabled = true;
+        }
 
         // Other
         $this->traceComps = $inputContext->traceComps;
 
     }
-
-//    public function parseQueryString($inputContextRaw){
-//       // $inputContext = json_decode($inputContextRaw[0]);
-//        //Parse Inputs
-//        if(isset($inputContext['multiyear'])){
-//            $this->prevYear = $inputContext['multiyear'];
-//        }
-//
-//        if(isset($inputContext['display'])){
-//            $this->compsToDisplay = intval(trim($inputContext['display']));
-//        }
-//        if(isset($inputContext['propid'])){
-//            $this->subjPropId = trim($inputContext['propid']);
-//        }
-//        if(isset($inputContext['trimindicated'])){
-//            if (trim($inputContext['trimindicated']) == 'on'){
-//                $this->trimIndicated = true;
-//            }
-//        }
-//        if(isset($inputContext['style'])){
-//            if (trim($inputContext['style']) == 'sales'){
-//                $this->isEquityComp = false;
-//            }
-//        }
-//        if(isset($inputContext['includemls'])){
-//            if (trim($inputContext['includemls']) == 'on'){
-//                $this->includeMls = true;
-//            }
-//        }
-//        if(isset($inputContext['multihood'])){
-//            if (trim($inputContext['multihood']) == 'on'){
-//                $this->multiHood = true;
-//            }
-//        }
-//
-//        if(isset($inputContext['includevu'])) {
-//            if (trim($inputContext['includevu']) == 'on'){
-//                $this->includeVu = true;
-//            }
-//        }
-//
-//        if(isset($inputContext['sqftPct'])){
-//          $val =  trim($inputContext['sqftPct']);
-//          $valArray = explode(":", $val);
-//          if(count($valArray) == 2){
-//            $this->sqftRangeMin = $valArray[0];
-//            $this->sqftRangeMax = $valArray[1];
-//            $this->sqftPercent = null;
-//          } else if(count($valArray) == 1) {
-//            $this->sqftRangeMin = null;
-//            $this->sqftRangeMax = null;
-//            $this->sqftPercent = $valArray[0];
-//          } else {
-//            error_log("Unexpected query value for sqftPct");
-//          }
-//        }
-//
-//        if(isset($inputContext['rangeEnabled'])){
-//            if(strcmp($inputContext['rangeEnabled'],'on') == 0){
-//                $this->subClassRangeEnabled = true;
-//                $this->subClassRange = intval(trim($inputContext['subClassRange']));
-//            }
-//        }
-//
-//        if(isset($inputContext['saleRatioEnabled'])){
-//            if(strcmp($inputContext['saleRatioEnabled'], 'on') ==0 ) {
-//                $this->saleRatioEnabled = true;
-//
-//                $val =  trim($inputContext['saleRatioRange']);
-//                $valArray = explode(":", $val);
-//                if(count($valArray) == 2){
-//                    $this->saleRatioMin = floatval($valArray[0]);
-//                    $this->saleRatioMax = floatval($valArray[1]);
-//                } else {
-//                    error_log("Unexpected query value for saleRatioEnabled");
-//                }
-//            }
-//        }
-//
-//        if(isset($inputContext['pctGoodRangeEnabled'])){
-//            if(strcmp($inputContext['pctGoodRangeEnabled'], 'on') ==0 ) {
-//                $this->percentGoodRangeEnabled = true;
-//
-//                $val =  trim($inputContext['pctGoodRange']);
-//                $valArray = explode(":", $val);
-//                if(count($valArray) == 2){
-//                    $this->percentGoodMin = $valArray[0];
-//                    $this->percentGoodMax = $valArray[1];
-//                    $this->percentGoodRange = null;
-//                } else if(count($valArray) == 1) {
-//                    $this->percentGoodMin = null;
-//                    $this->percentGoodMax = null;
-//                    $this->percentGoodRange = $valArray[0];
-//                } else {
-//                    error_log("Unexpected query value for pctGoodRange");
-//                }
-//            }
-//        }
-//
-//        if(isset($inputContext['netadjust'])){
-//            if(strcmp($inputContext['netadjust'], 'on') ==0 ) {
-//                $this->netAdjustEnabled = true;
-//                $this->netAdjustAmount = intVal(trim($inputContext['netAdjustAmt']));
-//            }
-//        }
-//
-//        if(isset($inputContext['exclude'])){
-//            $excludeStrList = trim($inputContext['exclude']);
-//            $this->excludes = explode('_',$excludeStrList);
-//        }
-//
-//        if(isset($inputContext['Submit'])){
-//            if($inputContext['Submit'] == 'Build Sales Table'){
-//                $this->isEquityComp = false;
-//            } else if(strpos($inputContext['Submit'], 'Equity') !== false){
-//                $this->isEquityComp = true;
-//            }
-//        }
-//
-//        if(isset($inputContext['limitImps'])){
-//            if(strcmp($inputContext['limitImps'], 'on') == 0) {
-//                $this->limitToLessImps = true;
-//            }
-//        }
-//
-//        if(isset($inputContext['tracecomps'])){
-//            $this->traceComps = true;
-//        }
-//
-//        //////////////
-//        // Rank options
-//        /////////////
-//        if(isset($inputContext['rank'])){
-//            if(strcmp($inputContext['rank'], 'indicated') == 0) {
-//                $this->rankByIndicated = true;
-//            } else {
-//                $this->rankByIndicated = false;
-//            }
-//        }
-//
-//        //////////////
-//        // Display filter options
-//        /////////////
-//
-//        if(isset($inputContext['showBaseMktData'])){
-//            if(strcmp($inputContext['showBaseMktData'], 'on') == 0) {
-//                $this->showBaseMktData = true;
-//            } else {
-//                $this->showBaseMktData = false;
-//            }
-//        }
-//
-//        if(isset($inputContext['showTcadScores'])){
-//            if(strcmp($inputContext['showTcadScores'], 'on') == 0) {
-//                $this->showTcadScores = true;
-//            } else {
-//                $this->showTcadScores = false;
-//            }
-//        }
-//
-//        if(isset($inputContext['showSaleRatio'])){
-//            if(strcmp($inputContext['showSaleRatio'], 'on') == 0) {
-//                $this->showSaleRatios = true;
-//            } else {
-//                $this->showSaleRatios = false;
-//            }
-//        }
-//
-//        if(isset($inputContext['limitTcadScores'])){
-//            if(strcmp($inputContext['limitTcadScores'], 'on') ==0 ) {
-//                $this->limitTcadScores = true;
-//
-//                $val =  trim($inputContext['limitTcadScoresAmount']);
-//                $valArray = explode(":", $val);
-//                if(count($valArray) == 2){
-//                    $this->tcadScoreLimitMin = $valArray[0];
-//                    $this->tcadScoreLimitMax = $valArray[1];
-//                    $this->limitTcadScoresAmount = null;
-//                } else if(count($valArray) == 1) {
-//                    $this->tcadScoreLimitMin = null;
-//                    $this->tcadScoreLimitMax = null;
-//                    $this->limitTcadScoresAmount = $valArray[0];
-//                } else {
-//                    error_log("Unexpected query value for limitTcadScoresAmount");
-//                }
-//            } else {
-//                $this->limitTcadScores = false;
-//            }
-//        }
-//
-//        $compInt = 1;
-//        while(true){
-//            if(isset($_GET['c'.$compInt])){
-//                $id = trim($_GET['c'.$compInt]);
-//                if(isset($_GET['c'.$compInt.'sp'])){
-//                    $saleprice = trim($_GET['c'.$compInt.'sp']);
-//                } else {
-//                    $saleprice = null;
-//                }
-//                if(isset($_GET['c'.$compInt.'sd'])){
-//                    $saledate = trim($_GET['c'.$compInt.'sd']);
-//                } else {
-//                    $saledate = null;
-//                }
-//                $this->compInfo[] = array("id"=>$id,"salePrice"=>$saleprice,"saleDate"=>$saledate);
-//                $compInt++;
-//            } else {
-//                break;
-//            }
-//        }
-//
-//    }
 }

@@ -190,55 +190,11 @@ class FullTable
 
         //Determine if we should comp off provided list or not
         if(count($queryContext->compInfo) === 0){
-            if($queryContext->isEquityComp) {
-                error_log("Finding best EQUITY comps for " . $this->subjectProp->getPropID());
-            } else {
-                error_log("Finding best SALES comps for " . $this->subjectProp->getPropID());
-            }
-
-            //no comps provided so we must find some
-            $this->subjCompArray  = generateArrayOfBestComps( $this->subjectProp , $queryContext);
-
-            if($queryContext->traceComps) error_log("TRACE\tFound ".count($this->subjCompArray)." comps after filtering");
-            if(count($queryContext->excludes) > 0){
-                //Save off since it might go down
-                $startCount = count($this->subjCompArray);
-                for($i = 0 ; $i < $startCount; $i++){
-                    /* @var propertyClass $property */
-                    $property = $this->subjCompArray[$i];
-                    if(in_array($property->getPropID(), $queryContext->excludes)){
-                        $msg = sprintf("%u removed as potential comp due to being in exclusion list", $property->getPropID());
-                        if ($queryContext->traceComps) error_log("TRACE\tgenerateTableData: ".$msg);
-                        $queryContext->responseCtx->infos[] = $msg;
-                        unset($this->subjCompArray[$i]);
-                    }
-                }
-                //Re-index the array so we don't have gaps
-                $this->subjCompArray  = array_values($this->subjCompArray);
-            }
+            $this->subjCompArray = $this->mineForComps($queryContext);
         } else {
-            error_log("Building comps from user provided for ". $this->subjectProp ->getPropID());
-
-            $subjcomparray = array();
-            $subjcomparray[] = $this->subjectProp;
-            foreach($queryContext->compInfo as $compIn){
-                if(in_array($compIn['id'], $queryContext->excludes)){
-                    error_log("Removing ".$compIn['id']." from comp results due to being in excludes");
-                    continue;
-                }
-                $c = getProperty($compIn['id']);
-                if($c === null){
-                    error_log("Unable to retrieve comp property=".$compIn['id']);
-                }
-                if(!$queryContext->isEquityComp) {
-                    $c->setSalePrice($compIn['salePrice']);
-                    $c->mSaleDate = $compIn['saleDate'];
-                }
-                calcDeltas($this->subjectProp,$c, $queryContext->isEquityComp);
-                $subjcomparray[] = $c;
-            }
-            $this->subjCompArray = $subjcomparray;
+            $this->subjCompArray = $this->useProvidedComps($queryContext);
         }
+
 
         if($this->subjCompArray === null || sizeof($this->subjCompArray) == 1){
             $this->subjCompArray = null;
@@ -257,12 +213,101 @@ class FullTable
     }
 
     /**
+     * @param $queryContext queryContext
+     * @return propertyClass[]
+     * @throws Exception
+     */
+    private function mineForComps($queryContext){
+        if($queryContext->isEquityComp) {
+            error_log("Finding best EQUITY comps for " . $this->subjectProp->getPropID());
+        } else {
+            error_log("Finding best SALES comps for " . $this->subjectProp->getPropID());
+        }
+
+        //no comps provided so we must find some
+        $subjCompArray  = generateArrayOfBestComps( $this->subjectProp , $queryContext);
+
+        if($queryContext->traceComps) error_log("TRACE\tFound ".count($this->subjCompArray)." comps after filtering");
+        if($queryContext->userFilterEnabled){
+            $subjCompArray = $this->applyUserFilter($queryContext, $subjCompArray);
+        }
+        return $subjCompArray;
+    }
+
+    /**
+     * @param $queryContext queryContext
+     * @param $subjCompArrayIn propertyClass[]
+     * @return propertyClass[]
+     */
+    private function applyUserFilter($queryContext, $subjCompArrayIn)
+    {
+        $result = array();
+
+        foreach ($subjCompArrayIn as $prop){
+            if($prop->isSubj()){
+                //preserve the subj
+                $result[] = $prop;
+                continue;
+            }
+            if(in_array($prop->getPropID(), $queryContext->filterProps)){
+                if($queryContext->filterTypeExclude){
+                    $msg = sprintf("%u removed as potential comp due to being in exclusion list", $prop->getPropID());
+                    if ($queryContext->traceComps) error_log("TRACE\tgenerateTableData: ".$msg);
+                    $queryContext->responseCtx->infos[] = $msg;
+                } else {
+                    $result[] = $prop;
+                }
+            } else  {
+                if($queryContext->filterTypeExclude){
+                    $result[] = $prop;
+                } else {
+                    $msg = sprintf("%u removed as potential comp due to being not being on inclusion list", $prop->getPropID());
+                    if ($queryContext->traceComps) error_log("TRACE\tgenerateTableData: ".$msg);
+                    $queryContext->responseCtx->infos[] = $msg;
+                }
+            }
+
+        }
+        return $result;
+    }
+
+    /**
+     * @param $queryContext queryContext
+     * @return propertyClass[]
+     * @throws Exception
+     */
+    private function useProvidedComps($queryContext){
+        error_log("Building comps from user provided for ". $this->subjectProp ->getPropID());
+
+        $subjcomparray = array();
+        $subjcomparray[] = $this->subjectProp;
+        foreach($queryContext->compInfo as $compIn){
+            if(in_array($compIn['id'], $queryContext->excludes)){
+                error_log("Removing ".$compIn['id']." from comp results due to being in excludes");
+                continue;
+            }
+            $c = getProperty($compIn['id']);
+            if($c === null){
+                error_log("Unable to retrieve comp property=".$compIn['id']);
+            }
+            if(!$queryContext->isEquityComp) {
+                $c->setSalePrice($compIn['salePrice']);
+                $c->mSaleDate = $compIn['saleDate'];
+            }
+            calcDeltas($this->subjectProp,$c, $queryContext->isEquityComp);
+            $subjcomparray[] = $c;
+        }
+        return $subjcomparray;
+    }
+
+    /**
      * Returns a FullTable object with a subjCompArray object that is the size or less of passed in count
      * @param int $count
      * @return FullTable
      */
-    public function trimTo($count){
-        if($this->getNumComp() < $count){
+    public function trimTo($count)
+    {
+        if ($this->getNumComp() < $count) {
             return $this;
         }
         $newTable = new FullTable();
@@ -276,8 +321,7 @@ class FullTable
         $newTable->setMeanValSqft(getMeanValSqft($newTable->subjCompArray));
         $newTable->setMedianVal(getMedianVal($newTable->subjCompArray));
         $newTable->setMedianValSqft(getMedianValSqft($newTable->subjCompArray));
-        
+
         return $newTable;
     }
-
 }
