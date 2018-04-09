@@ -203,6 +203,13 @@ class ImpHelper
                 return $secImp->getImprvVal();
             }
         }
+        // Making it here means that no improvement with True flag for use unit found
+        foreach($secImps as $secImp) {
+            //return first number we fine... I guess
+            if(is_numeric($secImp->getImprvVal())){
+                return $secImp->getImprvVal();
+            }
+        }
         throw new Exception("No value found for secondary improvement");
     }
 
