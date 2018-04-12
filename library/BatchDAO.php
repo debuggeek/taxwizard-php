@@ -123,7 +123,7 @@ class BatchDAO
         $stmt->bindValue(1, $this->strbool($status), PDO::PARAM_STR);
         $stmt->execute();
         
-        while($job = $stmt->fetchColumn()){
+        while(($job = $stmt->fetchColumn()) !== false){
             $jobs[] = $job;
         }
         return $jobs;
