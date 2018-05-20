@@ -304,7 +304,7 @@ class ImpHelper
         $detValCalcSum = 0;
         foreach($primeImps as $imp){
             if(!self::isMainArea($imp->getImprvDetTypeCd())) {
-                $detValCalcSum += $imp->getDetCalcVal();
+                $detValCalcSum += $imp->getDetVal();
             }
         }
         return $detValCalcSum;
