@@ -2,6 +2,7 @@
 ###Clone existing database
 >`mysqldbcopy --source=root:root@localhost --destination=root:root@localhost --drop-first <src>:<dst> --skip=data`
 
+NOTE: Currently this won't work on AWS
 ###Get template for new table
 + Use `TCAD_TEMPLATE.sql` that is checked in OR
 + Export from recent database with command: 
@@ -10,8 +11,11 @@
 + Import the template:
 >> `mysql -u [user] -h [host] -p [new db] < TCAD_TEMPLATE.sql`
 
+####If you are updating to a refreshed table for the same year
+Make sure to copy over MLS_SALES and BATCH_PROP_SETTINGS with this command
+> `INSERT INTO database2.table2 SELECT * from database1.table1;`
 ###Create new table
-+ Create the new table via mysql admin / phpMyAdmin or 
++ Create the new table via mysql admin / phpMyAdmin or Sequal Pro
 
 #**Populating the Data**
 #####Requirements
@@ -74,7 +78,10 @@ Starting in 2014 we began getting ths sales in the Special_Sales.txt but
 that file needs to be reformatted with the following command:
 >`sed 's/^[[:digit:]]*|[[:digit:]]*|/&|/' Special_Sales.txt > Special_Sales.txt.fixed`
 
+###Within Year Updates
+Copy existing MLS_SALES and BATCH_PROP, BATCH_PROP_SETTINGS
 
+> `INSERT INTO tcad_2018_2.MLS_SALES SELECT * FROM tcad_2018.MLS_SALES;`
 
 
 #**Useful Tools/Links**
