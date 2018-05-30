@@ -36,6 +36,8 @@ These can be extracted from the source expected zip files with names like
 
 IMP_DET and PROP are the 2 files that are not in a good format to import, and must be converted
 
+*Most of the above and below can be done with the extract.sh script in ./admin*
+
 convert non-deliminated files to '|' deliminated:
 ------------------------------------------------
 >cat IMP_DET.txt | awk '{print substr($0,1,12) "|" substr($0,13,4) "|" substr($0,17,12) "|" substr($0,29,12) "|" substr($0,41,10) "|" substr($0,51,25) "|" substr($0,76,10) "|" substr($0,86,4)"|" substr($0,90,4)"|"substr($0,94,15)"|"substr($0,109,14)"|"substr($0,500)}' > IMP_DET_DELIM.txt
