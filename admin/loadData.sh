@@ -26,10 +26,16 @@ echo 'Attempting to connect to $host against $db'
 mysql -h $host -u $user -p $db -e "SHOW DATABASES LIKE $db"
 
 echo 'Loading SPECIAL_PROPDATA table'
-mysql -h $host -u $user -p $db -e "LOAD DATA LOCAL INFILE './Special_PropData.txt' INTO TABLE `SPECIAL_PROPDATA` FIELDS TERMINATED BY '|' LINES TERMINATED BY '\n';'"
+mysql -h $host -u $user -p $db -e "LOAD DATA LOCAL INFILE './Special_PropData.txt' INTO TABLE SPECIAL_PROPDATA FIELDS TERMINATED BY '|' LINES TERMINATED BY '\n';"
+
+echo 'Loading SPECIAL_IMP table'
+mysql -h $host -u $user -p $db -e "LOAD DATA LOCAL INFILE './Special_Improvement.txt' INTO TABLE SPECIAL_IMP FIELDS TERMINATED BY '|' LINES TERMINATED BY '\n';"
+
+echo 'Loading SPECIAL_SALE_EX_CONF table'
+mysql -h $host -u $user -p $db -e "LOAD DATA LOCAL INFILE './Special_Sales.txt.fixed' INTO TABLE SPECIAL_SALE_EX_CONF FIELDS TERMINATED BY '|' LINES TERMINATED BY '\n';"
 
 echo 'Loading PROP table'
-#mysql -h $host -u $user -p $db -e "LOAD DATA LOCAL INFILE './PROP_DELIM.TXT' INTO TABLE `PROP` FIELDS TERMINATED BY '|' LINES TERMINATED BY '\n';'"
+mysql -h $host -u $user -p $db -e "LOAD DATA LOCAL INFILE './PROP_DELIM.txt' INTO TABLE PROP FIELDS TERMINATED BY '|' LINES TERMINATED BY '\n';"
 
-echo 'Loading PROP table'
-#mysql -h $host -u $user -p $db -e "LOAD DATA LOCAL INFILE './PROP_DELIM.TXT' INTO TABLE `PROP` FIELDS TERMINATED BY '|' LINES TERMINATED BY '\n';'"
+echo 'Loading IMP_DET table'
+mysql -h $host -u $user -p $db -e "LOAD DATA LOCAL INFILE './IMP_DET_DELIM.txt' INTO TABLE IMP_DET FIELDS TERMINATED BY '|' LINES TERMINATED BY '\n';"
