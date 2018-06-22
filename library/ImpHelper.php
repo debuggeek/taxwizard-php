@@ -304,7 +304,12 @@ class ImpHelper
         $detValCalcSum = 0;
         foreach($primeImps as $imp){
             if(!self::isMainArea($imp->getImprvDetTypeCd())) {
-                $detValCalcSum += $imp->getDetVal();
+                // It was found that condos had no DetCalcVal and should fall back to DetVal for accuracy
+                if($imp->getDetCalcVal() == 0){
+                    $detValCalcSum += $imp->getDetVal();
+                } else {
+                    $detValCalcSum += $imp->getDetCalcVal();
+                }
             }
         }
         return $detValCalcSum;
