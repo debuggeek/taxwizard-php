@@ -30,6 +30,10 @@ The following source files are required
 
 The Batch Settings table should be initialized with a new row as the initial default.
 
+####Copying from S3
+To get the file from an s3 bucket you can use the aws cli with the following command
++ `aws s3 cp s3://fivestone-tcad-public/ ./ --recursive`
+
 These can be extracted from the source expected zip files with names like
 + `2017-04-19_006051_APPRAISAL_R&P ALLJUR AS OF PERLIMINARY.zip` for PROP and IMP
 + `SPECIAL_ALL FILES EXPORT_20170419.zip` for the Special_* files
@@ -74,7 +78,7 @@ MLS table might be ok and not need date change, but verify the YYYY-MM-DD format
 
 > `INSERT IGNORE INTO SALES_MLS_MERGED SELECT prop_id,sale_price,sale_date,'MLS',NULL FROM MLS_SALES WHERE sale_price >0`
 
-**NOTE**: `IGNORE` is because data isnâ€™t clean and same sale for same date sometimes 2x
+**NOTE**: `IGNORE` is because data isn’t clean and same sale for same date sometimes 2x
 ###Special Notes
 Starting in 2014 we began getting ths sales in the Special_Sales.txt but 
 that file needs to be reformatted with the following command:
