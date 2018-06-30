@@ -370,8 +370,10 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
     //2014 : Can't include VU
     if (!$queryContext->isEquityComp && $queryContext->includeVu == false) {
         $badSaleTypes = "VU";
-        if ($c->mSaleType == $badSaleTypes) {
-            if ($queryContext->traceComps) error_log("TRACE\taddToCompsArray: Sale type was bad: " . $c->mSaleType);
+        if ($c->getSaleType() == $badSaleTypes) {
+            $msg = sprintf("%u removed as potential comp due to saleType=%s",$c->getPropID(), $c->getSaleType());
+            if ($queryContext->traceComps) error_log("TRACE\taddToCompsArray: ".$msg);
+            $queryContext->responseCtx->infos[] = $msg;
             return false;
         }
     }

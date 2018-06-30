@@ -82,6 +82,7 @@ class queryContext {
         $this->limitToOnlyCurrentYearLowered = $inputContext->onlyCurrYearLowered;
         $this->multiHood = $inputContext->multiHood;
         $this->limitToLessImps = $inputContext->limitImps;
+        $this->includeVu = $inputContext->includeVU;
         $this->netAdjustEnabled = $inputContext->netAdjEnabled;
         $this->netAdjustAmount = $inputContext->netAdjustAmt;
         $this->subClassRangeEnabled = $inputContext->subClassRangeEnabled;
