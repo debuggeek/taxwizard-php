@@ -16,7 +16,7 @@ class BatchDAOTest extends PHPUnit_Framework_TestCase
     var $HOST = 'localhost';
     var $user = "root";
     var $pw = "root";
-    var $db = "TCAD_2016";
+    var $db = "TCAD_2018";
 
     public function test_updateBatchSettings(){
         $batchDao = new BatchDAO($this->HOST, $this->user, $this->pw, $this->db);
@@ -63,15 +63,23 @@ class BatchDAOTest extends PHPUnit_Framework_TestCase
         $jobs = $batchDao->getBatchJobsPropList(false);
 
         $this->assertEquals(count($startJobs) + 1, count($jobs));
-        $this->assertEquals(false, $jobs[0]->batchStatus);
 
         // Now get our test prop
         $testJob = $batchDao->getBatchJob($propId);
-        $testJob->batchStatus = true;
+        $this->assertEquals('false', $testJob->batchStatus);
+
+        // Pretend we calculated some things
+        $testJob->batchStatus = 'true';
         $testJob->propMktVal = 987654321;
-        $testJob->propMedSale5 = 987654321;
-        $testJob->propMedSale10 = 987654321;
-        $testJob->propMedSale15 = 987654321;
+        $testJob->propLowSale5 = 5;
+        $testJob->propMedSale5 = 55;
+        $testJob->propHighSale5 = 555;
+        $testJob->propLowSale10 = 10;
+        $testJob->propMedSale10 = 1010;
+        $testJob->propHighSale10 = 101010;
+        $testJob->propLowSale15 = 15;
+        $testJob->propMedSale15 = 1515;
+        $testJob->propHighSale15 = 151515;
         $testJob->propMedEq11 = 987654321;
         $testJob->pdfs = base64_encode("987654321");
 

@@ -30,6 +30,8 @@ if($queryContext->subjPropId == ""){
     exit;
 }
 
+$queryContext->validate();
+
 if($debug) error_log(var_dump($queryContext));
 
 $fullTable = new FullTable();

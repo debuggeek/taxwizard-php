@@ -5,8 +5,8 @@ echo "\n--------------------------------------------------------------\n";
 echo "Current Working dir: " . getcwd() . "\n";
 
 //Uncomment to debug
-//ini_set('error_reporting', E_ALL);
-//ini_set('display_errors', "stderr");
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', "stderr");
 
 chdir('/Users/nick/github/fivestone/five-stone-property-tax_PhpStorm');
 

@@ -72,12 +72,17 @@ class BatchPDF{
                     }
                     if ($retArray["compsFound"] == true) {
                         $multiPDF = $retArray["mPDF"];
-                        $content = $multiPDF->Output('', 'S');
-                        $content = base64_encode($content);
-                        $retArray['base64'] = $content;
-                        $job->parseArray($retArray);
-                        $job->batchStatus = true;
-                        $content = null;
+                        if($multiPDF == null){
+                            error_log("ERROR: generatePropMultiPDF didn't return pdf");
+                            error_log("Got : " + implode(",", $retArray));
+                        } else {
+                            $content = $multiPDF->Output('', 'S');
+                            $content = base64_encode($content);
+                            $retArray['base64'] = $content;
+                            $job->parseArray($retArray);
+                            $job->batchStatus = true;
+                            $content = null;
+                        }
                     } else {
                         $job->batchStatus = true;
                         $job->errorsIn = "No comps found";
@@ -85,7 +90,7 @@ class BatchPDF{
                     $batchDAO->updateBatchJob($job);
                     error_log("BatchPDF: Updated " . $job->propId . "\n");
                     $completed++;
-                    logStamp("BatchPDF: COMPLETED $job->propId : $job->errorsIn");
+                    logStamp("BatchPDF: COMPLETED $job->propId : total sales=$job->totalSalesComps : $job->errorsIn");
                 } catch (Exception $e) {
                     $errored++;
                     $job->batchStatus = true;

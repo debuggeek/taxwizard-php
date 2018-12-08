@@ -20,6 +20,8 @@ function strbool($value)
  */
 function generatePropMultiPDF($queryContext)
 {
+    $queryContext->validate();
+
     $_SESSION = array();
     $retArray = array();
 
@@ -42,13 +44,19 @@ function generatePropMultiPDF($queryContext)
     if ($fullTable->getSubjCompArray() !== null) {
         $retArray["compsFound"] = true;
 
-        //Generate Sales 15
-        $fullTable = $fullTable->trimTo(16);
-		$retArray["medSale15"] = $fullTable->getMedianVal();
-		$html15 = returnJsonBasedHTMLTable($fullTable, $queryContext->isEquityComp, $queryContext->responseCtx);
-		error_log("Post Sales 15 JSON Mem Usage: " . memory_get_usage());
+        // Generate Sales All
 
-		$mpdf->WriteHTML($html15, 2);
+        //Generate Sales 15
+		if($fullTable->getNumComp() >= 15) {
+            $fullTable = $fullTable->trimTo(16);
+            $retArray["medSale15"] = $fullTable->getMedianVal();
+            $retArray["lowSale15"] = $fullTable->getLowVal();
+            $retArray["highSale15"] = $fullTable->getHighVal();
+            $html15 = returnJsonBasedHTMLTable($fullTable, $queryContext->isEquityComp, $queryContext->responseCtx);
+            error_log("Post Sales 15 JSON Mem Usage: " . memory_get_usage());
+
+            $mpdf->WriteHTML($html15, 2);
+        }
 
 		//Generate Sales 10
 		$fullTable10 = null;
@@ -56,6 +64,8 @@ function generatePropMultiPDF($queryContext)
 			//Take the first 10 comps of the 15 + the subj
 			$fullTable10 = $fullTable->trimTo(11);
 			$retArray["medSale10"] = $fullTable10->getMedianVal();
+            $retArray["lowSale10"] = $fullTable10->getLowVal();
+            $retArray["highSale10"] = $fullTable10->getHighVal();
 			$html10 = returnJsonBasedHTMLTable($fullTable10, $queryContext->isEquityComp, $queryContext->responseCtx);
 			$mpdf->WriteHTML($html10, 2);
 		} else {
@@ -69,13 +79,19 @@ function generatePropMultiPDF($queryContext)
 		if ($fullTable->getNumComp() >= 6) {
 			$fullTable5 = $fullTable->trimTo(6);
 			$retArray["medSale5"] = $fullTable5->getMedianVal();
+            $retArray["lowSale5"] = $fullTable5->getLowVal();
+            $retArray["highSale5"] = $fullTable5->getHighVal();
 			$htmlEq = returnJsonBasedHTMLTable($fullTable5, $queryContext->isEquityComp, $queryContext->responseCtx);
 			$mpdf->AddPage();
 			$mpdf->WriteHTML($htmlEq);
 		} else {
 			//Fanagle the numbers since we didn't have more then 5
-			$retArray["medSale5"] = $retArray["medSale10"];
-			$retArray["medSale10"] = null;
+            $retArray["medSale5"] = $fullTable->getMedianVal();
+            $retArray["lowSale5"] = $fullTable->getLowVal();
+            $retArray["highSale5"] = $fullTable->getHighVal();
+            $htmlEq = returnJsonBasedHTMLTable($fullTable, $queryContext->isEquityComp, $queryContext->responseCtx);
+            $mpdf->AddPage();
+            $mpdf->WriteHTML($htmlEq);
 		}
 	} else {
         $retArray['totalSalesComps'] = 0;
@@ -84,22 +100,25 @@ function generatePropMultiPDF($queryContext)
 	error_log("Post Sales PDF Mem Usage: " . memory_get_usage());
 
     //Generate Equity 10 comps
-	$queryContext->compsToDisplay = 11;
-	$queryContext->isEquityComp = true;
-	$fullTableEq = new FullTable();
-	$fullTableEq->generateTableData($queryContext);
-	if($fullTableEq->getSubjCompArray() != null) {
-        $retArray["compsFound"] = true;
-        $retArray["medEq11"] = $fullTableEq->getMedianVal();
-        $htmlEq = returnJsonBasedHTMLTable($fullTableEq, $queryContext->isEquityComp, $queryContext->responseCtx);
-        $mpdf->AddPage();
-        $mpdf->WriteHTML($htmlEq);
-        error_log("Post Equity PDF Mem Usage: " . memory_get_usage());
-        $retArray["mPDF"] = $mpdf;
-    } else {
-        $retArray['totalEquityComps'] = 0;
-        error_log("No equity comps were found");
-	}
+//	$queryContext->compsToDisplay = 11;
+//	$queryContext->isEquityComp = true;
+//	$fullTableEq = new FullTable();
+//	$fullTableEq->generateTableData($queryContext);
+//	if($fullTableEq->getSubjCompArray() != null) {
+//        $retArray["compsFound"] = true;
+//        $retArray["medEq11"] = $fullTableEq->getMedianVal();
+//        $htmlEq = returnJsonBasedHTMLTable($fullTableEq, $queryContext->isEquityComp, $queryContext->responseCtx);
+//        $mpdf->AddPage();
+//        $mpdf->WriteHTML($htmlEq);
+//        error_log("Post Equity PDF Mem Usage: " . memory_get_usage());
+//    } else {
+//        $retArray['totalEquityComps'] = 0;
+//        error_log("No equity comps were found");
+//	}
+
+	//Add PDFs back to return array
+    $retArray["mPDF"] = $mpdf;
+
 	return $retArray;
 }
 ?>

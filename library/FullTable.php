@@ -7,6 +7,7 @@
  * Time: 7:26 AM
  */
 include_once 'functions.php';
+include_once 'SubjCompArrayUtil.php';
 
 class FullTable
 {
@@ -14,6 +15,10 @@ class FullTable
     private $subjectProp;
 
     private $subjCompArray;
+
+    private $lowVal;
+
+    private $highVal;
 
     private $meanVal;
 
@@ -51,6 +56,38 @@ class FullTable
      */
     public function setSubjCompArray($array){
         $this->subjCompArray = $array;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLowVal(): int
+    {
+        return $this->lowVal;
+    }
+
+    /**
+     * @param int $lowVal
+     */
+    public function setLowVal(int $lowVal)
+    {
+        $this->lowVal = $lowVal;
+    }
+
+    /**
+     * @return int
+     */
+    public function getHighVal(): int
+    {
+        return $this->highVal;
+    }
+
+    /**
+     * @param int $highVal
+     */
+    public function setHighVal(int $highVal)
+    {
+        $this->highVal = $highVal;
     }
 
     /**
@@ -206,10 +243,11 @@ class FullTable
         $this->setShowTcadScores($queryContext->showTcadScores);
         $this->setShowSaleRatios($queryContext->showSaleRatios);
 
-        $this->setMeanVal(getMeanVal($this->subjCompArray));
-        $this->setMeanValSqft(getMeanValSqft($this->subjCompArray));
-        $this->setMedianVal(getMedianVal($this->subjCompArray));
-        $this->setMedianValSqft(getMedianValSqft($this->subjCompArray));
+        FullTable::updateTableCalcs($this);
+//        $this->setMeanVal(getMeanVal($this->subjCompArray));
+//        $this->setMeanValSqft(getMeanValSqft($this->subjCompArray));
+//        $this->setMedianVal(getMedianVal($this->subjCompArray));
+//        $this->setMedianValSqft(getMedianValSqft($this->subjCompArray));
     }
 
     /**
@@ -227,7 +265,7 @@ class FullTable
         //no comps provided so we must find some
         $subjCompArray  = generateArrayOfBestComps( $this->subjectProp , $queryContext);
 
-        if($queryContext->traceComps) error_log("TRACE\tFound ".count($this->subjCompArray)." comps after filtering");
+        if($queryContext->traceComps) error_log("TRACE\tFound ".count($subjCompArray)." comps after filtering");
         if($queryContext->userFilterEnabled){
             $subjCompArray = $this->applyUserFilter($queryContext, $subjCompArray);
         }
@@ -317,11 +355,23 @@ class FullTable
         $newTable->setShowTcadScores($this->getShowTcadScores());
         $newTable->setShowSaleRatios($this->getShowSaleRatios());
 
-        $newTable->setMeanVal(getMeanVal($newTable->subjCompArray));
-        $newTable->setMeanValSqft(getMeanValSqft($newTable->subjCompArray));
-        $newTable->setMedianVal(getMedianVal($newTable->subjCompArray));
-        $newTable->setMedianValSqft(getMedianValSqft($newTable->subjCompArray));
+        FullTable::updateTableCalcs($newTable);
+
+//        $newTable->setMeanVal(getMeanVal($newTable->subjCompArray));
+//        $newTable->setMeanValSqft(getMeanValSqft($newTable->subjCompArray));
+//        $newTable->setMedianVal(getMedianVal($newTable->subjCompArray));
+//        $newTable->setMedianValSqft(getMedianValSqft($newTable->subjCompArray));
 
         return $newTable;
+    }
+
+    private static function updateTableCalcs(FullTable &$table){
+
+        $table->setLowVal(calcLowVal($table->subjCompArray));
+        $table->setHighVal(calcHighVal($table->subjCompArray));
+        $table->setMeanVal(getMeanVal($table->subjCompArray));
+        $table->setMeanValSqft(getMeanValSqft($table->subjCompArray));
+        $table->setMedianVal(getMedianVal($table->subjCompArray));
+        $table->setMedianValSqft(getMedianValSqft($table->subjCompArray));
     }
 }

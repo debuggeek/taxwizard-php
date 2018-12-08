@@ -129,4 +129,15 @@ class queryContext {
         $this->traceComps = $inputContext->traceComps;
 
     }
+
+    public function validate(){
+
+        if(!$this->sqftRangeMin AND !$this->sqftPercent){
+            error_log("WARNING\tNo minimum sqft provided to compare");
+
+        }
+        if(!$this->sqftRangeMax AND !$this->sqftPercent){
+            error_log("WARNING\tNo maximum sqft provided to compare");
+        }
+    }
 }

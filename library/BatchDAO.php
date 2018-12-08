@@ -72,9 +72,11 @@ class BatchDAO
      */
     public function getBatchJob($propId){
         $batchJob = new BatchJob();
-        $stmt = $this->pdo->prepare("SELECT prop, completed, pdfs, 
-                                            prop_mktval, Median_Sale5, Median_Sale10, 
-                                            Median_Sale15, Median_Eq11,TotalComps FROM BATCH_PROP WHERE prop=?");
+        $stmt = $this->pdo->prepare("SELECT prop, completed, pdfs, prop_mktval,
+                                            Low_Sale5, Median_Sale5, High_Sale5,
+                                            Low_Sale10, Median_Sale10, High_Sale10, 
+                                            Low_Sale15, Median_Sale15, High_Sale15,
+                                            Median_Eq11,TotalComps FROM BATCH_PROP WHERE prop=?");
         $stmt->bindValue(1, $propId, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -82,11 +84,17 @@ class BatchDAO
         $stmt->bindColumn(2, $batchJob->batchStatus, PDO::PARAM_STR);
         $stmt->bindColumn(3, $batchJob->pdfs, PDO::PARAM_STR);
         $stmt->bindColumn(4, $batchJob->propMktVal, PDO::PARAM_INT);
-        $stmt->bindColumn(5, $batchJob->propMedSale5, PDO::PARAM_INT);
-        $stmt->bindColumn(6, $batchJob->propMedSale10, PDO::PARAM_INT);
-        $stmt->bindColumn(7, $batchJob->propMedSale15, PDO::PARAM_INT);
-        $stmt->bindColumn(8, $batchJob->propMedEq11, PDO::PARAM_INT);
-        $stmt->bindColumn(9, $batchJob->totalSalesComps, PDO::PARAM_INT);
+        $stmt->bindColumn(5, $batchJob->propLowSale5, PDO::PARAM_INT);
+        $stmt->bindColumn(6, $batchJob->propMedSale5, PDO::PARAM_INT);
+        $stmt->bindColumn(7, $batchJob->propHighSale5, PDO::PARAM_INT);
+        $stmt->bindColumn(8, $batchJob->propLowSale10, PDO::PARAM_INT);
+        $stmt->bindColumn(9, $batchJob->propMedSale10, PDO::PARAM_INT);
+        $stmt->bindColumn(10, $batchJob->propHighSale10, PDO::PARAM_INT);
+        $stmt->bindColumn(11, $batchJob->propLowSale15, PDO::PARAM_INT);
+        $stmt->bindColumn(12, $batchJob->propMedSale15, PDO::PARAM_INT);
+        $stmt->bindColumn(13, $batchJob->propHighSale15, PDO::PARAM_INT);
+        $stmt->bindColumn(14, $batchJob->propMedEq11, PDO::PARAM_INT);
+        $stmt->bindColumn(15, $batchJob->totalSalesComps, PDO::PARAM_INT);
 
         $stmt->fetch(PDO::FETCH_BOUND);
 
@@ -114,7 +122,7 @@ class BatchDAO
     }
 
     /**
-     * @param string $status
+     * @param boolean $status
      * @return int[]
      */
     public function getBatchJobsPropList($status=false){
@@ -137,9 +145,15 @@ class BatchDAO
         $stmt = $this->pdo->prepare("UPDATE BATCH_PROP 
                                         SET completed = ?,
                                             prop_mktval = ?,
+                                            Low_Sale5 = ?,
                                             Median_Sale5 = ?,
+                                            High_Sale5 = ?,
+                                            Low_Sale10 = ?,
                                             Median_Sale10 = ?,
+                                            High_Sale10 = ?,
+                                            Low_Sale15 = ?,
                                             Median_Sale15 = ?,
+                                            High_Sale15 = ?,
                                             Median_Eq11 = ?,
                                             pdfs = ?,
                                             TotalComps = ?,
@@ -149,14 +163,20 @@ class BatchDAO
         $boolStr = $this->strbool($batchJob->batchStatus);
         $stmt->bindParam(1, $boolStr, PDO::PARAM_STR);
         $stmt->bindParam(2, $batchJob->propMktVal, PDO::PARAM_INT);
-        $stmt->bindParam(3, $batchJob->propMedSale5, PDO::PARAM_INT);
-        $stmt->bindParam(4, $batchJob->propMedSale10, PDO::PARAM_INT);
-        $stmt->bindParam(5, $batchJob->propMedSale15, PDO::PARAM_INT);
-        $stmt->bindParam(6, $batchJob->propMedEq11, PDO::PARAM_INT);
-        $stmt->bindParam(7, $batchJob->pdfs, PDO::PARAM_LOB);
-        $stmt->bindParam(8, $batchJob->totalSalesComps, PDO::PARAM_INT);
-        $stmt->bindParam(9, $batchJob->errorsIn, PDO::PARAM_STR);
-        $stmt->bindParam(10, $batchJob->propId, PDO::PARAM_INT);
+        $stmt->bindParam(3, $batchJob->propLowSale5, PDO::PARAM_INT);
+        $stmt->bindParam(4, $batchJob->propMedSale5, PDO::PARAM_INT);
+        $stmt->bindParam(5, $batchJob->propHighSale5, PDO::PARAM_INT);
+        $stmt->bindParam(6, $batchJob->propLowSale10, PDO::PARAM_INT);
+        $stmt->bindParam(7, $batchJob->propMedSale10, PDO::PARAM_INT);
+        $stmt->bindParam(8, $batchJob->propHighSale10, PDO::PARAM_INT);
+        $stmt->bindParam(9, $batchJob->propLowSale15, PDO::PARAM_INT);
+        $stmt->bindParam(10, $batchJob->propMedSale15, PDO::PARAM_INT);
+        $stmt->bindParam(11, $batchJob->propHighSale15, PDO::PARAM_INT);
+        $stmt->bindParam(12, $batchJob->propMedEq11, PDO::PARAM_INT);
+        $stmt->bindParam(13, $batchJob->pdfs, PDO::PARAM_LOB);
+        $stmt->bindParam(14, $batchJob->totalSalesComps, PDO::PARAM_INT);
+        $stmt->bindParam(15, $batchJob->errorsIn, PDO::PARAM_STR);
+        $stmt->bindParam(16, $batchJob->propId, PDO::PARAM_INT);
 
         return $stmt->execute();
     }
