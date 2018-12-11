@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 $debug = true;
 $debugquery = false;
 include_once 'defines.php';
@@ -24,7 +26,7 @@ function getMeanVal($subjcomp) : int
 		$result += $next;
 	}
 	if($compCount > 0){
-	    $result = $result / $compCount;
+	    $result = intval(round($result / $compCount));
     } else {
         error_log("getMeanVal: No comps to average over");
         $result = 0;
@@ -75,7 +77,7 @@ function getMedianVal($subjcomp): int {
 			$median = ($comparray[$num / 2] + $comparray[$num / 2 - 1]) / 2;
 		}
 	}
-	return $median;
+	return intval(round($median));
 }
 
 /**
@@ -191,6 +193,8 @@ function hasMultiRow($class){
 /**
  * @param propertyClass $subj
  * @param propertyClass $currprop
+ * @param bool $isEquity
+ * @throws Exception
  */
 function calcDeltas($subj,$currprop, $isEquity)
 {
@@ -368,16 +372,13 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
 
     //Check sale type.
     //2014 : Can't include VU
-    if (!$queryContext->isEquityComp && $queryContext->includeVu == false) {
-        $badSaleTypes = "VU";
-        if ($c->getSaleType() == $badSaleTypes) {
-            $msg = sprintf("%u removed as potential comp due to saleType=%s",$c->getPropID(), $c->getSaleType());
-            if ($queryContext->traceComps) error_log("TRACE\taddToCompsArray: ".$msg);
-            $queryContext->responseCtx->infos[] = $msg;
-            return false;
-        }
+    //2018 : Use list check
+    if(!isDesiredSaleType($c, $queryContext->salesTypes)){
+        $msg = sprintf("%u removed as potential comp due to saleType=%s",$c->getPropID(), $c->getSaleType());
+        if ($queryContext->traceComps) error_log("TRACE\taddToCompsArray: ".$msg);
+        $queryContext->responseCtx->infos[] = $msg;
+        return false;
     }
-
 
     // Check class
     //2013 : Can't include XX
@@ -679,6 +680,19 @@ function isFlaggableSaleType(propertyClass $propertyClass){
         return true;
     else
         return false;
+}
+
+function isDesiredSaleType(propertyClass $propertyClass,array $typesWanted): bool
+{
+    //an empty array means we are not limiting
+    if(sizeof($typesWanted) == 0){
+        return true;
+    }
+    // nonempty array means we check
+    if(in_array($propertyClass->mSaleType, $typesWanted)){
+        return true;
+    }
+    return false;
 }
 
 /**

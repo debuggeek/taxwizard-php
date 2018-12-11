@@ -684,6 +684,8 @@ class propertyClass
             case($LIVINGAREA["NAME"]):
                 return $this->getLivingArea();
             case($SALEDATE["NAME"]):
+                if ($this->isSubj())
+                    return ""; // Doesn't make sense for subject
                 if (isNotMLS($this))
                     return $this->mSaleDate;
                 else

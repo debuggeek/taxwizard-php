@@ -8,6 +8,8 @@
  */
 include_once "../library/functions.php";
 include_once "../library/presentation.php";
+include_once "../library/responseContext.php";
+include_once "../library/FullTable.php";
 
 class presentationTest extends PHPUnit_Framework_TestCase
 {
@@ -20,8 +22,12 @@ class presentationTest extends PHPUnit_Framework_TestCase
         global $debug;
     }
 
+    /**
+     * @throws Exception
+     */
     public function test_generateJsonRows(){
         global $fieldsofinteresteq;
+        $responseCtx = new responseContext();
         $subjProperty = getSubjProperty($this->subjId);
 
         error_log("Building subjcomparray for ".$this->subjId);
@@ -31,24 +37,27 @@ class presentationTest extends PHPUnit_Framework_TestCase
         $c = getProperty($this->compId);
         $c->setSalePrice(599500);
         $c->mSaleDate = '2/18/2014';
-        calcDeltas($subjProperty,$c);
+        calcDeltas($subjProperty,$c, false);
         $subjcomparray[] = $c;
         
-        $fullTable = array();
-        $fullTable["subjComps"] = $subjcomparray;
+        $fullTable = new FullTable();
+        $fullTable->setSubjCompArray($subjcomparray);
 
-        $fullTable["meanVal"] = getMeanVal($subjcomparray);
-        $fullTable["meanValSqft"] = getMeanValSqft($subjcomparray);
-        $fullTable["medianVal"]= getMedianVal($subjcomparray);
-        $fullTable["medianValSqft"] = getMedianValSqft($subjcomparray);
+        $fullTable->setMeanVal(getMeanVal($subjcomparray));
+        $fullTable->setMeanValSqft(getMeanValSqft($subjcomparray));
+        $fullTable->setMedianVal(getMedianVal($subjcomparray));
+        $fullTable->setMedianValSqft(getMedianValSqft($subjcomparray));
 
-        $output = generateJsonRows($fullTable,true);
+        $output = generateJsonRows($fullTable,true, $responseCtx);
 
         echo $output;
 
         $this->assertEquals("No error", json_last_error_msg());
     }
 
+    /**
+     * @throws Exception
+     */
     public function test_getMaxPrimaryImpCount(){
         global $fieldsofinteresteq, $SEGMENTSADJ;
 
@@ -58,16 +67,19 @@ class presentationTest extends PHPUnit_Framework_TestCase
         $subjcomparray[0] = $subjProperty;
 
         $c = getProperty($this->compId);
-        calcDeltas($subjProperty,$c);
+        calcDeltas($subjProperty,$c, false);
         $subjcomparray[] = $c;
 
         $c2 = getProperty($this->compId2);
-        calcDeltas($subjProperty,$c2);
+        calcDeltas($subjProperty,$c, false);
         $subjcomparray[] = $c2;
 
         $this->assertEquals(17, getMaxPrimaryImpCount($subjcomparray));
     }
 
+    /**
+     * @throws Exception
+     */
     public function test_addPrimaryImprovements(){
         global $fieldsofinteresteq, $SEGMENTSADJ;
 
@@ -77,16 +89,19 @@ class presentationTest extends PHPUnit_Framework_TestCase
         $subjcomparray[0] = $subjProperty;
 
         $c = getProperty($this->compId);
-        calcDeltas($subjProperty,$c);
+        calcDeltas($subjProperty,$c, false);
         $subjcomparray[] = $c;
 
         $c2 = getProperty($this->compId2);
-        calcDeltas($subjProperty,$c2);
+        calcDeltas($subjProperty,$c2, false);
         $subjcomparray[] = $c2;
 
         print json_encode(addPrimaryImprovements($subjcomparray, $SEGMENTSADJ), JSON_PRETTY_PRINT);
     }
 
+    /**
+     * @throws Exception
+     */
     public function test_addSecondaryImprovements(){
         global $fieldsofinteresteq;
 
@@ -96,7 +111,7 @@ class presentationTest extends PHPUnit_Framework_TestCase
         $subjcomparray[0] = $subjProperty;
 
         $c = getProperty($this->compId);
-        calcDeltas($subjProperty,$c);
+        calcDeltas($subjProperty,$c, false);
         $subjcomparray[] = $c;
 
         $result = json_encode(addSecondaryImprovements($subjcomparray));
@@ -114,7 +129,7 @@ class presentationTest extends PHPUnit_Framework_TestCase
         $subjcomparray[0] = $subjProperty;
 
         $c = getProperty($this->compId);
-        calcDeltas($subjProperty,$c);
+        calcDeltas($subjProperty,$c, false);
         $subjcomparray[] = $c;
 
         $result = json_encode($subjcomparray);

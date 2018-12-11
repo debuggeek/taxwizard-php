@@ -11,6 +11,7 @@ class queryContext {
     // The first grouping are all used in search filtering
     public $trimIndicated = false;
     public $multiHood = false;
+    public $salesTypes = array();
     public $includeVu = false;
     public $includeMls = false;
     public $prevYear = 1;
@@ -50,7 +51,6 @@ class queryContext {
     public $showTcadScores = false;
     public $showSaleRatios = true;
 
-
     /*
      * Below settings aren't stored in database
      */
@@ -77,12 +77,15 @@ class queryContext {
     public function parseQueryContextJson($inputContext){
         $this->subjPropId = $inputContext->propId;
         $this->trimIndicated = $inputContext->onlyLowerComps;
+        if($inputContext->salesTypes !== null) {
+            $this->salesTypes = $inputContext->salesTypes;
+        }
         $this->includeMls = $inputContext->includeMLS;
+        $this->includeVu = $inputContext->includeVU;
         $this->prevYear = $inputContext->mlsMultiYear;
         $this->limitToOnlyCurrentYearLowered = $inputContext->onlyCurrYearLowered;
         $this->multiHood = $inputContext->multiHood;
         $this->limitToLessImps = $inputContext->limitImps;
-        $this->includeVu = $inputContext->includeVU;
         $this->netAdjustEnabled = $inputContext->netAdjEnabled;
         $this->netAdjustAmount = $inputContext->netAdjustAmt;
         $this->subClassRangeEnabled = $inputContext->subClassRangeEnabled;

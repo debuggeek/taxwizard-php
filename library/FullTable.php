@@ -244,10 +244,6 @@ class FullTable
         $this->setShowSaleRatios($queryContext->showSaleRatios);
 
         FullTable::updateTableCalcs($this);
-//        $this->setMeanVal(getMeanVal($this->subjCompArray));
-//        $this->setMeanValSqft(getMeanValSqft($this->subjCompArray));
-//        $this->setMedianVal(getMedianVal($this->subjCompArray));
-//        $this->setMedianValSqft(getMedianValSqft($this->subjCompArray));
     }
 
     /**
@@ -356,11 +352,6 @@ class FullTable
         $newTable->setShowSaleRatios($this->getShowSaleRatios());
 
         FullTable::updateTableCalcs($newTable);
-
-//        $newTable->setMeanVal(getMeanVal($newTable->subjCompArray));
-//        $newTable->setMeanValSqft(getMeanValSqft($newTable->subjCompArray));
-//        $newTable->setMedianVal(getMedianVal($newTable->subjCompArray));
-//        $newTable->setMedianValSqft(getMedianValSqft($newTable->subjCompArray));
 
         return $newTable;
     }
