@@ -373,7 +373,7 @@ function addToCompsArray(propertyClass $c,propertyClass $subjprop, queryContext 
     //Check sale type.
     //2014 : Can't include VU
     //2018 : Use list check
-    if(!isDesiredSaleType($c, $queryContext->salesTypes)){
+    if(!$queryContext->isEquityComp && !isDesiredSaleType($c, $queryContext->salesTypes)){
         $msg = sprintf("%u removed as potential comp due to saleType=%s",$c->getPropID(), $c->getSaleType());
         if ($queryContext->traceComps) error_log("TRACE\taddToCompsArray: ".$msg);
         $queryContext->responseCtx->infos[] = $msg;
