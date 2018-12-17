@@ -115,7 +115,7 @@ function sqldbconnect()
 	global $servername,$username,$password,$database,$dbport;
 
 	// Create connection
-    $mysqli = new mysqli($servername, $username, $password, $database, $dbport);
+    $mysqli = new mysqli($servername, $username, $password, $database, intval($dbport));
 
 	
 	// Check connection
