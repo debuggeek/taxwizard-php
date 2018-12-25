@@ -227,7 +227,8 @@ class BatchDAO
                               LimitToCurrentYearLowered as limitToCurrYear,
                               GrossAdjFilterEnabled as grossAdjFilterEnabled,
                               ShowTcadScores as showTcadScores,
-                              ShowSaleRatios as showSaleRatios
+                              ShowSaleRatios as showSaleRatios,
+                              SaleTypeQ as SaleTypeQ
                           FROM BATCH_PROP_SETTINGS 
                           WHERE id=(SELECT max(id) FROM BATCH_PROP_SETTINGS)");
         $stmt->execute();
@@ -260,7 +261,11 @@ class BatchDAO
         $stmt->bindColumn(26, $queryContext->grossAdjFilterEnabled, PDO::PARAM_BOOL);
         $stmt->bindColumn(27, $queryContext->showTcadScores, PDO::PARAM_BOOL);
         $stmt->bindColumn(28, $queryContext->showSaleRatios, PDO::PARAM_BOOL);
+        $stmt->bindColumn(29, $boolSaleQ, PDO::PARAM_BOOL);
 
+        if($boolSaleQ){
+            $queryContext->salesTypes=['Q'];
+        }
 
         $stmt->fetch(PDO::FETCH_BOUND);
         $queryContext->saleRatioMin = floatval($ratioMin);
