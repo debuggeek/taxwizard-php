@@ -18,35 +18,44 @@ class BatchDAOTest extends PHPUnit_Framework_TestCase
     var $pw = "root";
     var $db = "TCAD_2018";
 
-    public function test_updateBatchSettings(){
+//    public function test_updateBatchSettings(){
+//        $batchDao = new BatchDAO($this->HOST, $this->user, $this->pw, $this->db);
+//        $queryContext = new queryContext();
+//
+//        $this->assertNotFalse($batchDao->updateBatchSettings($queryContext));
+//
+//        $newQueryContext = $batchDao->getBatchSettings();
+//
+//        $this->assertEquals($queryContext, $newQueryContext);
+//
+//        $queryContext->percentGoodRange=42;
+//        $queryContext->includeMls=true;
+//        $queryContext->trimIndicated=true;
+//        $queryContext->multiHood=true;
+//        $queryContext->includeVu=true;
+//        $queryContext->subClassRangeEnabled=true;
+//        $queryContext->percentGoodRangeEnabled=true;
+//        $queryContext->subClassRange=4;
+//        $queryContext->sqftPercent=42;
+//        $queryContext->netAdjustAmount=10000;
+//        $queryContext->netAdjustEnabled=true;
+//        $queryContext->prevYear=5;
+//
+//
+//        $batchDao->updateBatchSettings($queryContext);
+//
+//        $newQueryContext = $batchDao->getBatchSettings();
+//
+//        $this->assertEquals($queryContext, $newQueryContext);
+//    }
+
+    public function test_GetBatchSettings(){
         $batchDao = new BatchDAO($this->HOST, $this->user, $this->pw, $this->db);
         $queryContext = new queryContext();
 
-        $this->assertNotFalse($batchDao->updateBatchSettings($queryContext));
-
         $newQueryContext = $batchDao->getBatchSettings();
 
-        $this->assertEquals($queryContext, $newQueryContext);
-
-        $queryContext->percentGoodRange=42;
-        $queryContext->includeMls=true;
-        $queryContext->trimIndicated=true;
-        $queryContext->multiHood=true;
-        $queryContext->includeVu=true;
-        $queryContext->subClassRangeEnabled=true;
-        $queryContext->percentGoodRangeEnabled=true;
-        $queryContext->subClassRange=4;
-        $queryContext->sqftPercent=42;
-        $queryContext->netAdjustAmount=10000;
-        $queryContext->netAdjustEnabled=true;
-        $queryContext->prevYear=5;
-
-
-        $batchDao->updateBatchSettings($queryContext);
-
-        $newQueryContext = $batchDao->getBatchSettings();
-
-        $this->assertEquals($queryContext, $newQueryContext);
+        $this->assertNotEmpty($newQueryContext);
     }
 
     public function test_GetUpdateBatchJobs(){

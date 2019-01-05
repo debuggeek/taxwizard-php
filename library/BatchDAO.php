@@ -263,11 +263,13 @@ class BatchDAO
         $stmt->bindColumn(28, $queryContext->showSaleRatios, PDO::PARAM_BOOL);
         $stmt->bindColumn(29, $boolSaleQ, PDO::PARAM_BOOL);
 
+        $stmt->fetch(PDO::FETCH_BOUND);
+
         if($boolSaleQ){
             $queryContext->salesTypes=['Q'];
+        } else {
+            $queryContext->salesTypes=[];
         }
-
-        $stmt->fetch(PDO::FETCH_BOUND);
         $queryContext->saleRatioMin = floatval($ratioMin);
         $queryContext->saleRatioMax = floatval($ratioMax);
         return $queryContext;
