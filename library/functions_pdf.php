@@ -44,6 +44,13 @@ function generatePropMultiPDF($queryContext)
     if ($fullTable->getSubjCompArray() !== null) {
         $retArray["compsFound"] = true;
 
+        //2019 set up to the first 10 comps indicated values
+        $compCount = 1;
+        foreach ($fullTable->getCompIndicatedValues() as $value){
+            $compEntry = "Comp" . $compCount . "_IndicatedValue";
+            $retArray[$compEntry] = $value;
+            $compCount = $compCount + 1;
+        }
         // Generate Sales All
 
         //Generate Sales 15

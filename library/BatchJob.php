@@ -72,6 +72,55 @@ class BatchJob
     public $totalSalesComps;
 
     /**
+     * @var int
+     */
+    public $comp1_IndicatedValue;
+
+    /**
+     * @var int
+     */
+    public $comp2_IndicatedValue;
+
+    /**
+     * @var int
+     */
+    public $comp3_IndicatedValue;
+
+    /**
+     * @var int
+     */
+    public $comp4_IndicatedValue;
+
+    /**
+     * @var int
+     */
+    public $comp5_IndicatedValue;
+
+    /**
+     * @var int
+     */
+    public $comp6_IndicatedValue;
+
+    /**
+     * @var int
+     */
+    public $comp7_IndicatedValue;
+
+    /**
+     * @var int
+     */
+    public $comp8_IndicatedValue;
+
+    /**
+     * @var int
+     */
+    public $comp9_IndicatedValue;
+
+    /**
+     * @var int
+     */
+    public $comp10_IndicatedValue;
+    /**
      * @var string
      */
     public $errorsIn;
@@ -91,5 +140,15 @@ class BatchJob
         $this->pdfs = $array['base64'];
         $this->totalSalesComps = $array['totalSalesComps'];
         $this->errorsIn = $array['errors'];
+        $this->comp1_IndicatedValue = $array['Comp1_IndicatedValue'];
+        $this->comp2_IndicatedValue = $array['Comp2_IndicatedValue'];
+        $this->comp3_IndicatedValue = $array['Comp3_IndicatedValue'];
+        $this->comp4_IndicatedValue = $array['Comp4_IndicatedValue'];
+        $this->comp5_IndicatedValue = $array['Comp5_IndicatedValue'];
+        $this->comp6_IndicatedValue = $array['Comp6_IndicatedValue'];
+        $this->comp7_IndicatedValue = $array['Comp7_IndicatedValue'];
+        $this->comp8_IndicatedValue = $array['Comp8_IndicatedValue'];
+        $this->comp9_IndicatedValue = $array['Comp9_IndicatedValue'];
+        $this->comp10_IndicatedValue = $array['Comp10_IndicatedValue'];
     }
 }

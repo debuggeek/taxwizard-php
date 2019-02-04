@@ -34,6 +34,8 @@ class FullTable
 
     private $showSaleRatios;
 
+    private $compIndicatedValues;
+
     /**
      * @return propertyClass
      */
@@ -213,6 +215,22 @@ class FullTable
     }
 
     /**
+     * @return mixed
+     */
+    public function getCompIndicatedValues()
+    {
+        return $this->compIndicatedValues;
+    }
+
+    /**
+     * @param mixed $compIndicatedValues
+     */
+    public function setCompIndicatedValues($compIndicatedValues): void
+    {
+        $this->compIndicatedValues = $compIndicatedValues;
+    }
+
+    /**
      * @param  queryContext $queryContext
      * @throws Exception
      * @internal param propertyClass[] $compInfo
@@ -238,6 +256,20 @@ class FullTable
             error_log("No comps found for " . $this->subjectProp->getPropID());
             return;
         }
+
+        $compIndVal = array();
+        $count = 0;
+        foreach ($this->subjCompArray as $comp){
+            $count = $count + 1;
+            if($count == 1){
+                //skip subject
+                continue;
+            }
+            $compIndVal[$count] = $comp->getIndicatedVal(false);
+        }
+        $count = $count - 1;  // Don't count subject
+
+        $this->setCompIndicatedValues($compIndVal);
 
         $this->setShowBaseMktData($queryContext->showBaseMktData);
         $this->setShowTcadScores($queryContext->showTcadScores);
