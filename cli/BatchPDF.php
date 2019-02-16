@@ -66,7 +66,12 @@ class BatchPDF{
                     logStamp("BatchPDF: Updating " . $job->propId);
                     error_log("Start Mem Usage: " . memory_get_usage());
                     $queryContext->subjPropId = $prop;
-                    $retArray = generatePropMultiPDF($queryContext);
+                    if(true){
+                        //2019 change
+                        $retArray = generateSinglePropPDF($queryContext);
+                    } else {
+                        $retArray = generatePropMultiPDF($queryContext);
+                    }
                     if ($retArray == null) {
                         throw new Exception("retArray came back null");
                     }

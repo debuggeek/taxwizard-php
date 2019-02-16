@@ -382,6 +382,7 @@ class FullTable
 
         $newTable->setShowTcadScores($this->getShowTcadScores());
         $newTable->setShowSaleRatios($this->getShowSaleRatios());
+        $newTable->setCompIndicatedValues(array_slice($this->getCompIndicatedValues(), 0, $count));
 
         FullTable::updateTableCalcs($newTable);
 
