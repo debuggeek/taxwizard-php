@@ -264,6 +264,7 @@ class BatchDAO
                               GrossAdjFilterEnabled as grossAdjFilterEnabled,
                               ShowTcadScores as showTcadScores,
                               ShowSaleRatios as showSaleRatios,
+                              rankByIndicated as rankByIndicated,
                               SaleTypeQ as SaleTypeQ
                           FROM BATCH_PROP_SETTINGS 
                           WHERE id=(SELECT max(id) FROM BATCH_PROP_SETTINGS)");
@@ -297,6 +298,7 @@ class BatchDAO
         $stmt->bindColumn(26, $queryContext->grossAdjFilterEnabled, PDO::PARAM_BOOL);
         $stmt->bindColumn(27, $queryContext->showTcadScores, PDO::PARAM_BOOL);
         $stmt->bindColumn(28, $queryContext->showSaleRatios, PDO::PARAM_BOOL);
+        $stmt->bindColumn(29, $rankByIndicated, PDO::PARAM_INT);
         $stmt->bindColumn(29, $boolSaleQ, PDO::PARAM_BOOL);
 
         $stmt->fetch(PDO::FETCH_BOUND);
@@ -308,6 +310,13 @@ class BatchDAO
         }
         $queryContext->saleRatioMin = floatval($ratioMin);
         $queryContext->saleRatioMax = floatval($ratioMax);
+
+        if($rankByIndicated){
+            $queryContext->rank = RankType::Indicated;
+        } else {
+            $queryContext->rank = RankType::TCAD;
+        }
+
         return $queryContext;
     }
 
