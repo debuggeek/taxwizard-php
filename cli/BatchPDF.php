@@ -41,14 +41,19 @@ class BatchPDF{
             $queryContext->traceComps = true;
         }
     
-        echo "\nExecuting with settings: ";
-        var_dump($queryContext);
-    
         //Query to check if any work to do
         $props = $batchDAO->getBatchJobsPropList(false);
     
         $completed = 0;
         $errored = 0;
+
+        if(count($props) == 0){
+            logStamp("No properties found to process");
+            return;
+        }
+
+        echo "\nExecuting with settings: ";
+        var_dump($queryContext);
 
         try {
             foreach ($props as $prop) {
