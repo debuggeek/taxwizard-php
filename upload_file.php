@@ -56,7 +56,7 @@ else{
                         error_log("TRACE>>> upload_file: ".$total_num." properties found");
                         $response["idsFound"] = $total_num;
                         $query = trim($query,",");
-                        $query = $query . "on duplicate key UPDATE completed= 'false', pdfs='', prop_mktval='', Median_Sale5='', Median_Sale10='', Median_Sale15='', Median_Eq11='' ";
+                        $query = $query . " on duplicate key UPDATE completed= 'false', pdfs='', prop_mktval='', Median_Sale5='', Median_Sale10='', Median_Sale15='', Median_Eq11='' ";
                         //echo $query . "<br />";
                         error_log("debug: upload_file: query : ". $query);
                         fclose($handle);
