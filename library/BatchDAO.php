@@ -299,7 +299,7 @@ class BatchDAO
         $stmt->bindColumn(27, $queryContext->showTcadScores, PDO::PARAM_BOOL);
         $stmt->bindColumn(28, $queryContext->showSaleRatios, PDO::PARAM_BOOL);
         $stmt->bindColumn(29, $rankByIndicated, PDO::PARAM_INT);
-        $stmt->bindColumn(29, $boolSaleQ, PDO::PARAM_BOOL);
+        $stmt->bindColumn(30, $boolSaleQ, PDO::PARAM_BOOL);
 
         $stmt->fetch(PDO::FETCH_BOUND);
 

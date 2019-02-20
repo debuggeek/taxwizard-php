@@ -34,7 +34,7 @@ function setupFullTable($queryContext, &$retArray){
 
     //Get Sales Comps
     $fullTable = new FullTable();
-    $queryContext->compsToDisplay = 1000;
+    $queryContext->compsToDisplay = 100;
     $queryContext->isEquityComp = false;
     $fullTable->generateTableData($queryContext);
     $retArray['totalSalesComps'] = $fullTable->getNumComp();
