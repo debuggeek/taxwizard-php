@@ -14,7 +14,7 @@ class BatchPDF{
          * For each non completed row in the batch_prop table
          * calculate the comp pdf and save it back to the pdfs column blob
          */
-        global $servername, $username, $password, $database;
+        global $servername, $username, $password, $database, $production;
     
         /*
          * Parse commandline options
@@ -33,7 +33,7 @@ class BatchPDF{
         $date = new DateTime();
         echo "\n" . $date->format('Y-m-d H:i:s') . " >> Starting Batch Processing with mod $mod\n";
         echo "\n Current Working dir:" . getcwd();
-        $batchDAO = new BatchDAO($servername, $username, $password, $database);
+        $batchDAO = new BatchDAO($servername, $username, $password, $database, $production);
         $queryContext = $batchDAO->getBatchSettings();
         $queryContext->responseCtx = new responseContext();
 

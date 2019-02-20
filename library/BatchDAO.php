@@ -22,6 +22,11 @@ class BatchDAO
     protected $db;
 
     /**
+     * Batch prop table name
+     */
+    protected $batchPropTable = 'BATCH_PROP';
+
+    /**
      * BatchDAO constructor.
      * @param string $host
      * @param string $username
@@ -29,11 +34,15 @@ class BatchDAO
      * @param string $database
      * @param int $dbport
      */
-    public function __construct($host, $username, $password, $database, $dbport=3306){
+    public function __construct($host, $username, $password, $database, $production, $dbport=3306){
         // Create connection
         $pdo = new PDO("mysql:host=".$host.";dbname=".$database, $username, $password);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this->pdo = $pdo;
+
+        if(!$production){
+            $this->batchPropTable = $this->batchPropTable . '_STAGE';
+        }
     }
 
 
@@ -60,7 +69,7 @@ class BatchDAO
      * @return false if failed
      */
     public function createBatchJob($propId){
-        $stmt = $this->pdo->prepare("INSERT INTO BATCH_PROP SET prop = ?, completed = 'false';");
+        $stmt = $this->pdo->prepare("INSERT INTO ". $this->batchPropTable . " SET prop = ?, completed = 'false';");
         $stmt->bindValue(1, $propId, PDO::PARAM_INT);
         
         return $stmt->execute();
@@ -81,7 +90,7 @@ class BatchDAO
                                             Comp4_IndicatedValue,Comp5_IndicatedValue,Comp6_IndicatedValue,
                                             Comp7_IndicatedValue,Comp8_IndicatedValue,Comp9_IndicatedValue,
                                             Comp10_IndicatedValue
-                                            FROM BATCH_PROP WHERE prop=?");
+                                            FROM ". $this->batchPropTable . " WHERE prop=?");
         $stmt->bindValue(1, $propId, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -123,7 +132,7 @@ class BatchDAO
      * @return \BatchJob[]
      */
     public function getPagedBatchJobs($status, $start, $limit = 20){
-        $stmt = $this->pdo->prepare("SELECT prop FROM BATCH_PROP WHERE completed=? ORDER BY prop ASC LIMIT ?, ?");
+        $stmt = $this->pdo->prepare("SELECT prop FROM ".$this->batchPropTable." WHERE completed=? ORDER BY prop ASC LIMIT ?, ?");
         $stmt->bindValue(1, $this->strbool($status), PDO::PARAM_STR);
         $stmt->bindValue(2, $start, PDO::PARAM_INT);
         $stmt->bindValue(3, $limit, PDO::PARAM_INT);
@@ -142,7 +151,7 @@ class BatchDAO
      */
     public function getBatchJobsPropList($status=false){
         $jobs = array();
-        $stmt = $this->pdo->prepare("SELECT prop FROM BATCH_PROP WHERE completed=?");
+        $stmt = $this->pdo->prepare("SELECT prop FROM ".$this->batchPropTable." WHERE completed=?");
         $stmt->bindValue(1, $this->strbool($status), PDO::PARAM_STR);
         $stmt->execute();
         
@@ -157,7 +166,7 @@ class BatchDAO
      * @return bool
      */
     public function updateBatchJob($batchJob){
-        $stmt = $this->pdo->prepare("UPDATE BATCH_PROP 
+        $stmt = $this->pdo->prepare("UPDATE ".$this->batchPropTable."  
                                         SET completed = ?,
                                             prop_mktval = ?,
                                             Low_Sale5 = ?,
@@ -218,14 +227,14 @@ class BatchDAO
     }
     
     public function deleteBatchJob($propId){
-        $stmt = $this->pdo->prepare("DELETE FROM BATCH_PROP WHERE prop = ?;");
+        $stmt = $this->pdo->prepare("DELETE FROM ".$this->batchPropTable." WHERE prop = ?;");
         $stmt->bindValue(1, $propId, PDO::PARAM_INT);
 
         return $stmt->execute();   
     }
 
     public function deleteAllBatchJobs(){
-        $stmt = $this->pdo->prepare("TRUNCATE BATCH_PROP;");
+        $stmt = $this->pdo->prepare("TRUNCATE ".$this->batchPropTable.";");
 
         return $stmt->execute();
     }
