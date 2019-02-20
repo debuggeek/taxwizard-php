@@ -7,6 +7,12 @@ $maxFileSize = 200000;
 
 $response = array();
 
+$batchPropTable = "BATCH_PROP";
+
+if(!$production){
+    $batchPropTable = $batchPropTable . "_STAGE";
+}
+
 if (!$_FILES)
     echo("Must upload a file");
 else{
@@ -36,7 +42,7 @@ else{
                 if(move_uploaded_file($_FILES["file"]["tmp_name"],$localfile)){
                     $row = 1;
                     if (($handle = fopen($localfile, "r")) !== FALSE) {
-                        $query = "INSERT INTO BATCH_PROP (prop,completed) VALUES ";
+                        $query = "INSERT INTO ".$batchPropTable." (prop,completed) VALUES ";
                         while (($data = fgetcsv($handle, 0, ",")) !== FALSE) {
                             $num = count($data);
                             $row++;
