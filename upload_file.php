@@ -1,6 +1,8 @@
 <?php
 include_once("library/functions.php");
 
+global $production;
+
 $allowedExts = array("txt", "log", "csv");
 $maxEntries = 200000;
 $maxFileSize = 200000;
