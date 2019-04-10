@@ -44,6 +44,10 @@ class queryContext {
     public $limitToOnlyCurrentYearLowered = false;
     public $grossAdjFilterEnabled = false;
 
+    //known as MaxDisplay in db
+    public $compsToDisplay = 100;
+
+
     // Rank by
     public $rank = RankType::Indicated;
 
@@ -55,7 +59,6 @@ class queryContext {
      * Below settings aren't stored in database
      */
     public $limit = null;
-    public $compsToDisplay = 100;
 
     //Holds a list of propertyIds to exclude from consideration
     public $userFilterEnabled = false;

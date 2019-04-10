@@ -32,13 +32,14 @@ class BatchPDF{
     
         $date = new DateTime();
         echo "\n" . $date->format('Y-m-d H:i:s') . " >> Starting Batch Processing with mod $mod\n";
-        echo "\n Current Working dir:" . getcwd();
+        echo "\n Current Working dir:" . getcwd() . "\n";
         $batchDAO = new BatchDAO($servername, $username, $password, $database, $production);
         $queryContext = $batchDAO->getBatchSettings();
         $queryContext->responseCtx = new responseContext();
 
         if ($options['t'] === false){
             $queryContext->traceComps = true;
+            var_dump($queryContext);
         }
     
         //Query to check if any work to do
@@ -48,7 +49,7 @@ class BatchPDF{
         $errored = 0;
 
         if(count($props) == 0){
-            logStamp("No properties found to process");
+            logStamp("\nNo properties found to process");
             return;
         }
 
