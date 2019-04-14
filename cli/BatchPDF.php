@@ -31,9 +31,10 @@ class BatchPDF{
     
     
         $date = new DateTime();
-        logStamp(" >> Starting Batch Processing with mod $mod\n");
+        logStamp("Starting Batch Processing with mod $mod\n");
         logStamp("Current Working dir:" . getcwd());
         $batchDAO = new BatchDAO($servername, $username, $password, $database, $production);
+        logStamp("Getting Batch settings");
         $queryContext = $batchDAO->getBatchSettings();
         $queryContext->responseCtx = new responseContext();
 

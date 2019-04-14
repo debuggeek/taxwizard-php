@@ -284,7 +284,7 @@ class BatchDAO
                               SaleTypeQ as SaleTypeQ,
                               MaxDisplay as MaxDisplay
                           FROM ". $this->batchPropSettings .
-                          "WHERE id=(SELECT max(id) FROM ". $this->batchPropSettings);
+                          " WHERE id=(SELECT max(id) FROM ". $this->batchPropSettings);
         $stmt->execute();
 
         $stmt->bindColumn(1, $queryContext->trimIndicated, PDO::PARAM_BOOL);
