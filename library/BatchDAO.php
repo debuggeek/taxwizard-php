@@ -25,6 +25,7 @@ class BatchDAO
      * Batch prop table name
      */
     protected $batchPropTable = 'BATCH_PROP';
+    protected $batchPropSettings = 'BATCH_PROP_SETTINGS';
 
     /**
      * BatchDAO constructor.
@@ -39,6 +40,10 @@ class BatchDAO
         $pdo = new PDO("mysql:host=".$host.";dbname=".$database, $username, $password);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this->pdo = $pdo;
+
+        if(!$production){
+            $this->batchPropTable = $this->batchPropTable . '_STAGE';
+        }
 
         if(!$production){
             $this->batchPropTable = $this->batchPropTable . '_STAGE';
@@ -276,8 +281,8 @@ class BatchDAO
                               rankByIndicated as rankByIndicated,
                               SaleTypeQ as SaleTypeQ,
                               MaxDisplay as MaxDisplay
-                          FROM BATCH_PROP_SETTINGS 
-                          WHERE id=(SELECT max(id) FROM BATCH_PROP_SETTINGS)");
+                          FROM ". $this->batchPropSettings .
+                          "WHERE id=(SELECT max(id) FROM ". $this->batchPropSettings);
         $stmt->execute();
 
         $stmt->bindColumn(1, $queryContext->trimIndicated, PDO::PARAM_BOOL);
@@ -340,8 +345,8 @@ class BatchDAO
     {
         throw new Exception("Not expecting this to be called");
 
-        $stmt = $this->pdo->prepare("INSERT INTO BATCH_PROP_SETTINGS 
-                    SET TrimIndicated = ?, MultiHood = ?, IncludeVU = ?, IncludeMLS = ?, NumPrevYears = ?, 
+        $stmt = $this->pdo->prepare("INSERT INTO ". $this->batchPropSettings .
+                    " SET TrimIndicated = ?, MultiHood = ?, IncludeVU = ?, IncludeMLS = ?, NumPrevYears = ?, 
                      SqftRange = ?, ClassRange = ?, ClassRangeEnabled = ?, PercentGood = ?, PercentGoodEnabled = ?,
                      NetAdj = ?, NetAdjEnabled = ?, ImpLimit = ?");
 
