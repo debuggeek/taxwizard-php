@@ -31,8 +31,8 @@ class BatchPDF{
     
     
         $date = new DateTime();
-        echo "\n" . $date->format('Y-m-d H:i:s') . " >> Starting Batch Processing with mod $mod\n";
-        echo "\n Current Working dir:" . getcwd() . "\n";
+        logStamp(" >> Starting Batch Processing with mod $mod\n");
+        logStamp("Current Working dir:" . getcwd());
         $batchDAO = new BatchDAO($servername, $username, $password, $database, $production);
         $queryContext = $batchDAO->getBatchSettings();
         $queryContext->responseCtx = new responseContext();
@@ -41,7 +41,8 @@ class BatchPDF{
             $queryContext->traceComps = true;
             var_dump($queryContext);
         }
-    
+
+        logStamp("Checking for work");
         //Query to check if any work to do
         $props = $batchDAO->getBatchJobsPropList(false);
     
