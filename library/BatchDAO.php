@@ -46,7 +46,7 @@ class BatchDAO
         }
 
         if(!$production){
-            $this->batchPropTable = $this->batchPropTable . '_STAGE';
+            $this->batchPropTable = $this->batchPropSettings . '_STAGE';
         }
     }
 
