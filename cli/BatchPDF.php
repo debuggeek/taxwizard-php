@@ -72,10 +72,11 @@ class BatchPDF{
                     logStamp("BatchPDF: Updating " . $job->propId);
                     error_log("Start Mem Usage: " . memory_get_usage());
                     $queryContext->subjPropId = $prop;
-                    if(true){
+                    if($queryContext->compsToDisplay <= 10){
                         //2019 change
                         $retArray = generateSinglePropPDF($queryContext);
                     } else {
+                        error_log("More then 10 comps... using classic pdf");
                         $retArray = generatePropMultiPDF($queryContext);
                     }
                     if ($retArray == null) {

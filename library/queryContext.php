@@ -45,7 +45,7 @@ class queryContext {
     public $grossAdjFilterEnabled = false;
 
     //known as MaxDisplay in db
-    public $compsToDisplay = 100;
+    public $compsToDisplay = 10;
 
 
     // Rank by

@@ -34,7 +34,7 @@ function setupFullTable($queryContext, &$retArray){
 
     //Get Sales Comps
     $fullTable = new FullTable();
-//    $queryContext->compsToDisplay = 100;
+//    $queryContext->limit = 100;
     $queryContext->isEquityComp = false;
     $fullTable->generateTableData($queryContext);
     $retArray['totalSalesComps'] = $fullTable->getNumComp();
@@ -85,10 +85,10 @@ function generateSinglePropPDF($queryContext){
         return $retArray;
     }
 
-//    if($queryContext->limit){
-//        //If a limit is set then use it...but we need to add the subj to the total
-//        $trim = $queryContext->limit + 1;
-//    }
+    if($queryContext->compsToDisplay){
+        //If a limit is set then use it...but we need to add the subj to the total
+        $trim = $queryContext->compsToDisplay + 1;
+    }
 
     $fullTable10 = $fullTable->trimTo($trim);
     $retArray["medSale10"] = $fullTable10->getMedianVal();
