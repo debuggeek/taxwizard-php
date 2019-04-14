@@ -274,7 +274,8 @@ class BatchDAO
                               ShowTcadScores as showTcadScores,
                               ShowSaleRatios as showSaleRatios,
                               rankByIndicated as rankByIndicated,
-                              SaleTypeQ as SaleTypeQ
+                              SaleTypeQ as SaleTypeQ,
+                              MaxDisplay as MaxDisplay
                           FROM BATCH_PROP_SETTINGS 
                           WHERE id=(SELECT max(id) FROM BATCH_PROP_SETTINGS)");
         $stmt->execute();
@@ -309,6 +310,7 @@ class BatchDAO
         $stmt->bindColumn(28, $queryContext->showSaleRatios, PDO::PARAM_BOOL);
         $stmt->bindColumn(29, $rankByIndicated, PDO::PARAM_INT);
         $stmt->bindColumn(30, $boolSaleQ, PDO::PARAM_BOOL);
+        $stmt->bindColumn(31, $queryContext->compsToDisplay, PDO::PARAM_INT);
 
         $stmt->fetch(PDO::FETCH_BOUND);
 
