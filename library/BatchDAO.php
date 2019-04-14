@@ -48,6 +48,8 @@ class BatchDAO
         if(!$production){
             $this->batchPropTable = $this->batchPropSettings . '_STAGE';
         }
+
+        error_log("Connection settings: ", var_dump($this));
     }
 
 
