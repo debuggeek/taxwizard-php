@@ -46,8 +46,10 @@ class BatchDAO
         }
 
         if(!$production){
-            $this->batchPropTable = $this->batchPropSettings . '_STAGE';
+            $this->batchPropSettings = $this->batchPropSettings . '_STAGE';
         }
+
+        error_log("Connection settings: ", var_dump($this));
     }
 
 
@@ -250,7 +252,7 @@ class BatchDAO
     public function getBatchSettings(){
         $queryContext = new queryContext;
 
-        $stmt = $this->pdo->prepare("SELECT TrimIndicated as trimIndicated,
+        $query = "SELECT TrimIndicated as trimIndicated,
                               MultiHood as multiHood,
                               IncludeVU as includeVu,
                               IncludeMLS as includeMls,
@@ -281,8 +283,11 @@ class BatchDAO
                               rankByIndicated as rankByIndicated,
                               SaleTypeQ as SaleTypeQ,
                               MaxDisplay as MaxDisplay
-                          FROM ". $this->batchPropSettings .
-                          "WHERE id=(SELECT max(id) FROM ". $this->batchPropSettings);
+                              FROM ". $this->batchPropSettings . " WHERE id=(SELECT max(id) FROM ". $this->batchPropSettings . ");";
+
+
+
+        $stmt = $this->pdo->prepare($query);
         $stmt->execute();
 
         $stmt->bindColumn(1, $queryContext->trimIndicated, PDO::PARAM_BOOL);
