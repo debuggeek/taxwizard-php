@@ -38,6 +38,7 @@ function setupFullTable($queryContext, &$retArray){
     $queryContext->isEquityComp = false;
     $fullTable->generateTableData($queryContext);
     $retArray['totalSalesComps'] = $fullTable->getTotalFilteredCompsFound();
+
     $property = $fullTable->getSubjectProp();
     $retArray["prop_mktvl"] = $property->mMarketVal;
     $retArray["compsFound"] = false;
