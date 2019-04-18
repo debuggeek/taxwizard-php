@@ -319,7 +319,6 @@ function findBestComps(propertyClass $subjprop, queryContext $queryContext)
         $compsSeen[] = $comp->getPropID();
 	}
 	error_log("findBestComps: compsarray count= ".count($compsarray). " sizeof=".sizeof($compsarray));
-    $responseCtx->filteredPropCount = count($compsarray);
 	return $compsarray;
 }
 
@@ -733,6 +732,11 @@ function generateArrayOfBestComps(propertyClass $property, queryContext $queryCo
             throw new Exception("UNDEFINED RANK SORT");
     }
 
+    $responseCtx = $queryContext->responseCtx;
+    /** @var responseContext $responseCtx */
+    $responseCtx->filteredPropCount = count($compsarray);
+
+    // Trim down the number of comps displayed based on user desire
     $comp_min = MIN($queryContext->compsToDisplay, count($compsarray));
     $subjcomparray = array();
     $subjcomparray[0] = $property;
