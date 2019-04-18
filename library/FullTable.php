@@ -36,6 +36,8 @@ class FullTable
 
     private $compIndicatedValues;
 
+    private $totalCompsFound;
+
     /**
      * @return propertyClass
      */
@@ -169,6 +171,24 @@ class FullTable
     /**
      * @return mixed
      */
+    public function getTotalCompsFound()
+    {
+        return $this->totalCompsFound;
+    }
+
+    /**
+     * @param mixed $totalCompsFound
+     */
+    public function setTotalCompsFound($totalCompsFound): void
+    {
+        $this->totalCompsFound = $totalCompsFound;
+    }
+
+
+
+    /**
+     * @return mixed
+     */
     public function getShowBaseMktData()
     {
         return $this->showBaseMktData;
@@ -292,6 +312,9 @@ class FullTable
 
         //no comps provided so we must find some
         $subjCompArray  = generateArrayOfBestComps( $this->subjectProp , $queryContext);
+        /** @var responseContext $responseCtx */
+        $responseCtx = $queryContext->responseCtx;
+        $this->setTotalCompsFound($responseCtx->unfilteredPropCount);
 
         if($queryContext->traceComps) error_log("TRACE\tFound ".count($subjCompArray)." comps after filtering");
         if($queryContext->userFilterEnabled){
