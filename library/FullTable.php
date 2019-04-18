@@ -36,7 +36,9 @@ class FullTable
 
     private $compIndicatedValues;
 
-    private $totalCompsFound;
+    private $totalUnfilteredCompsFound;
+
+    private $totalFilteredCompsFound;
 
     /**
      * @return propertyClass
@@ -171,20 +173,34 @@ class FullTable
     /**
      * @return mixed
      */
-    public function getTotalCompsFound()
+    public function getTotalUnfilteredCompsFound()
     {
-        return $this->totalCompsFound;
+        return $this->totalUnfilteredCompsFound;
     }
 
     /**
-     * @param mixed $totalCompsFound
+     * @param mixed $totalUnfilteredCompsFound
      */
-    public function setTotalCompsFound($totalCompsFound): void
+    public function setTotalUnfilteredCompsFound($totalUnfilteredCompsFound): void
     {
-        $this->totalCompsFound = $totalCompsFound;
+        $this->totalUnfilteredCompsFound = $totalUnfilteredCompsFound;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getTotalFilteredCompsFound()
+    {
+        return $this->totalFilteredCompsFound;
+    }
 
+    /**
+     * @param mixed $totalFilteredCompsFound
+     */
+    public function setTotalFilteredCompsFound($totalFilteredCompsFound): void
+    {
+        $this->totalFilteredCompsFound = $totalFilteredCompsFound;
+    }
 
     /**
      * @return mixed
@@ -314,7 +330,8 @@ class FullTable
         $subjCompArray  = generateArrayOfBestComps( $this->subjectProp , $queryContext);
         /** @var responseContext $responseCtx */
         $responseCtx = $queryContext->responseCtx;
-        $this->setTotalCompsFound($responseCtx->unfilteredPropCount);
+        $this->setTotalFilteredCompsFound($responseCtx->filteredPropCount);
+        $this->setTotalUnfilteredCompsFound($responseCtx->unfilteredPropCount);
 
         if($queryContext->traceComps) error_log("TRACE\tFound ".count($subjCompArray)." comps after filtering");
         if($queryContext->userFilterEnabled){
