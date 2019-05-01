@@ -1,3 +1,7 @@
+************************************************************************
+*  This file is deprecated...looking at Readme.md                      *
+************************************************************************
+
 IMP_DET and PROP are the 2 files that are not in a good format to import, and must be converted
 
 convert non-deliminated files to '|' deliminated:
