@@ -1,24 +1,26 @@
-#**Setting up a new table**
-###Clone existing database
->`mysqldbcopy --source=root:root@localhost --destination=root:root@localhost --drop-first <src>:<dst> --skip=data`
+# Setting up a new table
+### Clone existing database
+`mysqldbcopy --source=root:root@localhost --destination=root:root@localhost --drop-first <src>:<dst> --skip=data`
 
 NOTE: Currently this won't work on AWS
-###Get template for new table
+### Get template for new table
 + Use `TCAD_TEMPLATE.sql` that is checked in OR
 + Export from recent database with command: 
->> `mysqldump -u [user] -h [host] --no-data -p [database] > TCAD_TEMPLATE.sql`
+
+  `mysqldump -u [user] -h [host] --no-data -p [database] > TCAD_TEMPLATE.sql`
 + Create the new DB
 + Import the template:
->> `mysql -u [user] -h [host] -p [new db] < TCAD_TEMPLATE.sql`
 
-####If you are updating to a refreshed table for the same year
+  `mysql -u [user] -h [host] -p [new db] < TCAD_TEMPLATE.sql`
+
+#### If you are updating to a refreshed table for the same year
 Make sure to copy over MLS_SALES and BATCH_PROP_SETTINGS with this command
-> `INSERT INTO database2.table2 SELECT * from database1.table1;`
-###Create new table
+`INSERT INTO database2.table2 SELECT * from database1.table1;`
+### Create new table
 + Create the new table via mysql admin / phpMyAdmin or Sequal Pro
 
-#**Populating the Data**
-####Requirements
+# Populating the Data=
+#### Requirements
 The following source files are required
 + PROP.TXT
 + IMP.TXT
@@ -26,16 +28,17 @@ The following source files are required
 + Special_PropData.txt
 + Special_Sales_Exclude_Conf.txt OR Special_Sales.txt
 + MLS:
+
   csv file with : `prop_id, sale_price, sale_date, address`
 
 The Batch Settings table should be initialized with a new row as the initial default.
 
-####Copying from S3
+#### Copying from S3
 To get the file from an s3 bucket you can use the aws cli with the following command
 
 `aws s3 cp s3://fivestone-tcad-public/ ./ --recursive`
 
-####Extraction
+#### Extraction
 These can be extracted from the source expected zip files with names like
 + `2017-04-19_006051_APPRAISAL_R&P ALLJUR AS OF PERLIMINARY.zip` for PROP and IMP
 + `SPECIAL_ALL FILES EXPORT_20170419.zip` for the Special_* files
@@ -52,48 +55,64 @@ convert non-deliminated files to '|' deliminated:
 
 NOTE: For PROP and IMP_DELIM if you need to break into smaller files due to SQL insert 
 timeout you can do so with the following command:
->> `split -l 250000 PROP_DELIM.txt prop_delim`
-<br>
->> linux: `split -d -l 1000000 IMP_DET_DELIM.txt` 
-<br>
->> mac : `split -l 1000000 IMP_DET_DELIM.txt imp_det_delim`
+
+  `split -l 250000 PROP_DELIM.txt prop_delim`
+  
++linux: 
+
+  `split -d -l 1000000 IMP_DET_DELIM.txt` 
+
++mac : 
+
+  `split -l 1000000 IMP_DET_DELIM.txt imp_det_delim`
 
 Run the following to load the data per file and table
 
->`LOAD DATA LOCAL INFILE '[filename]' 
+```sql
+LOAD DATA LOCAL INFILE '[filename]' 
 INTO TABLE [tablename]
 FIELDS TERMINATED BY '|'
-LINES TERMINATED BY '\n';`
+LINES TERMINATED BY '\n';
+```
 
 If you have .sql files with each of the above commands then you can run
 
-> `mysql -h fivestonetcad2.cusgdaffdgw5.us-west-2.rds.amazonaws.com -u dgDBMaster -p tcad_2017 < specImp.sql`
-#####SALES MLS Merged:
+`mysql -h fivestonetcad2.cusgdaffdgw5.us-west-2.rds.amazonaws.com -u dgDBMaster -p tcad_2017 < specImp.sql`
+##### SALES MLS Merged:
 Check that the sale_date column is in the YYYY-MM-DD format and if not do this
 
->`UPDATE SPECIAL_SALE_EX_CONF SET sale_date = str_to_date( sale_date, '%m/%d/%Y' );`
+```sql
+UPDATE SPECIAL_SALE_EX_CONF SET sale_date = str_to_date( sale_date, '%m/%d/%Y' );
+```
 
 Bring in the TCAD data first so that it will be marked that it's from TCAD not MLS
-> `INSERT IGNORE INTO SALES_MLS_MERGED SELECT prop_id,sale_price,sale_date,'SPECIAL',sale_type FROM SPECIAL_SALE_EX_CONF WHERE sale_price >0`
+```sql
+INSERT IGNORE INTO SALES_MLS_MERGED SELECT prop_id,sale_price,sale_date,'SPECIAL',sale_type 
+FROM SPECIAL_SALE_EX_CONF WHERE sale_price >0;
+````
  
 MLS table might be ok and not need date change, but verify the YYYY-MM-DD format before doing the following
 
-> `INSERT IGNORE INTO SALES_MLS_MERGED SELECT prop_id,sale_price,sale_date,'MLS',NULL FROM MLS_SALES WHERE sale_price >0`
+```sql
+INSERT IGNORE INTO SALES_MLS_MERGED SELECT prop_id,sale_price,sale_date,'MLS',NULL 
+FROM MLS_SALES WHERE sale_price >0;
+```
 
 **NOTE**: `IGNORE` is because data isn�t clean and same sale for same date sometimes 2x
-###Special Notes
+### Special Notes
 Starting in 2014 we began getting ths sales in the Special_Sales.txt but 
 that file needs to be reformatted with the following command:
->`sed 's/^[[:digit:]]*|[[:digit:]]*|/&|/' Special_Sales.txt > Special_Sales.txt.fixed`
 
-###Within Year Updates
+`sed 's/^[[:digit:]]*|[[:digit:]]*|/&|/' Special_Sales.txt > Special_Sales.txt.fixed`
+
+### Within Year Updates
 Copy existing MLS_SALES and BATCH_PROP, BATCH_PROP_SETTINGS
 
-> `INSERT INTO tcad_2018_2.MLS_SALES SELECT * FROM tcad_2018.MLS_SALES;`
+`INSERT INTO tcad_2018_2.MLS_SALES SELECT * FROM tcad_2018.MLS_SALES;`
 
 
 #**Useful Tools/Links**
 
-####SQL Tools
+#### SQL Tools
 UI admin for Mac
-https://sequelpro.com/
+[Sequel Pro](https://sequelpro.com/)
