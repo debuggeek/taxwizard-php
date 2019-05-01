@@ -6,4 +6,4 @@ At this time this application is used only for it's api's and none of the UI ren
 It is expected in our EC2 instances that this application resides in a `fivestone` folder under a hosted apache instance
 
 ## Data
-Data is loaded into the system by following the [SQLCheatSheet](admin/SQLCheatSheet.txt)
+Data is loaded into the system by following the [Admin Readme](admin/README.md)
