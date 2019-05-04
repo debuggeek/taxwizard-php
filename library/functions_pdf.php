@@ -99,6 +99,23 @@ function generateSinglePropPDF($queryContext){
     $mpdf->WriteHTML($html10, 2);
 
     getReturnComps($fullTable10, $retArray);
+
+
+    $queryContext->isEquityComp = true;
+    $fullTableEq = new FullTable();
+    $fullTableEq->generateTableData($queryContext);
+    if($fullTableEq->getSubjCompArray() != null) {
+        $retArray["compsFound"] = true;
+        $retArray["medEq11"] = $fullTableEq->getMedianVal();
+        $htmlEq = returnJsonBasedHTMLTable($fullTableEq, $queryContext->isEquityComp, $queryContext->responseCtx);
+        $mpdf->AddPage();
+        $mpdf->WriteHTML($htmlEq);
+        error_log("Post Equity PDF Mem Usage: " . memory_get_usage());
+    } else {
+        $retArray['totalEquityComps'] = 0;
+        error_log("No equity comps were found");
+    }
+
     //Add PDFs back to return array
     $retArray["mPDF"] = $mpdf;
 
