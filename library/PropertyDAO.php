@@ -134,6 +134,7 @@ class PropertyDAO{
                         LTRIM(RTRIM(p.situs_unit)) as situs_unit,
                         LTRIM(RTRIM(p.situs_zip)) as situs_zip,
                         LTRIM(RTRIM(p.hood_cd)) as mNeighborhood,
+                        LTRIM(RTRIM(p.abs_subdv_cd)) as mSubdivision,
                         LTRIM(RTRIM(p.py_owner_name)) as mOwner,
                         p.market_value as mMarketVal,
                         sp.liv_area as mLivingArea,
@@ -163,6 +164,7 @@ class PropertyDAO{
         $stmt->bindColumn('situs_unit', $prop->situs_unit, PDO::PARAM_STR);
         $stmt->bindColumn('situs_zip', $prop->situs_zip, PDO::PARAM_INT);
         $stmt->bindColumn('mNeighborhood', $prop->mNeighborhood, PDO::PARAM_STR);
+        $stmt->bindColumn('mSubdivision', $prop->mSubdivision, PDO::PARAM_STR);
         $stmt->bindColumn('mOwner', $prop->mOwner, PDO::PARAM_STR);
         $stmt->bindColumn('mMarketVal', $prop->mMarketVal, PDO::PARAM_INT);
         $stmt->bindColumn('mLivingArea', $livingarea, PDO::PARAM_INT);

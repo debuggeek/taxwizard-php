@@ -21,6 +21,8 @@ class TcadScore
     private $hoodPoints = 0;
     
     private $schoolPoints = 0;
+
+    private $subDivPoints = 0;
     
     private $streetPoints = 0;
     
@@ -41,6 +43,7 @@ class TcadScore
         return $this->classPoints
                 + $this->conditionPoints
                 + $this->hoodPoints
+                + $this->subDivPoints
                 + $this->schoolPoints
                 + $this->streetPoints
                 + $this->stateCodePoints
@@ -54,11 +57,14 @@ class TcadScore
      * @param \propertyClass $subjProp
      * @param \propertyClass $compProp
      * @return TcadScore
+     * @throws \Exception
      */
     public function setScore($subjProp, $compProp){
+        // No Value as of 2019
         $this->classPoints = $this->calculateClassPoints($subjProp->getClassCode(), $compProp->getClassCode());
         $this->conditionPoints = $this->calculateConditionPoints($subjProp->getCondition(), $compProp->getCondition());
         $this->hoodPoints = $this->calculateHoodPoints($subjProp->mNeighborhood, $compProp->mNeighborhood);
+        $this->subDivPoints = $this->calculateSubdivision($subjProp->getSubdivision(), $compProp->getSubdivision());
         //No value for school as of 2016 scoring
         $this->schoolPoints = 0;
         $this->streetPoints = $this->calculateStreetPoints($subjProp->getSitus(), $compProp->getSitus());
@@ -72,6 +78,9 @@ class TcadScore
     }
     
     private function calculateClassPoints($subjClassAdj, $compClassAdj){
+        // No value as of 2019
+        return 0;
+
         if($subjClassAdj === $compClassAdj){
             return 5;
         }      
@@ -80,7 +89,8 @@ class TcadScore
     
     private function calculateConditionPoints($subjCond, $compCond){
         if($subjCond === $compCond){
-            return 5;
+            // 15 as of 2019
+            return 15;
         }
         return 0;
     }
@@ -89,7 +99,17 @@ class TcadScore
         return 0;
     }
 
+    private function calculateSubdivision($subjSubdivsion, $compSubdivsion){
+        if(strcasecmp($subjSubdivsion,$compSubdivsion) == 0){
+            return 5;
+        }
+        return 0;
+    }
+
     private function calculateStreetPoints($subjSitus, $compSitus){
+        // No value as of 2019
+        return 0;
+
         if(strcasecmp($subjSitus,$compSitus) == 0){
             return 2;
         }
@@ -97,12 +117,21 @@ class TcadScore
     }
 
     private function calculateStCodePoints($subjStCode, $compStCode){
+        // No value as of 2019
+        return 0;
+
         if($subjStCode === $compStCode){
             return 5;
         }
         return 0;
     }
 
+    /**
+     * @param $subjSubClass
+     * @param $compSubClass
+     * @return float|int
+     * @throws \Exception
+     */
     private function calculateSubClassPoints($subjSubClass, $compSubClass){
         $most = 35;
 
@@ -127,6 +156,9 @@ class TcadScore
     }
 
     private function calculateEffectiveYearBuiltPoints($subjEffYr, $compEffYr){
+        // No value as of 2019
+        return 0;
+
         $most = 3;
         $yrDiff = abs($subjEffYr-$compEffYr);
         $pointsOff = $yrDiff * 1;
@@ -140,8 +172,10 @@ class TcadScore
     private function calculateLivingAreaPoints($subjLivArea, $compLivArea){
         $most = 35;
         $diff = abs($subjLivArea-$compLivArea);
-        //5 pts per 250Sqft difference
-        $pointsOff = ($diff/250) * 5;
+        //5 pts per 10% difference
+        $pctDiff = ($diff/$subjLivArea);
+        $diffBy10 = intdiv($pctDiff*100,10);
+        $pointsOff = $diffBy10 * 5;
         $value = $most - $pointsOff;
         if($value < 0){
             $value = 0;
@@ -152,7 +186,9 @@ class TcadScore
     private function calculateActYearBuiltPoints($subjActYear, $compActYear){
         $most = 10;
         $yrDiff = abs($subjActYear-$compActYear);
-        $pointsOff = $yrDiff * 3;
+        //3 pts per 5 year diff
+        $diffBy5 = intdiv($yrDiff, 5);
+        $pointsOff = $diffBy5 * 3;
         $value = $most - $pointsOff;
         if($value < 0){
             $value = 0;

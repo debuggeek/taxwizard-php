@@ -14,6 +14,7 @@ class propertyClass
     public $situs_unit;
     public $situs_zip;
     public $mNeighborhood;
+    public $mSubdivision;
     public $mOwner;
     public $mHoodMIA;
 
@@ -142,6 +143,23 @@ class propertyClass
     {
         $this->mLivingArea = $mLivingArea;
     }
+
+    /**
+     * @return String
+     */
+    public function getSubdivision()
+    {
+        return $this->mSubdivision;
+    }
+
+    /**
+     * @param String $mSubdivision
+     */
+    public function setSubdivision($mSubdivision): void
+    {
+        $this->mSubdivision = $mSubdivision;
+    }
+
 
     /**
      * @param int $mSalePrice

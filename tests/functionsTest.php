@@ -3,7 +3,9 @@
 include_once '../library/functions.php';
 include_once '../library/queryContext.php';
 
-class functionsTest extends PHPUnit_Framework_TestCase{
+use PHPUnit\Framework\TestCase;
+
+class functionsTest extends TestCase{
 
     public function test_getSubjProperty() {
         $propid = 224540;

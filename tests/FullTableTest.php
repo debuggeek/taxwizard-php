@@ -6,7 +6,6 @@
  * Date: 4/24/16
  * Time: 9:57 AM
  */
-require_once '../vendor/autoload.php';
 
 use Apache\Log4php\Logger;
 
@@ -14,7 +13,10 @@ include_once '../library/queryContext.php';
 include_once '../library/FullTable.php';
 include_once '../library/presentation.php';
 
-class FullTableTest extends PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+
+class FullTableTest extends TestCase
 {
 //    /* @var logger $logger */
 //    private $logger;

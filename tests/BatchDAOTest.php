@@ -10,7 +10,9 @@
 include_once "../library/BatchDAO.php";
 include_once "../library/queryContext.php";
 
-class BatchDAOTest extends PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class BatchDAOTest extends TestCase
 {
 
     var $HOST = 'localhost';

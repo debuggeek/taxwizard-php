@@ -6,7 +6,7 @@
  * Time: 10:31 AM
  */
 
-namespace TaxWizard;
+namespace TaxWizardTest;
 
 class TestUtil
 {
@@ -22,6 +22,7 @@ class TestUtil
         $prop->setSubClass('4+');
         $prop->setCondition('A');
         $prop->mNeighborhood = 'A5000';
+        $prop->setSubdivision('S05688');
         //Not used currently
         ///$prop->school
         $prop->situs_street="Main";
