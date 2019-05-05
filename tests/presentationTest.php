@@ -11,6 +11,9 @@ include_once "../library/presentation.php";
 include_once "../library/responseContext.php";
 include_once "../library/FullTable.php";
 
+use PHPUnit\Framework\TestCase;
+
+
 class presentationTest extends PHPUnit_Framework_TestCase
 {
     public $subjId = 105290;
