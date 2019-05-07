@@ -93,6 +93,7 @@ class BatchPDF{
                             $content = $multiPDF->Output('', 'S');
                             $content = base64_encode($content);
                             $retArray['base64'] = $content;
+                            $retArray['mPDF'] = null;
                             $job->parseArray($retArray);
                             $job->batchStatus = true;
                             $content = null;

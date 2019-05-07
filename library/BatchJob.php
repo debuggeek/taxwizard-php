@@ -120,6 +120,12 @@ class BatchJob
      * @var int
      */
     public $comp10_IndicatedValue;
+
+    /**
+     * @var string
+     */
+    public $compType;
+
     /**
      * @var string
      */
@@ -150,5 +156,6 @@ class BatchJob
         $this->comp8_IndicatedValue = $array['Comp8_IndicatedValue'];
         $this->comp9_IndicatedValue = $array['Comp9_IndicatedValue'];
         $this->comp10_IndicatedValue = $array['Comp10_IndicatedValue'];
+        $this->compType = $array['compType'];
     }
 }

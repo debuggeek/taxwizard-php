@@ -198,7 +198,8 @@ class BatchDAO
                                             Comp7_IndicatedValue =?,
                                             Comp8_IndicatedValue =?,
                                             Comp9_IndicatedValue =?,
-                                            Comp10_IndicatedValue =?
+                                            Comp10_IndicatedValue =?,
+                                            CompType = ? 
                                         WHERE 
                                           prop = ?;");
         $boolStr = $this->strbool($batchJob->batchStatus);
@@ -227,8 +228,9 @@ class BatchDAO
         $stmt->bindParam(23, $batchJob->comp8_IndicatedValue, PDO::PARAM_INT);
         $stmt->bindParam(24, $batchJob->comp9_IndicatedValue, PDO::PARAM_INT);
         $stmt->bindParam(25, $batchJob->comp10_IndicatedValue, PDO::PARAM_INT);
+        $stmt->bindParam(26, $batchJob->compType, PDO::PARAM_STR);
 
-        $stmt->bindParam(26, $batchJob->propId, PDO::PARAM_INT);
+        $stmt->bindParam(27, $batchJob->propId, PDO::PARAM_INT);
 
         return $stmt->execute();
     }
@@ -282,7 +284,8 @@ class BatchDAO
                               ShowSaleRatios as showSaleRatios,
                               rankByIndicated as rankByIndicated,
                               SaleTypeQ as SaleTypeQ,
-                              MaxDisplay as MaxDisplay
+                              MaxDisplay as MaxDisplay,
+                              CompType as CompType 
                               FROM ". $this->batchPropSettings . " WHERE id=(SELECT max(id) FROM ". $this->batchPropSettings . ");";
 
 
@@ -321,6 +324,7 @@ class BatchDAO
         $stmt->bindColumn(29, $rankByIndicated, PDO::PARAM_INT);
         $stmt->bindColumn(30, $boolSaleQ, PDO::PARAM_BOOL);
         $stmt->bindColumn(31, $queryContext->compsToDisplay, PDO::PARAM_INT);
+        $stmt->bindColumn(32, $queryContext->compType, PDO::PARAM_STR);
 
         $stmt->fetch(PDO::FETCH_BOUND);
 
@@ -336,6 +340,12 @@ class BatchDAO
             $queryContext->rank = RankType::Indicated;
         } else {
             $queryContext->rank = RankType::TCAD;
+        }
+
+        if($queryContext->compType === "sales"){
+            $queryContext->isEquityComp = false;
+        } else {
+            $queryContext->isEquityComp = true;
         }
 
         return $queryContext;

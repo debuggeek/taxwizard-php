@@ -44,6 +44,7 @@ class queryContext {
     public $limitToOnlyCurrentYearLowered = false;
     public $grossAdjFilterEnabled = false;
 
+    public $compType;
     //known as MaxDisplay in db
     public $compsToDisplay = 10;
 
@@ -129,6 +130,10 @@ class queryContext {
         }
         if(array_count_values($this->filterProps) > 0){
             $this->userFilterEnabled = true;
+        }
+
+        if($inputContext->salesType !== null){
+            $this->compType = $inputContext->salesType;
         }
 
         // Other
