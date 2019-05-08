@@ -1095,6 +1095,10 @@ class propertyClass
         return $this->mHVIMARCNareaPerSqft;
     }
 
+    /**
+     * High Value Improvement Main Area
+     * @return int|string
+     */
     function getHVImpMARCN()
 
     {

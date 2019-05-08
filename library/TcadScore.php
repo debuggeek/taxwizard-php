@@ -71,7 +71,7 @@ class TcadScore
         $this->stateCodePoints = $this->calculateStCodePoints($subjProp->stateCode, $compProp->stateCode);
         $this->subClassPoints = $this->calculateSubClassPoints($subjProp->getSubClass(), $compProp->getSubClass());
         $this->effectiveYearBuiltPoints = $this->calculateEffectiveYearBuiltPoints($subjProp->effectiveYearBuilt, $compProp->effectiveYearBuilt);
-        $this->livingAreaPoints = $this->calculateLivingAreaPoints($subjProp->getLivingArea(), $compProp->getLivingArea());
+        $this->livingAreaPoints = $this->calculateLivingAreaPoints($subjProp->getHVImpMARCN(), $compProp->getHVImpMARCN());
         $this->acutalYearBuiltPoints = $this->calculateActYearBuiltPoints($subjProp->getYearBuilt(), $compProp->getYearBuilt());
         
         return $this;
