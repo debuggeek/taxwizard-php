@@ -10,14 +10,20 @@ Data is loaded into the system by following the [Admin Readme](admin/README.md)
 
 ## Application Setup
 
-In general the files are expected to be deployed into a `fivestone` folder under the base apache2 html directory.
+### System Requirements
++ Ubuntu 18.04
++ Apache/2.4.29+
++ PHP 7.2+
++ MySql 5.6+
+In general the files are expected to be deployed into a `fivestone` folder under the base apache2 html directory.  In 
+the current aws ec2 instances the `fivestone` directory is in the home folder and symlinked from `/var/www/html`.
 
-For specifics review the [Deployment script](admin/awsDeploy.sh)
+For specifics review the [Deployment script](admin/awsDeploy.sh).  Reading this file will give an overview of where it 
+copies files from this project into the apache filestructure
 
 ## Docker Deployment
 
-Still under development.  [Dockerfile](Dockerfile)
-
+Still under development, but should work in some local environments  [Dockerfile](Dockerfile)
 
 ## Runtime
 
