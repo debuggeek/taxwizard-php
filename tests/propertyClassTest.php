@@ -10,7 +10,9 @@ include_once '../library/propertyClass.php';
 include_once "../library/ImpHelper.php";
 include_once "../library/functions.php";
 
-class propertyClassTest extends PHPUnit_Framework_TestCase{
+use PHPUnit\Framework\TestCase;
+
+class propertyClassTest extends TestCase{
 
     /* @var propertyClass */
     public $property;
@@ -20,7 +22,7 @@ class propertyClassTest extends PHPUnit_Framework_TestCase{
         global $debug;
 
         $debug = false;
-        $this->property = getProperty(105290);
+        $this->property = getProperty(121352);
     }
 
     public function test_getImpCount(){
@@ -28,15 +30,15 @@ class propertyClassTest extends PHPUnit_Framework_TestCase{
     }
 
     public function test_toJson(){
-        echo $this->property->toJson();
+        $this->assertJson($this->property->toJson(), "Not valid JSON");
     }
     
     public function testIndicators(){
+        $this->markTestSkipped('must be revisited.');
         //Current indicators are:
         //  "." after SalePrice if saleType is 'VQ'
         //  "_" after SaleDate if from MLS
         //  "_" after GoodAdj if >25 years old and GoodAdj > 75
-        
     }
     
     public function testProperties(){
