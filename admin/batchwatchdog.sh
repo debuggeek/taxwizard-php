@@ -1,13 +1,14 @@
 #!/bin/sh
-if ps -ef | grep -v grep | grep batch_pdf.php ; then
-        echo "batch_pdf is already running" | mutt -s "Batch_pdf still running" debuggeek@gmail.com
+LOCKFILE=~/batchwatchdog.lock
+
+if [ -f "$LOCKFILE" ] ; then
+    timestamp=$(date +%T)
+	echo "$timestamp > batch_pdf is already running" >> ~/phpcli_running.$d.log
 	exit 0
 else
-        d=$(date +%y-%m-%d)
+    touch $LOCKFILE
+	d=$(date +%y-%m-%d)
 	/usr/bin/php ~/fivestone/cli/batch_pdf_aws.php >> ~/phpcli.$d.log 2> ~/phpcli_error.$d.log
-
-	#mailing program
-        echo "restarted batch_pdf, not found in process list" | mutt -s "Restarted batch_pdf" debuggeek@gmail.comdd
-	#/home/user/bin/simplemail.php "Print spooler was not running...  Restarted."
-        exit 0
+    rm $LOCKFILE
+	exit 0
 fi
