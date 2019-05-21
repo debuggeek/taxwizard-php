@@ -9,13 +9,24 @@
 
 include_once "../library/PropertyDAO.php";
 require_once "../library/queryContext.php";
+require_once "../library/accountinfo.php";
 
-class PropertyDAOTest extends PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+global $servername;
+
+
+class PropertyDAOTest extends TestCase
 {
-    var $HOST = 'localhost';
-    var $user = "root";
-    var $pw = "root";
-    var $db = "TCAD_2017_2";
+//    var $HOST = 'localhost';
+//    var $user = "root";
+//    var $pw = "root";
+//    var $db = "TCAD_2017_2";
+
+    var $HOST="fivestonetcad2.cusgdaffdgw5.us-west-2.rds.amazonaws.com";
+    var $user="dgDBMaster";
+    var $pw="";
+    var $db="tcad_2019";
 
     public function test_getPropertyById(){
         $propDao = new PropertyDAO($this->HOST, $this->user, $this->pw, $this->db);
@@ -72,5 +83,14 @@ class PropertyDAOTest extends PHPUnit_Framework_TestCase
         $property = $propDao->getPropertyById(100944);
         var_dump($property);
         $this->assertNotEmpty($property);
+    }
+
+    public function test_MultiImpSegment(){
+        $propDao = new PropertyDAO($this->HOST, $this->user, $this->pw, $this->db);
+        $property = $propDao->getPropertyById(309814);
+
+        var_dump($property);
+
+        $this->assertEquals(107653, $property->getSegAdj());
     }
 }
