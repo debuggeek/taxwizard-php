@@ -197,11 +197,15 @@ class ImpHelper
      */
     public static function getSecondaryImprovementsValue($propertyImps){
         $secImps = self::getSecondaryImprovements($propertyImps);
+        $secTotal = 0;
         foreach($secImps as $secImp){
             /* @var ImprovementDetailClass $secImp */
             if($secImp->isDetUseUnitPrice() == 'T'){
-                return $secImp->getImprvVal();
+                $secTotal += $secImp->getImprvVal();
             }
+        }
+        if($secTotal > 0){
+            return $secTotal;
         }
         // Making it here means that no improvement with True flag for use unit found
         foreach($secImps as $secImp) {
