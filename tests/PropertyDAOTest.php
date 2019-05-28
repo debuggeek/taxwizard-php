@@ -26,7 +26,7 @@ class PropertyDAOTest extends TestCase
     var $HOST="fivestonetcad2.cusgdaffdgw5.us-west-2.rds.amazonaws.com";
     var $user="dgDBMaster";
     var $pw="";
-    var $db="tcad_2019";
+    var $db="tcad_2019_3";
 
     public function test_getPropertyById(){
         $propDao = new PropertyDAO($this->HOST, $this->user, $this->pw, $this->db);

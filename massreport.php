@@ -43,7 +43,11 @@ try {
     }
 
     if ($fullTable->getSubjCompArray() == null || sizeof($fullTable->getSubjCompArray()) == 1) {
-        echo json_encode(array("error" => "No comps found for propId=" . $queryContext->subjPropId, "propId" => $queryContext->subjPropId), JSON_PRETTY_PRINT);
+        $response = array("error" => "No comps found for propId=" . $queryContext->subjPropId,
+                          "propId" => $queryContext->subjPropId,
+                          "hiddenDetails" => $queryContext->responseCtx
+        );
+        echo json_encode($response, JSON_PRETTY_PRINT);
         exit;
     }
 

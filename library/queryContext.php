@@ -1,6 +1,7 @@
 <?php
 
 include_once 'enums/RankType.php';
+include_once 'responseContext.php';
 
 class queryContext {
 
@@ -77,6 +78,10 @@ class queryContext {
     public $traceComps = false;
 
     public $responseCtx = null;
+
+    function __construct() {
+        $this->responseCtx = new responseContext();
+    }
 
     public function parseQueryContextJson($inputContext){
         $this->subjPropId = $inputContext->propId;

@@ -95,4 +95,25 @@ class FullTableTest extends TestCase
         print generateJsonRows($fullTable);
     }
 
+    public function test_GenerateFullTable_Sales_J2600Hood(){
+        $queryContext = new queryContext();
+        $queryContext->subjPropId = 709677;
+        $queryContext->isEquityComp = false;
+        $queryContext->compsToDisplay=8;
+        $queryContext->traceComps=true;
+        $queryContext->sqftPercent=20;
+
+
+        $fullTable = new FullTable();
+        $fullTable->generateTableData($queryContext);
+
+        $this->assertNotEmpty($fullTable->getSubjCompArray());
+        $this->assertNotEmpty($fullTable->getMedianVal());
+        $this->assertNotEmpty($fullTable->getSubjectProp());
+        $this->assertNotEmpty($fullTable->getMeanVal());
+        $this->assertNotEmpty($fullTable->getMeanValSqft());
+        $this->assertNotEmpty($fullTable->getMedianValSqft());
+
+        print generateJsonRows($fullTable);
+    }
 }

@@ -454,9 +454,10 @@ class ImprovementDetailClass{
         }
 
         $pieces = explode(";", $this->adjPercRaw);
-        if(sizeof($pieces) != 2){
-            error_log("Expected 2 halfs to the adjPercRaw for imprv_det_id=" . $this->imprv_det_id);
-            throw new Exception("Expected 2 halfs to the adjPercRaw");
+        if((sizeof($pieces) < 2) || sizeof($pieces) > 3){
+            $msg = sprintf("Expected adjPercRaw to only have 2-3 parts for imprv_det_id=%u", $this->imprv_det_id);
+            error_log($msg);
+            throw new Exception($msg);
         }
         $percString = explode(": ",$pieces[1]);
         if(sizeof($percString) != 2){

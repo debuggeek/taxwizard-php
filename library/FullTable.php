@@ -400,7 +400,13 @@ class FullTable
                 $c->setSalePrice($compIn['salePrice']);
                 $c->mSaleDate = $compIn['saleDate'];
             }
-            calcDeltas($this->subjectProp,$c, $queryContext->isEquityComp);
+            try {
+                calcDeltas($this->subjectProp, $c, $queryContext->isEquityComp);
+            } catch (Exception $e){
+                sprintf("%u skipped due to 0 detail improvements found", $c->getPropID());
+                $msg = printf("Unable to calculate delta for comp=%u due to: %s", $c->getPropID(), $e);
+                $queryContext->responseCtx->errors[] = $msg;
+            }
             $subjcomparray[] = $c;
         }
         return $subjcomparray;
