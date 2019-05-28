@@ -10,10 +10,10 @@
 include_once("library/functions.php");
 include_once("library/BatchDAO.php");
 
-global $servername,$username,$password,$database,$dbport;
+global $servername,$username,$password,$database,$dbport,$production;
 
 $propid = null;
-$batchDAO = new BatchDAO($servername, $username, $password, $database);
+$batchDAO = new BatchDAO($servername, $username, $password, $database,$production);
 
 //Parse Inputs
 $queryContext = new queryContext();

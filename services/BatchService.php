@@ -25,10 +25,10 @@ namespace DebugGeek\TaxWizard\Services {
          */
         public function __construct(\BatchDAO $batchDaoIn = null)
         {
-            global $servername, $username, $password, $database;
+            global $servername, $username, $password, $database, $production;
 
             if ($batchDaoIn === null) {
-                $this->batchDao = new \BatchDAO($servername, $username, $password, $database);
+                $this->batchDao = new \BatchDAO($servername, $username, $password, $database,$production);
             } else {
                 $this->batchDao = $batchDaoIn;
             }
