@@ -14,7 +14,7 @@ include_once "../library/FullTable.php";
 use PHPUnit\Framework\TestCase;
 
 
-class presentationTest extends PHPUnit_Framework_TestCase
+class presentationTest extends TestCase
 {
     public $subjId = 105290;
     public $compId = 106033;

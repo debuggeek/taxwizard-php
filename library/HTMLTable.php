@@ -95,6 +95,9 @@ class HTMLTable
                     if ($this->isTableElementGlobal($rowClass) && $key != 'col1') {
                         $result = $result . '<td>/td>';
                     } else {
+                        if(is_int($value)){
+                            $value = number_format($value);
+                        }
                         $result = $result . '<td class=\'' . $rowClass . '\'>' . $value . '</td>';
                     }
                 } else {
