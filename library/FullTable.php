@@ -435,6 +435,10 @@ class FullTable
         return $newTable;
     }
 
+    /**
+     * Used to update global table data
+     * @param FullTable $table
+     */
     private static function updateTableCalcs(FullTable &$table){
 
         $table->setLowVal(calcLowVal($table->subjCompArray));

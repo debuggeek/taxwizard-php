@@ -30,6 +30,10 @@ class FullTableTest extends TestCase
         $queryContext->isEquityComp = false;
         $queryContext->compsToDisplay = 2;
         $queryContext->sqftPercent= 10;
+        $queryContext->prevYear=2;
+        $queryContext->showBaseMktData = true;
+        $queryContext->showTcadScores = true;
+        $queryContext->showSaleRatios = true;
 
         return $queryContext;
     }

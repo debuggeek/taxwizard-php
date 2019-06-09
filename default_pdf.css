@@ -66,6 +66,13 @@ th
 	/*white-space: nowrap;*/
 }
 
+.MedianValue
+{
+	color: blue;
+	font-weight: bold;
+	font-size: large;
+}
+
 .SalePrice,.SalePrice\/Sqft
 {
 	text-align:right;
