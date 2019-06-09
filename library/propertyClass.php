@@ -921,6 +921,7 @@ class propertyClass
      * @return int|string
      */
     function getIndicatedVal($pretty){
+        // Null check so we don't turn nulls into 0's
         if($pretty && $this->indicatedVal != null) {
             return number_format($this->indicatedVal);
         } else {

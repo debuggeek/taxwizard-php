@@ -218,7 +218,7 @@ function calcDeltas($subj,$currprop, $isEquity)
 function getSubjProperty($propid){
     $property = getProperty($propid);
     $property->setisSubj(true);
-    $property->setIndicatedVal(null);//$property->getMarketVal());
+    $property->setIndicatedVal(null); // Changed per 2019 request from $property->getMarketVal());
     return $property;
 }
 
