@@ -25,7 +25,7 @@ Make sure to copy over MLS_SALES and BATCH_PROP_SETTINGS with this command
 ### Create new table
 + Create the new table via mysql admin / phpMyAdmin or Sequal Pro
 
-# Populating the Data=
+# Populating the Data
 #### Requirements
 The following source files are required
 + PROP.TXT
@@ -52,7 +52,7 @@ These can be extracted from the source expected zip files with names like
 
 IMP_DET and PROP are the 2 files that are not in a good format to import, and must be converted
 
-*Most of the above and below can be done with the extract.sh script in ./admin*
+*Most of the above and below can be done with the [extract.sh](./extract.sh) script in ./admin*
 
 convert non-deliminated files to '|' deliminated:
 ------------------------------------------------
@@ -85,7 +85,7 @@ timeout you can do so with the following command:
 Run the following to load the data per file and table
 
 ```sql
-LOAD DATA LOCAL INFILE '[filename]' 
+LOAD DATA LOCAL INFILE "[filename]" 
 INTO TABLE [tablename]
 FIELDS TERMINATED BY '|'
 LINES TERMINATED BY '\n';
