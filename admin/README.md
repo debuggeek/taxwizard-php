@@ -1,9 +1,11 @@
 # Setting up a new table
 ### Clone existing database
+Using Sequal Pro you can do this via `Database`->`Duplicate Database` from the currently used one
+
+#### Local Method
 ```bash
 mysqldbcopy --source=root:root@localhost --destination=root:root@localhost --drop-first <src>:<dst> --skip=data
 ```
-
 NOTE: Currently this won't work on AWS
 ### Get template for new table
 + Use `TCAD_TEMPLATE.sql` that is checked in OR
